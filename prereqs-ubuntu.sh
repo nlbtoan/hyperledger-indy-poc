@@ -59,7 +59,8 @@ sudo apt-get install -y \
    cmake \
    libssl-dev \
    libsqlite3-dev \
-   libsodium-dev
+   libzmq3-dev \
+   libncursesw5-dev
 
 # Execute nvm installation script
 echo "# Executing nvm installation script"
@@ -128,13 +129,24 @@ fi
 # Install Rust and Rustup
 curl -sf -L https://static.rust-lang.org/rustup.sh | sh
 
-# Clone and Build Indy SDK
-git clone https://github.com/hyperledger/indy-sdk.git
-cd ./indy-sdk
-git checkout tags/v1.3.0
-cd ./libindy
-cargo build --release
-sudo cp -rf ./target/release/libindy.so /usr/lib/libindy.so
+# Install libsodium
+cd ~/ && \
+  curl https://download.libsodium.org/libsodium/releases/libsodium-1.0.14.tar.gz | tar -xz && \
+   cd ~/libsodium-1.0.14 && \
+   ./configure --disable-shared && \
+   make && \
+   sudo make install && \
+   rm -rf ~/libsodium-1.0.14 \
+   cd ~/
+
+# Build Indy SDK
+cd ~/ && \
+	git clone https://github.com/hyperledger/indy-sdk.git && \
+	cd ./indy-sdk && \
+	git checkout tags/v1.6.0 && \
+	cd ./libindy && \
+	cargo build && \
+	sudo sudo cp -rf ./target/debug/libindy.so /usr/lib/libindy.so
 
 # Print installation details for user
 echo ''
