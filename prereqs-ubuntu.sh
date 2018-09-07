@@ -60,7 +60,8 @@ sudo apt-get install -y \
    libssl-dev \
    libsqlite3-dev \
    libzmq3-dev \
-   libncursesw5-dev
+   libncursesw5-dev \
+   curl
 
 # Execute nvm installation script
 echo "# Executing nvm installation script"
