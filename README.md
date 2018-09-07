@@ -4,7 +4,7 @@
 ## Setup Development/Runtime Environment
 ```
 git clone https://github.com/maitien2004/hyperledger-indy-poc.git
-cd hyperledger-indy-poc && chmod +x prereqs-ubuntu.sh && ./prereqs-ubuntu.sh
+cd hyperledger-indy-poc && chmod u+x prereqs-ubuntu.sh && ./prereqs-ubuntu.sh
 ```
 
 ## Setup Hyperledger Indy network
