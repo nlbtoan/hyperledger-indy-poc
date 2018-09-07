@@ -64,7 +64,7 @@ sudo apt-get install -y \
 
 # Execute nvm installation script
 echo "# Executing nvm installation script"
-curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.2/install.sh | bash
+curl -o- https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash
 
 # Set up nvm environment without restarting the shell
 export NVM_DIR="${HOME}/.nvm"
