@@ -6,10 +6,6 @@
 git clone https://github.com/maitien2004/hyperledger-indy-poc.git
 cd hyperledger-indy-poc && chmod +x prereqs-ubuntu.sh && ./prereqs-ubuntu.sh
 ```
-Or
-```
-curl -o- https://raw.githubusercontent.com/maitien2004/hyperledger-indy-poc/master/prereqs-ubuntu.sh | bash
-```
 
 ## Setup Hyperledger Indy network
 
