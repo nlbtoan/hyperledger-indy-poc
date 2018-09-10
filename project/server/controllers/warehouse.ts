@@ -33,7 +33,7 @@ export default class wareHouseCtrl extends BaseCtrl {
   // }
   createSchema = async (req, res) => {
     try {
-      let [prescriptionSchemaId, prescriptionSchema] = await indy.issuerCreateSchema(req.body.nursingHomeDid, 'Prescription', '1.2', req.body.schema);
+      let [prescriptionSchemaId, prescriptionSchema] = await indy.issuerCreateSchema(req.body.nursingHomeDid, 'id-card', '1.0', req.body.schema);
 
       await this.sendSchema(req.body.poolHandle, req.body.nursingHomeWallet, req.body.nursingHomeDid, prescriptionSchema);
       res.status(200).json({
