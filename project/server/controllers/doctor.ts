@@ -46,23 +46,31 @@ export default class doctorCtrl extends BaseCtrl {
   // }
   gettingPrescription = async (req, res) => {
     try {
-      let patientWalletName = req.body.patientWalletName;
+      let poolHandle = req.body.poolHandle;
+      let doctorWallet = req.body.doctorWallet;
+      let doctorDid = req.body.doctorDid;
+      let pharmacyWallet = req.body.pharmacyWallet;
+
+      let patientWalletConfig = { 'id': req.body.patientWalletName };
       let patientWalletCredentials = { 'key': req.body.name + '_key' };
-      let [patientWallet, doctorPatientKey, patientDoctorDid, patientDoctorKey, doctorPatientConnectionResponse] = await this.onboarding(req.body.poolHandle, req.body.poolName, "Doctor", req.body.doctorWallet, req.body.doctorDid, "Patient", null, patientWalletName, patientWalletCredentials);
-      let prescriptionCredOfferJson = await indy.issuerCreateCredentialOffer(req.body.doctorWallet, req.body.doctorPrescriptionCredDefId);
-      let patientDoctorVerkey = await indy.keyForDid(req.body.poolHandle, req.body.pharmacyWallet, doctorPatientConnectionResponse['did']);
-      let authcryptedPrescriptionCredOffer = await indy.cryptoAuthCrypt(req.body.doctorWallet, doctorPatientKey, patientDoctorVerkey, Buffer.from(JSON.stringify(prescriptionCredOfferJson), 'utf8'));
+      let [patientWallet, doctorPatientKey, patientDoctorDid, patientDoctorKey, doctorPatientConnectionResponse] = await this.onboarding(poolHandle, "Government", doctorWallet, doctorDid, "Personal", null, patientWalletConfig, patientWalletCredentials);
+
+      let prescriptionCredOfferJson = await indy.issuerCreateCredentialOffer(doctorWallet, req.body.doctorPrescriptionCredDefId);
+      let patientDoctorVerkey = await indy.keyForDid(poolHandle, pharmacyWallet, doctorPatientConnectionResponse['did']);
+      let authcryptedPrescriptionCredOffer = await indy.cryptoAuthCrypt(doctorWallet, doctorPatientKey, patientDoctorVerkey, Buffer.from(JSON.stringify(prescriptionCredOfferJson), 'utf8'));
       let [doctorPatientVerkey, authdecryptedPrescriptionCredOfferJson, authdecryptedPrescriptionCredOffer] = await this.authDecrypt(patientWallet, patientDoctorKey, authcryptedPrescriptionCredOffer);
       let patientMasterSecretId = await indy.proverCreateMasterSecret(patientWallet, null);
+
       let doctorPrescriptionCredDef;
-      [req.body.doctorPrescriptionCredDefId, doctorPrescriptionCredDef] = await this.getCredDef(req.body.poolHandle, patientDoctorDid, authdecryptedPrescriptionCredOffer['cred_def_id']);
+      [req.body.doctorPrescriptionCredDefId, doctorPrescriptionCredDef] = await this.getCredDef(poolHandle, patientDoctorDid, authdecryptedPrescriptionCredOffer['cred_def_id']);
       let [prescriptionCredRequestJson, prescriptionCredRequestMetadataJson] = await indy.proverCreateCredentialReq(patientWallet, patientDoctorDid, authdecryptedPrescriptionCredOfferJson, doctorPrescriptionCredDef, patientMasterSecretId);
       let authcryptedPrescriptionCredRequest = await indy.cryptoAuthCrypt(patientWallet, patientDoctorKey, doctorPatientVerkey, Buffer.from(JSON.stringify(prescriptionCredRequestJson), 'utf8'));
+
       let authdecryptedPrescriptionCredRequestJson;
-      [patientDoctorVerkey, authdecryptedPrescriptionCredRequestJson] = await this.authDecrypt(req.body.doctorWallet, doctorPatientKey, authcryptedPrescriptionCredRequest);
+      [patientDoctorVerkey, authdecryptedPrescriptionCredRequestJson] = await this.authDecrypt(doctorWallet, doctorPatientKey, authcryptedPrescriptionCredRequest);
       let prescriptionCredValues = req.body.prescriptionCredValues;
-      let [prescriptionCredJson] = await indy.issuerCreateCredential(req.body.doctorWallet, prescriptionCredOfferJson, authdecryptedPrescriptionCredRequestJson, prescriptionCredValues, null, -1);
-      let authcryptedPrescriptionCredJson = await indy.cryptoAuthCrypt(req.body.doctorWallet, doctorPatientKey, patientDoctorVerkey, Buffer.from(JSON.stringify(prescriptionCredJson), 'utf8'));
+      let [prescriptionCredJson] = await indy.issuerCreateCredential(doctorWallet, prescriptionCredOfferJson, authdecryptedPrescriptionCredRequestJson, prescriptionCredValues, null, -1);
+      let authcryptedPrescriptionCredJson = await indy.cryptoAuthCrypt(doctorWallet, doctorPatientKey, patientDoctorVerkey, Buffer.from(JSON.stringify(prescriptionCredJson), 'utf8'));
       let [, authdecryptedPrescriptionCredJson] = await this.authDecrypt(patientWallet, patientDoctorKey, authcryptedPrescriptionCredJson);
 
       await indy.proverStoreCredential(patientWallet, null, prescriptionCredRequestMetadataJson,
@@ -120,10 +128,13 @@ export default class doctorCtrl extends BaseCtrl {
   setupCredentialDefinition = async (req, res) => {
     try {
       let poolHandle = req.body.poolHandle;
-      [, req.body.prescriptionSchema] = await this.getSchema(poolHandle, req.body.doctorDid, req.body.prescriptionSchemaId);
+      let doctorWallet = req.body.doctorWallet;
+      let doctorDid = req.body.doctorDid;
 
-      let [doctorPrescriptionCredDefId, doctorPrescriptionCredDefJson] = await indy.issuerCreateAndStoreCredentialDef(req.body.doctorWallet, req.body.doctorDid, req.body.prescriptionSchema, 'TAG1', 'CL', '{"support_revocation": false}');
-      await this.sendCredDef(poolHandle, req.body.doctorWallet, req.body.doctorDid, doctorPrescriptionCredDefJson);
+      [, req.body.prescriptionSchema] = await this.getSchema(poolHandle, doctorDid, req.body.prescriptionSchemaId);
+
+      let [doctorPrescriptionCredDefId, doctorPrescriptionCredDefJson] = await indy.issuerCreateAndStoreCredentialDef(doctorWallet, doctorDid, req.body.prescriptionSchema, 'TAG1', 'CL', '{"support_revocation": false}');
+      await this.sendCredDef(poolHandle, doctorWallet, doctorDid, doctorPrescriptionCredDefJson);
 
       res.status(200).json({
         doctorPrescriptionCredDefId: doctorPrescriptionCredDefId,

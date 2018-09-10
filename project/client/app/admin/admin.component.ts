@@ -209,7 +209,7 @@ export class AdminComponent implements OnInit {
       nursingHomeWallet: 'null',
       nursingHomeDid: 'null',
       poolHandle: parseInt(this.ledgers[this.ledgers.length - 1].poolHandle),
-      schema: ["id", "full_name", "dob", "gender", "nationality", "hometown", "profile_image_hash", "created_at"]
+      schema: ["id", "name", "dob", "gender", "nationality", "hometown", "profile_image_hash", "created_at"]
     };
 
     this.TrustAnchors.forEach(TrustAnchor => {

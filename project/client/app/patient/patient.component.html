@@ -42,58 +42,68 @@
   <div class="card-body">
     <form [formGroup]="patientForm" (ngSubmit)="createPrescription()">
 
-      <div class="input-group" [ngClass]="setClassFirstname()">
-        <div class="input-group-prepend">
-          <span class="input-group-text">
-            <i class="fa fa-odnoklassniki"></i>
-          </span>
-        </div>
-        <input class="form-control" type="text" name="patient_first_name" formControlName="patient_first_name" placeholder="Patient First Name">
-      </div>
-
-      <div class="input-group" [ngClass]="setClassLastname()">
-        <div class="input-group-prepend">
-          <span class="input-group-text">
-            <i class="fa fa-odnoklassniki"></i>
-          </span>
-        </div>
-        <input class="form-control" type="text" name="patient_last_name" formControlName="patient_last_name" placeholder="Patient Last Name">
-      </div>
-
-      <div class="input-group" [ngClass]="setClassDoctorName()">
+      <div class="input-group" [ngClass]="setClassID()">
         <div class="input-group-prepend">
           <span class="input-group-text">
             <i class="fa fa-id-card"></i>
           </span>
         </div>
-        <input class="form-control" type="text" name="doctor_name" formControlName="doctor_name" placeholder="Doctor Name">
+        <input class="form-control" type="text" name="id" formControlName="id" placeholder="ID">
       </div>
 
-      <div class="input-group" [ngClass]="setClassStatus()">
+      <div class="input-group" [ngClass]="setClassName()">
         <div class="input-group-prepend">
           <span class="input-group-text">
-            <i class="fa fa-heartbeat"></i>
+            <i class="fa fa-user"></i>
           </span>
         </div>
-        <input class="form-control" type="text" name="status" formControlName="status" placeholder="Patient health status">
+        <input class="form-control" type="text" name="name" formControlName="name" placeholder="Name">
       </div>
 
-      <div class="input-group" [ngClass]="setClassBob()">
+      <div class="input-group" [ngClass]="setClassDOB()">
         <div class="input-group-prepend">
           <span class="input-group-text">
             <i class="fa fa-birthday-cake"></i>
           </span>
         </div>
-        <input class="form-control" type="text" name="dob" formControlName="dob" placeholder="Patient Day of birth">
+        <input class="form-control" type="text" name="dob" formControlName="dob" placeholder="Day of birth (yyyy-mm-dd)">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassGender()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-odnoklassniki"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="gender" formControlName="gender" placeholder="Gender (Male or Female)">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassNationality()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-globe"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="nationality" formControlName="nationality" placeholder="Nationality">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassHometown()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-home"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="hometown" formControlName="hometown" placeholder="Hometown">
       </div>
 
       <div class="form-group">
         <div class="input-group-prepend">
           <span class="input-group-text">
-            <i class="fa fa-key"></i>
+            <i class="fa fa-user-circle"></i>
           </span>
         </div>
-        <input class="form-control" type="file" name="pdf_hash" formControlName="pdf_hash" (change)="onFileChange($event)" #fileInput>
+        <input class="form-control" type="file" name="profile_image_hash" formControlName="profile_image_hash" (change)="onFileChange($event)"
+          #fileInput>
       </div>
 
       <button class="btn btn-primary" type="submit" [disabled]="!patientForm.valid">
@@ -105,7 +115,7 @@
     <table class="table table-bordered">
       <thead class="thead-light">
         <tr>
-            <th scope="col">Patient Doctor DID</th>
+          <th scope="col">Patient Doctor DID</th>
           <th scope="col">Patient Wallet</th>
           <!-- <th scope="col">Hash</th> -->
           <!-- <th scope="col">Patient Master Secret ID</th> -->
@@ -119,7 +129,7 @@
       </tbody>
       <tbody>
         <tr *ngFor="let patientPrescription of patientPrescriptions">
-            <td>{{patientPrescription.patientDoctorDid}}</td>
+          <td>{{patientPrescription.patientDoctorDid}}</td>
           <td>{{patientPrescription.patientWallet}}</td>
           <!-- <td>{{patientPrescription.prescriptionCredValues.pdf_hash.raw}}</td> -->
           <!-- <td>{{patientPrescription.patientMasterSecretId}}</td> -->

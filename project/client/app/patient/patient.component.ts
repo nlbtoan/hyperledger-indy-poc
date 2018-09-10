@@ -27,22 +27,25 @@ export class PatientComponent implements OnInit {
   // Patient validation
   patientForm: FormGroup;
 
-  patient_first_name = new FormControl('', [
+  id = new FormControl('', [
     Validators.required
   ]);
-  patient_last_name = new FormControl('', [
-    Validators.required
-  ]);
-  doctor_name = new FormControl('', [
-    Validators.required
-  ]);
-  status = new FormControl('', [
+  name = new FormControl('', [
     Validators.required
   ]);
   dob = new FormControl('', [
     Validators.required
   ]);
-  pdf_hash = new FormControl('', [
+  gender = new FormControl('', [
+    Validators.required
+  ]);
+  nationality = new FormControl('', [
+    Validators.required
+  ]);
+  hometown = new FormControl('', [
+    Validators.required
+  ]);
+  profile_image_hash = new FormControl('', [
     Validators.required
   ]);
 
@@ -63,39 +66,44 @@ export class PatientComponent implements OnInit {
 
     // Build form for patient
     this.patientForm = this.formBuilder.group({
-      patient_first_name: this.patient_first_name,
-      patient_last_name: this.patient_last_name,
-      doctor_name: this.doctor_name,
-      status: this.status,
+      id: this.id,
+      name: this.name,
       dob: this.dob,
-      pdf_hash: this.pdf_hash
+      gender: this.gender,
+      nationality: this.nationality,
+      hometown: this.hometown,
+      profile_image_hash: this.profile_image_hash
     });
 
   }
 
   // Patient class notification
-  setClassFirstname() {
-    return { 'has-danger': !this.patient_first_name.pristine && !this.patient_first_name.valid };
+  setClassID() {
+    return { 'has-danger': !this.id.pristine && !this.id.valid };
   }
 
-  setClassLastname() {
-    return { 'has-danger': !this.patient_last_name.pristine && !this.patient_last_name.valid };
+  setClassName() {
+    return { 'has-danger': !this.name.pristine && !this.name.valid };
   }
 
-  setClassDoctorName() {
-    return { 'has-danger': !this.doctor_name.pristine && !this.doctor_name.valid };
-  }
-
-  setClassStatus() {
-    return { 'has-danger': !this.status.pristine && !this.status.valid };
-  }
-
-  setClassBob() {
+  setClassDOB() {
     return { 'has-danger': !this.dob.pristine && !this.dob.valid };
   }
 
-  setClassPdfHash() {
-    return { 'has-danger': !this.pdf_hash.pristine && !this.pdf_hash.valid };
+  setClassGender() {
+    return { 'has-danger': !this.gender.pristine && !this.gender.valid };
+  }
+
+  setClassNationality() {
+    return { 'has-danger': !this.nationality.pristine && !this.nationality.valid };
+  }
+
+  setClassHometown() {
+    return { 'has-danger': !this.hometown.pristine && !this.hometown.valid };
+  }
+
+  setClassProfileImageHash() {
+    return { 'has-danger': !this.profile_image_hash.pristine && !this.profile_image_hash.valid };
   }
 
   getCredentialDefinitions() {
@@ -169,37 +177,34 @@ export class PatientComponent implements OnInit {
 
   createPrescription() {
     this.isLoading = true;
-    let prescription = this.patientForm.value;
-
-    prescription.name = this.patientForm.value.patient_first_name;
-    prescription.patientWalletName = this.patientForm.value.patient_first_name + 'Wallet';
-    prescription.poolHandle = this.ledgers[this.ledgers.length - 1].poolHandle;
-    prescription.poolName = this.ledgers[this.ledgers.length - 1].poolName;
-    prescription.doctorPrescriptionCredDefId = this.credentialDefinitions[this.credentialDefinitions.length - 1].doctorPrescriptionCredDefId;
-    prescription.prescriptionCredValues = {
-      patient_first_name: { raw: this.patientForm.value.patient_first_name, encoded: '1139481716457488690172217916278103335' },
-      patient_last_name: { raw: this.patientForm.value.patient_last_name, encoded: '5321642780241790123587902456789123452' },
-      doctor_name: { raw: this.patientForm.value.doctor_name, encoded: '12434523576212321' },
-      status: { raw: this.patientForm.value.status, encoded: '2213454313412354' },
-      dob: { raw: this.patientForm.value.dob, encoded: '3124141231422543541' },
-      link: { raw: '2015', encoded: '2015' },
-      pdf_hash: { raw: this.hashResponse, encoded: '456856164451658' },
-      isCreated: { raw: '1', encoded: '1' }
-    }
-
-    delete prescription.dob;
-    delete prescription.doctor_name;
-    delete prescription.patient_first_name;
-    delete prescription.patient_last_name;
-    delete prescription.pdf_hash;
-    delete prescription.status;
+    let data = this.patientForm.value;
+    let prescription = {
+      patientWalletName: data.name.split(' ').join('-') + 'Wallet',
+      poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
+      poolName: this.ledgers[this.ledgers.length - 1].poolName,
+      doctorPrescriptionCredDefId: this.credentialDefinitions[this.credentialDefinitions.length - 1].doctorPrescriptionCredDefId,
+      doctorDid: 'null',
+      doctorWallet: 'null',
+      pharmacyWallet: 'null',
+      prescriptionCredValues: {
+        id: { raw: this.patientForm.value.id, encoded: '1' },
+        name: { raw: this.patientForm.value.name, encoded: '1' },
+        dob: { raw: this.patientForm.value.dob, encoded: '1' },
+        gender: { raw: this.patientForm.value.gender, encoded: '1' },
+        nationality: { raw: this.patientForm.value.nationality, encoded: '1' },
+        hometown: { raw: this.patientForm.value.hometown, encoded: '1' },
+        profile_image_hash: { raw: this.hashResponse, encoded: '1' },
+        created_at: { raw: new Date().toISOString().slice(0, 10), encoded: '1' }
+      }
+    };
 
     this.TrustAnchors.forEach(TrustAnchor => {
-      if (TrustAnchor.trustAnchorWallet == 13) {
-        prescription.doctorDid = TrustAnchor.trustAnchorDID,
-          prescription.doctorWallet = TrustAnchor.trustAnchorWallet
-      } else if (TrustAnchor.trustAnchorWallet == 21) {
-        prescription.pharmacyWallet = TrustAnchor.trustAnchorWallet
+      let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
+      if (anchorName === 'government' || anchorName === 'gov') {
+        prescription.doctorDid = TrustAnchor.trustAnchorDID;
+        prescription.doctorWallet = TrustAnchor.trustAnchorWallet;
+      } else if (anchorName === 'banking' || anchorName === 'bank') {
+        prescription.pharmacyWallet = TrustAnchor.trustAnchorWallet;
       }
     });
 
@@ -236,7 +241,8 @@ export class PatientComponent implements OnInit {
     }
 
     this.TrustAnchors.forEach(TrustAnchor => {
-      if (TrustAnchor.trustAnchorWallet == 13) {
+      let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
+      if (anchorName === 'government' || anchorName === 'gov') {
         credentialDefinition.doctorDid = TrustAnchor.trustAnchorDID,
           credentialDefinition.doctorWallet = TrustAnchor.trustAnchorWallet
       }
