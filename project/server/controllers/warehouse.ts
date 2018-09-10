@@ -58,28 +58,33 @@ export default class wareHouseCtrl extends BaseCtrl {
   //   "stewardDid": "Th7MpTaRZVRYnPiabds81Y"
   // }
   addTrustAnchor = async (req, res) => {
-    let poolHandle = req.body.poolHandle;
-    let stewardWallet = req.body.stewardWallet;
-    let stewardDid = req.body.stewardDid;
-    let entityName = req.body.name;
-    let trustAnchorWalletConfig = { 'id': req.body.trustAnchorWalletName };
-    let trustAnchorWalletCredentials = { 'key': entityName + '_key' };
-    let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] = await this.onboarding(poolHandle, "Sovrin Steward", stewardWallet, stewardDid, entityName, null, trustAnchorWalletConfig, trustAnchorWalletCredentials);
+    try {
+      let poolHandle = req.body.poolHandle;
+      let stewardWallet = req.body.stewardWallet;
+      let stewardDid = req.body.stewardDid;
+      let entityName = req.body.name;
+      let trustAnchorWalletConfig = { 'id': req.body.trustAnchorWalletName };
+      let trustAnchorWalletCredentials = { 'key': entityName + '_key' };
+      let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] = await this.onboarding(poolHandle, "Sovrin Steward", stewardWallet, stewardDid, entityName, null, trustAnchorWalletConfig, trustAnchorWalletCredentials);
 
-    let trustAnchorDID = await this.getVerinym(poolHandle, "Sovrin Steward", stewardWallet, stewardDid,
-      stewardTrustAnchorKey, entityName, trustAnchorWallet, trustAnchorStewardDid,
-      trustAnchorStewardKey, 'TRUST_ANCHOR');
+      let trustAnchorDID = await this.getVerinym(poolHandle, "Sovrin Steward", stewardWallet, stewardDid,
+        stewardTrustAnchorKey, entityName, trustAnchorWallet, trustAnchorStewardDid,
+        trustAnchorStewardKey, 'TRUST_ANCHOR');
 
-    if (trustAnchorDID) {
-      res.status(200).json({
-        trustAnchorName: entityName,
-        trustAnchorDID: trustAnchorDID,
-        trustAnchorWallet: trustAnchorWallet,
-        stewardTrustAnchorKey: stewardTrustAnchorKey,
-        trustAnchorStewardDid: trustAnchorStewardDid,
-        trustAnchorStewardKey: trustAnchorStewardKey
-      });
-    } else {
+      if (trustAnchorDID) {
+        res.status(200).json({
+          trustAnchorName: entityName,
+          trustAnchorDID: trustAnchorDID,
+          trustAnchorWallet: trustAnchorWallet,
+          stewardTrustAnchorKey: stewardTrustAnchorKey,
+          trustAnchorStewardDid: trustAnchorStewardDid,
+          trustAnchorStewardKey: trustAnchorStewardKey
+        });
+      } else {
+        res.sendStatus(403);
+      }
+    } catch (error) {
+      console.log(error);
       res.sendStatus(403);
     }
   }
