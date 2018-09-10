@@ -93,6 +93,7 @@ export default class pharmacyCtrl extends BaseCtrl {
       let credForAttr4 = credsForPrescriptionApplicationProofRequest['attrs']['attr4_referent'][0]['cred_info'];
       let credForAttr5 = credsForPrescriptionApplicationProofRequest['attrs']['attr5_referent'][0]['cred_info'];
       let credForAttr6 = credsForPrescriptionApplicationProofRequest['attrs']['attr6_referent'][0]['cred_info'];
+      let credForAttr7 = credsForPrescriptionApplicationProofRequest['attrs']['attr7_referent'][0]['cred_info'];
       let credForPredicate1 = credsForPrescriptionApplicationProofRequest['predicates']['predicate1_referent'][0]['cred_info'];
 
       let credsForPrescriptionApplicationProof = {};
@@ -101,16 +102,17 @@ export default class pharmacyCtrl extends BaseCtrl {
       credsForPrescriptionApplicationProof[`${credForAttr3['referent']}`] = credForAttr3;
       credsForPrescriptionApplicationProof[`${credForAttr4['referent']}`] = credForAttr4;
       credsForPrescriptionApplicationProof[`${credForAttr5['referent']}`] = credForAttr5;
-      credsForPrescriptionApplicationProof[`${credForAttr6['referent']}`] = credForAttr5;
+      credsForPrescriptionApplicationProof[`${credForAttr6['referent']}`] = credForAttr6;
+      credsForPrescriptionApplicationProof[`${credForAttr7['referent']}`] = credForAttr7;
       credsForPrescriptionApplicationProof[`${credForPredicate1['referent']}`] = credForPredicate1;
 
-      let [schemasJson, credDefsJson, revocStatesJson] = await this.proverGetEntitiesFromLedger(req.body.poolHandle, req.body.patientDoctorDid, credsForPrescriptionApplicationProof, 'Patient');
+      let [schemasJson, credDefsJson, revocStatesJson] = await this.proverGetEntitiesFromLedger(req.body.poolHandle, req.body.patientDoctorDid, credsForPrescriptionApplicationProof, 'Personal');
 
       let prescriptionApplicationRequestedCredsJson = {
         'self_attested_attributes': {
-          'attr1_referent': req.body.patientFirstName,
-          'attr2_referent': req.body.patientLastName,
-          'attr3_referent': req.body.dateOfBirth
+          'attr1_referent': req.body.id,
+          'attr2_referent': req.body.name,
+          'attr3_referent': req.body.dob
         },
         'requested_attributes': {
           'attr4_referent': { 'cred_id': credForAttr4['referent'], 'revealed': true },
@@ -132,12 +134,13 @@ export default class pharmacyCtrl extends BaseCtrl {
       let revocRefDefsJson, revocRegsJson;
       [schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson] = await this.verifierGetEntitiesFromLedger(req.body.poolHandle, req.body.pharmacyDid, decryptedPrescriptionApplicationProof['identifiers'], 'Pharmacy');
 
-      assert(req.body.patientFirstName === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr1_referent']);
-      assert(req.body.patientLastName === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr2_referent']);
-      assert(req.body.dateOfBirth === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr3_referent']);
-      assert(req.body.status === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr4_referent']['raw']);
-      assert(req.body.doctorName === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr5_referent']['raw']);
-      assert(req.body.pdfHash === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr6_referent']['raw']);
+      assert(req.body.id === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr1_referent']);
+      assert(req.body.name === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr2_referent']);
+      assert(req.body.dob === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr3_referent']);
+      assert(req.body.gender === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr4_referent']['raw']);
+      assert(req.body.nationality === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr5_referent']['raw']);
+      assert(req.body.hometown === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr6_referent']['raw']);
+      assert(req.body.profile_image_hash === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr7_referent']['raw']);
 
       await indy.verifierVerifyProof(prescriptionApplicationProofRequestJson, decryptedPrescriptionApplicationProofJson, schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson);
       res.status(200).json();

@@ -40,6 +40,9 @@ export class PharmacyComponent implements OnInit {
   hometown = new FormControl('', [
     Validators.required
   ]);
+  createdAt = new FormControl('', [
+    Validators.required
+  ]);
   profile_image_hash = new FormControl('', [
     Validators.required
   ]);
@@ -69,6 +72,7 @@ export class PharmacyComponent implements OnInit {
       gender: this.gender,
       nationality: this.nationality,
       hometown: this.hometown,
+      createdAt: this.createdAt,
       profile_image_hash: this.profile_image_hash,
       money: this.money
     });
@@ -106,6 +110,10 @@ export class PharmacyComponent implements OnInit {
 
   setClassMoney() {
     return { 'has-danger': !this.money.pristine && !this.money.valid };
+  }
+
+  setClassCreatedAt() {
+    return { 'has-danger': !this.createdAt.pristine && !this.createdAt.valid };
   }
 
   getPharmacyPrescriptions() {
@@ -168,23 +176,26 @@ export class PharmacyComponent implements OnInit {
 
   applyPrescription() {
     this.isLoading = true;
-    let prescription = this.pharmacyForm.value;
-
-    prescription.poolHandle = parseInt(this.ledgers[this.ledgers.length - 1].poolHandle);
-    prescription.poolName = this.ledgers[this.ledgers.length - 1].poolName;
-    prescription.patientWallet = this.patientPrescriptions[this.patientPrescriptions.length - 1].patientWallet;
-    prescription.patientWalletName = this.pharmacyForm.value.patientFirstName + 'Wallet';
-    prescription.patientDoctorDid = this.patientPrescriptions[this.patientPrescriptions.length - 1].patientDoctorDid;
-    prescription.patientMasterSecretId = this.patientPrescriptions[this.patientPrescriptions.length - 1].patientMasterSecretId;
-    prescription.doctorPrescriptionCredDefId = this.credentialDefinitions[this.credentialDefinitions.length - 1].doctorPrescriptionCredDefId;
-    prescription.pdfHash = this.hashResponse;
-
-    prescription.patientWalletCredentials = {
-      key: this.pharmacyForm.value.patientFirstName + "_key"
+    let data = this.pharmacyForm.value;
+    let prescription = {
+      poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
+      poolName: this.ledgers[this.ledgers.length - 1].poolName,
+      patientWallet: this.patientPrescriptions[this.patientPrescriptions.length - 1].patientWallet,
+      patientWalletName: data.name.split(' ').join('-') + 'Wallet',
+      patientDoctorDid: this.patientPrescriptions[this.patientPrescriptions.length - 1].patientDoctorDid,
+      patientMasterSecretId: this.patientPrescriptions[this.patientPrescriptions.length - 1].patientMasterSecretId,
+      doctorPrescriptionCredDefId: this.credentialDefinitions[this.credentialDefinitions.length - 1].doctorPrescriptionCredDefId,
+      pdfHash: this.hashResponse,
+      pharmacyWallet: 'null',
+      pharmacyDid: 'null',
+      patientWalletCredentials: {
+        key: data.name.split(' ').join('-') + "_key"
+      }
     };
 
     this.TrustAnchors.forEach(TrustAnchor => {
-      if (TrustAnchor.trustAnchorWallet == 21) {
+      let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
+      if (anchorName === 'banking' || anchorName === 'bank') {
         prescription.pharmacyWallet = TrustAnchor.trustAnchorWallet;
         prescription.pharmacyDid = TrustAnchor.trustAnchorDID;
       }
