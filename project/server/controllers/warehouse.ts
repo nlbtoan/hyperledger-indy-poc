@@ -41,6 +41,7 @@ export default class wareHouseCtrl extends BaseCtrl {
         prescriptionSchema: prescriptionSchema
       });
     } catch (error) {
+      console.log(error);
       res.sendStatus(403);
     }
   }
