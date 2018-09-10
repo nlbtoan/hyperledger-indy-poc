@@ -106,7 +106,8 @@ export default class wareHouseCtrl extends BaseCtrl {
       await indy.createPoolLedgerConfig(poolName, poolConfig);
     } catch (e) {
       if (e.message !== "PoolLedgerConfigAlreadyExistsError") {
-        throw e;
+        console.log(e);
+        res.sendStatus(403);
       }
     }
 
@@ -114,12 +115,13 @@ export default class wareHouseCtrl extends BaseCtrl {
 
     let poolHandle = await indy.openPoolLedger(poolName);
     let stewardWalletConfig = { 'id': req.body.stewardWalletName };
-    let stewardWalletCredentials = { 'key': 'steward_key' };
+    let stewardWalletCredentials = { 'key': req.body.stewardWalletName + '_key' };
     try {
       await indy.createWallet(stewardWalletConfig, stewardWalletCredentials);
     } catch (e) {
       if (e.message !== "WalletAlreadyExistsError") {
-        throw e;
+        console.log(e);
+        res.sendStatus(403);
       }
     }
     let stewardWallet = await indy.openWallet(stewardWalletConfig, stewardWalletCredentials);
