@@ -22,22 +22,28 @@ export class PharmacyComponent implements OnInit {
   isLoading = true;
 
   pharmacyForm: FormGroup;
-  patientFirstName = new FormControl('', [
+  id = new FormControl('', [
     Validators.required
   ]);
-  patientLastName = new FormControl('', [
+  name = new FormControl('', [
     Validators.required
   ]);
-  dateOfBirth = new FormControl('', [
+  dob = new FormControl('', [
     Validators.required
   ]);
-  status = new FormControl('', [
+  gender = new FormControl('', [
     Validators.required
   ]);
-  doctorName = new FormControl('', [
+  nationality = new FormControl('', [
     Validators.required
   ]);
-  pdfHash = new FormControl('', [
+  hometown = new FormControl('', [
+    Validators.required
+  ]);
+  profile_image_hash = new FormControl('', [
+    Validators.required
+  ]);
+  money = new FormControl('', [
     Validators.required
   ]);
 
@@ -57,38 +63,49 @@ export class PharmacyComponent implements OnInit {
     this.getCredentialDefinitions();
 
     this.pharmacyForm = this.formBuilder.group({
-      patientFirstName: this.patientFirstName,
-      patientLastName: this.patientLastName,
-      status: this.status,
-      dateOfBirth: this.dateOfBirth,
-      doctorName: this.doctorName,
-      pdfHash: this.pdfHash
+      id: this.id,
+      name: this.name,
+      dob: this.dob,
+      gender: this.gender,
+      nationality: this.nationality,
+      hometown: this.hometown,
+      profile_image_hash: this.profile_image_hash,
+      money: this.money
     });
 
   }
 
-  setClassStatus() {
-    return { 'has-danger': !this.status.pristine && !this.status.valid };
+
+  setClassID() {
+    return { 'has-danger': !this.id.pristine && !this.id.valid };
   }
 
-  setClassDoctorName() {
-    return { 'has-danger': !this.doctorName.pristine && !this.doctorName.valid };
+  setClassName() {
+    return { 'has-danger': !this.name.pristine && !this.name.valid };
   }
 
-  setClassPdfHash() {
-    return { 'has-danger': !this.pdfHash.pristine && !this.pdfHash.valid };
+  setClassDOB() {
+    return { 'has-danger': !this.dob.pristine && !this.dob.valid };
   }
 
-  setClassPatientFirstName() {
-    return { 'has-danger': !this.patientFirstName.pristine && !this.patientFirstName.valid };
+  setClassGender() {
+    return { 'has-danger': !this.gender.pristine && !this.gender.valid };
   }
 
-  setClassPatientLastName() {
-    return { 'has-danger': !this.patientLastName.pristine && !this.patientLastName.valid };
+  setClassNationality() {
+    return { 'has-danger': !this.nationality.pristine && !this.nationality.valid };
   }
 
-  setClassDateOfBirth() {
-    return { 'has-danger': !this.dateOfBirth.pristine && !this.dateOfBirth.valid };
+  setClassHometown() {
+    return { 'has-danger': !this.hometown.pristine && !this.hometown.valid };
+  }
+
+  setClassProfileImageHash() {
+    return { 'has-danger': !this.profile_image_hash.pristine && !this.profile_image_hash.valid };
+  }
+
+  setClassMoney() {
+    return { 'has-danger': !this.money.pristine && !this.money.valid };
   }
 
   getPharmacyPrescriptions() {

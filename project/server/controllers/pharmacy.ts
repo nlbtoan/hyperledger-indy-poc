@@ -46,40 +46,38 @@ export default class pharmacyCtrl extends BaseCtrl {
   applyPrescription = async (req, res) => {
     try {
       let pharmacyPatientKey, patientPharmacyDid, patientPharmacyKey, pharmacyPatientConnectionResponse;
-      [req.body.patientWallet, pharmacyPatientKey, patientPharmacyDid, patientPharmacyKey, pharmacyPatientConnectionResponse] = await this.onboarding(req.body.poolHandle, req.body.poolName, "Pharmacy", req.body.pharmacyWallet, req.body.pharmacyDid, "Patient", req.body.patientWallet, req.body.patientWalletName, req.body.patientWalletCredentials);
+      [req.body.patientWallet, pharmacyPatientKey, patientPharmacyDid, patientPharmacyKey, pharmacyPatientConnectionResponse] = await this.onboarding(req.body.poolHandle, "Bank", req.body.pharmacyWallet, req.body.pharmacyDid, "Personal", req.body.patientWallet, { 'id': req.body.patientWalletName }, req.body.patientWalletCredentials);
 
       let prescriptionApplicationProofRequestJson = {
         'nonce': '1432422343242122312411212',
-        'name': 'Prescription-Application',
+        'name': 'Loan-Application',
         'version': '0.1',
         'requested_attributes': {
           'attr1_referent': {
-            'name': 'patient_first_name'
+            'name': 'id'
           },
           'attr2_referent': {
-            'name': 'patient_last_name'
+            'name': 'name'
           },
           'attr3_referent': {
             'name': 'dob'
           },
           'attr4_referent': {
-            'name': 'status',
-            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
+            'name': 'gender'
           },
           'attr5_referent': {
-            'name': 'doctor_name',
-            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
+            'name': 'nationality'
           },
           'attr6_referent': {
-            'name': 'pdf_hash',
-            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
+            'name': 'hometown'
+          },
+          'attr7_referent': {
+            'name': 'profile_image_hash'
           }
         },
         'requested_predicates': {
           'predicate1_referent': {
-            'name': 'isCreated',
-            'p_type': '>=',
-            'p_value': 0,
+            'name': 'created_at',
             'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
           }
         }
@@ -144,14 +142,14 @@ export default class pharmacyCtrl extends BaseCtrl {
       await indy.verifierVerifyProof(prescriptionApplicationProofRequestJson, decryptedPrescriptionApplicationProofJson, schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson);
       res.status(200).json();
     } catch (error) {
+      console.log(error);
       res.sendStatus(403);
     }
   }
 
   // Function for create stuff
-  onboarding = async function (poolHandle, poolName, From, fromWallet, fromDid, to, toWallet, toWalletName, toWalletCredentials) {
+  onboarding = async function (poolHandle, From, fromWallet, fromDid, to, toWallet, toWalletConfig, toWalletCredentials) {
     let [fromToDid, fromToKey] = await indy.createAndStoreMyDid(fromWallet, {});
-
     await this.sendNym(poolHandle, fromWallet, fromDid, fromToDid, fromToKey, null);
 
     let connectionRequest = {
@@ -161,28 +159,25 @@ export default class pharmacyCtrl extends BaseCtrl {
 
     if (!toWallet) {
       try {
-        await indy.createWallet(poolName, toWalletName, 'default', null, this.toJson(toWalletCredentials))
+        await indy.createWallet(toWalletConfig, toWalletCredentials)
       } catch (e) {
         if (e.message !== "WalletAlreadyExistsError") {
           throw e;
         }
       }
-      toWallet = await indy.openWallet(toWalletName, null, this.toJson(toWalletCredentials));
+      toWallet = await indy.openWallet(toWalletConfig, toWalletCredentials);
     }
 
     let [toFromDid, toFromKey] = await indy.createAndStoreMyDid(toWallet, {});
-
     let fromToVerkey = await indy.keyForDid(poolHandle, toWallet, connectionRequest.did);
-
     let connectionResponse = JSON.stringify({
       'did': toFromDid,
       'verkey': toFromKey,
       'nonce': connectionRequest['nonce']
     });
+
     let anoncryptedConnectionResponse = await indy.cryptoAnonCrypt(fromToVerkey, Buffer.from(connectionResponse, 'utf8'));
-
     let decryptedConnectionResponse = JSON.parse(Buffer.from(await indy.cryptoAnonDecrypt(fromWallet, fromToKey, anoncryptedConnectionResponse)).toString());
-
     if (connectionRequest['nonce'] !== decryptedConnectionResponse['nonce']) {
       throw Error("nonces don't match!");
     }
@@ -206,7 +201,6 @@ export default class pharmacyCtrl extends BaseCtrl {
     let nymRequest = await indy.buildNymRequest(Did, newDid, newKey, null, role);
     await indy.signAndSubmitRequest(poolHandle, walletHandle, Did, nymRequest);
   }
-
 
   authDecrypt = async function (walletHandle, key, message) {
     let [fromVerkey, decryptedMessageJsonBuffer] = await indy.cryptoAuthDecrypt(walletHandle, key, message);
