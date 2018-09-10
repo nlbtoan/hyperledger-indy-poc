@@ -17,8 +17,6 @@ import { CreateSchemaService } from './services/schema.service';
 import { AuthGuardLogin } from './services/auth-guard-login.service';
 import { AuthGuardAdmin } from './services/auth-guard-admin.service';
 import { AppComponent } from './app.component';
-import { CatsComponent } from './cats/cats.component';
-import { AboutComponent } from './about/about.component';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
@@ -35,8 +33,6 @@ export function tokenGetter() {
 @NgModule({
   declarations: [
     AppComponent,
-    CatsComponent,
-    AboutComponent,
     RegisterComponent,
     LoginComponent,
     LogoutComponent,
