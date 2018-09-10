@@ -183,9 +183,9 @@ export default class wareHouseCtrl extends BaseCtrl {
     })
   }
 
-  onboarding = function (poolHandle, From, fromWallet, fromDid, to, toWallet, toWalletConfig, toWalletCredentials) {
+  onboarding = async function (poolHandle, From, fromWallet, fromDid, to, toWallet, toWalletConfig, toWalletCredentials) {
     let [fromToDid, fromToKey] = await indy.createAndStoreMyDid(fromWallet, {});
-    await sendNym(poolHandle, fromWallet, fromDid, fromToDid, fromToKey, null);
+    await this.sendNym(poolHandle, fromWallet, fromDid, fromToDid, fromToKey, null);
 
     let connectionRequest = {
       did: fromToDid,
@@ -217,12 +217,12 @@ export default class wareHouseCtrl extends BaseCtrl {
       throw Error("nonces don't match!");
     }
 
-    await sendNym(poolHandle, fromWallet, fromDid, decryptedConnectionResponse['did'], decryptedConnectionResponse['verkey'], null);
+    await this.sendNym(poolHandle, fromWallet, fromDid, decryptedConnectionResponse['did'], decryptedConnectionResponse['verkey'], null);
 
     return [toWallet, fromToKey, toFromDid, toFromKey, decryptedConnectionResponse];
   }
 
-  getVerinym = function (poolHandle, From, fromWallet, fromDid, fromToKey, to, toWallet, toFromDid, toFromKey, role) {
+  getVerinym = async function (poolHandle, From, fromWallet, fromDid, fromToKey, to, toWallet, toFromDid, toFromKey, role) {
     let [toDid, toKey] = await indy.createAndStoreMyDid(toWallet, {});
     let didInfoJson = JSON.stringify({
       'did': toDid,
@@ -240,11 +240,11 @@ export default class wareHouseCtrl extends BaseCtrl {
       throw Error("Verkey is not the same");
     }
 
-    await sendNym(poolHandle, fromWallet, fromDid, authdecryptedDidInfoJson['did'], authdecryptedDidInfoJson['verkey'], role);
+    await this.sendNym(poolHandle, fromWallet, fromDid, authdecryptedDidInfoJson['did'], authdecryptedDidInfoJson['verkey'], role);
     return toDid
   }
 
-  sendNym = function (poolHandle, walletHandle, Did, newDid, newKey, role) {
+  sendNym = async function (poolHandle, walletHandle, Did, newDid, newKey, role) {
     let nymRequest = await indy.buildNymRequest(Did, newDid, newKey, null, role);
     await indy.signAndSubmitRequest(poolHandle, walletHandle, Did, nymRequest);
   }
