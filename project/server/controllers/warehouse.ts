@@ -101,17 +101,19 @@ export default class wareHouseCtrl extends BaseCtrl {
       }
     }
 
+    await indy.setProtocolVersion(2);
+
     let poolHandle = await indy.openPoolLedger(poolName);
-    let stewardWalletName = req.body.stewardWalletName;
+    let stewardWalletConfig = { 'id': req.body.stewardWalletName };
     let stewardWalletCredentials = { 'key': 'steward_key' };
     try {
-      await indy.createWallet(poolName, stewardWalletName, 'default', null, this.toJson(stewardWalletCredentials))
+      await indy.createWallet(stewardWalletConfig, stewardWalletCredentials);
     } catch (e) {
       if (e.message !== "WalletAlreadyExistsError") {
         throw e;
       }
     }
-    let stewardWallet = await indy.openWallet(stewardWalletName, null, this.toJson(stewardWalletCredentials));
+    let stewardWallet = await indy.openWallet(stewardWalletConfig, stewardWalletCredentials);
     let stewardDidInfo = {
       'seed': '000000000000000000000000Steward1'
     };
