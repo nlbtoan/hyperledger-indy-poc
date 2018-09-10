@@ -146,7 +146,7 @@ cd ~/ && \
 	git checkout tags/v1.6.2 && \
 	cd ./libindy && \
 	cargo build && \
-	sudo sudo cp -rf ./target/debug/libindy.so /usr/lib/libindy.so
+	sudo cp -rf ./target/debug/libindy.so /usr/lib/libindy.so
 
 # Print installation details for user
 echo ''
