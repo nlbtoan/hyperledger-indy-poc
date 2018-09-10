@@ -119,16 +119,18 @@ export default class doctorCtrl extends BaseCtrl {
   // }
   setupCredentialDefinition = async (req, res) => {
     try {
-      [, req.body.prescriptionSchema] = await this.getSchema(req.body.poolHandle, req.body.doctorDid, req.body.prescriptionSchemaId);
+      let poolHandle = req.body.poolHandle;
+      [, req.body.prescriptionSchema] = await this.getSchema(poolHandle, req.body.doctorDid, req.body.prescriptionSchemaId);
 
       let [doctorPrescriptionCredDefId, doctorPrescriptionCredDefJson] = await indy.issuerCreateAndStoreCredentialDef(req.body.doctorWallet, req.body.doctorDid, req.body.prescriptionSchema, 'TAG1', 'CL', '{"support_revocation": false}');
-
-      await this.sendCredDef(req.body.poolHandle, req.body.doctorWallet, req.body.doctorDid, doctorPrescriptionCredDefJson);
+      await this.sendCredDef(poolHandle, req.body.doctorWallet, req.body.doctorDid, doctorPrescriptionCredDefJson);
+      
       res.status(200).json({
         doctorPrescriptionCredDefId: doctorPrescriptionCredDefId,
         doctorPrescriptionCredDefJson: doctorPrescriptionCredDefJson
       });
     } catch (error) {
+      console.log(error);
       res.sendStatus(403);
     }
   }
