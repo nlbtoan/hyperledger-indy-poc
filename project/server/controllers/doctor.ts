@@ -124,7 +124,7 @@ export default class doctorCtrl extends BaseCtrl {
 
       let [doctorPrescriptionCredDefId, doctorPrescriptionCredDefJson] = await indy.issuerCreateAndStoreCredentialDef(req.body.doctorWallet, req.body.doctorDid, req.body.prescriptionSchema, 'TAG1', 'CL', '{"support_revocation": false}');
       await this.sendCredDef(poolHandle, req.body.doctorWallet, req.body.doctorDid, doctorPrescriptionCredDefJson);
-      
+
       res.status(200).json({
         doctorPrescriptionCredDefId: doctorPrescriptionCredDefId,
         doctorPrescriptionCredDefJson: doctorPrescriptionCredDefJson
@@ -136,10 +136,8 @@ export default class doctorCtrl extends BaseCtrl {
   }
 
   // Function for create stuff
-  onboarding = async function (poolHandle, poolName, From, fromWallet, fromDid, to, toWallet, toWalletName, toWalletCredentials) {
-
+  onboarding = async function (poolHandle, From, fromWallet, fromDid, to, toWallet, toWalletConfig, toWalletCredentials) {
     let [fromToDid, fromToKey] = await indy.createAndStoreMyDid(fromWallet, {});
-
     await this.sendNym(poolHandle, fromWallet, fromDid, fromToDid, fromToKey, null);
 
     let connectionRequest = {
@@ -149,28 +147,25 @@ export default class doctorCtrl extends BaseCtrl {
 
     if (!toWallet) {
       try {
-        await indy.createWallet(poolName, toWalletName, 'default', null, this.toJson(toWalletCredentials))
+        await indy.createWallet(toWalletConfig, toWalletCredentials)
       } catch (e) {
         if (e.message !== "WalletAlreadyExistsError") {
           throw e;
         }
       }
-      toWallet = await indy.openWallet(toWalletName, null, this.toJson(toWalletCredentials));
+      toWallet = await indy.openWallet(toWalletConfig, toWalletCredentials);
     }
 
     let [toFromDid, toFromKey] = await indy.createAndStoreMyDid(toWallet, {});
-
     let fromToVerkey = await indy.keyForDid(poolHandle, toWallet, connectionRequest.did);
-
     let connectionResponse = JSON.stringify({
       'did': toFromDid,
       'verkey': toFromKey,
       'nonce': connectionRequest['nonce']
     });
+
     let anoncryptedConnectionResponse = await indy.cryptoAnonCrypt(fromToVerkey, Buffer.from(connectionResponse, 'utf8'));
-
     let decryptedConnectionResponse = JSON.parse(Buffer.from(await indy.cryptoAnonDecrypt(fromWallet, fromToKey, anoncryptedConnectionResponse)).toString());
-
     if (connectionRequest['nonce'] !== decryptedConnectionResponse['nonce']) {
       throw Error("nonces don't match!");
     }
