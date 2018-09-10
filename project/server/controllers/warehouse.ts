@@ -183,33 +183,9 @@ export default class wareHouseCtrl extends BaseCtrl {
     })
   }
 
-  getVerinym = async function (poolHandle, From, fromWallet, fromDid, fromToKey, to, toWallet, toFromDid, toFromKey, role) {
-    let [toDid, toKey] = await indy.createAndStoreMyDid(toWallet, {});
-
-    let didInfoJson = JSON.stringify({
-      'did': toDid,
-      'verkey': toKey
-    });
-    let authcryptedDidInfo = await indy.cryptoAuthCrypt(toWallet, toFromKey, fromToKey, Buffer.from(didInfoJson, 'utf8'));
-
-    let [senderVerkey, authdecryptedDidInfo] =
-      await indy.cryptoAuthDecrypt(fromWallet, fromToKey, Buffer.from(authcryptedDidInfo));
-
-    let authdecryptedDidInfoJson = JSON.parse(Buffer.from(authdecryptedDidInfo).toString());
-    let retrievedVerkey = await indy.keyForDid(poolHandle, fromWallet, toFromDid);
-    if (senderVerkey !== retrievedVerkey) {
-      throw Error("Verkey is not the same");
-    }
-
-    await this.sendNym(poolHandle, fromWallet, fromDid, authdecryptedDidInfoJson['did'], authdecryptedDidInfoJson['verkey'], role);
-
-    return toDid
-  }
-
-  onboarding = async function (poolHandle, poolName, From, fromWallet, fromDid, to, toWallet, toWalletName, toWalletCredentials) {
+  onboarding = function (poolHandle, From, fromWallet, fromDid, to, toWallet, toWalletConfig, toWalletCredentials) {
     let [fromToDid, fromToKey] = await indy.createAndStoreMyDid(fromWallet, {});
-
-    await this.sendNym(poolHandle, fromWallet, fromDid, fromToDid, fromToKey, null);
+    await sendNym(poolHandle, fromWallet, fromDid, fromToDid, fromToKey, null);
 
     let connectionRequest = {
       did: fromToDid,
@@ -218,38 +194,57 @@ export default class wareHouseCtrl extends BaseCtrl {
 
     if (!toWallet) {
       try {
-        await indy.createWallet(poolName, toWalletName, 'default', null, this.toJson(toWalletCredentials))
+        await indy.createWallet(toWalletConfig, toWalletCredentials)
       } catch (e) {
         if (e.message !== "WalletAlreadyExistsError") {
           throw e;
         }
       }
-      toWallet = await indy.openWallet(toWalletName, null, this.toJson(toWalletCredentials));
+      toWallet = await indy.openWallet(toWalletConfig, toWalletCredentials);
     }
 
     let [toFromDid, toFromKey] = await indy.createAndStoreMyDid(toWallet, {});
-
     let fromToVerkey = await indy.keyForDid(poolHandle, toWallet, connectionRequest.did);
-
     let connectionResponse = JSON.stringify({
       'did': toFromDid,
       'verkey': toFromKey,
       'nonce': connectionRequest['nonce']
     });
+
     let anoncryptedConnectionResponse = await indy.cryptoAnonCrypt(fromToVerkey, Buffer.from(connectionResponse, 'utf8'));
-
-    let decryptedConnectionResponse = JSON.parse(Buffer.from(await indy.cryptoAnonDecrypt(fromWallet, fromToKey, anoncryptedConnectionResponse)).toString());
-
+    let decryptedConnectionResponse = JSON.parse(Buffer.from(await indy.cryptoAnonDecrypt(fromWallet, fromToKey, anoncryptedConnectionResponse)));
     if (connectionRequest['nonce'] !== decryptedConnectionResponse['nonce']) {
       throw Error("nonces don't match!");
     }
 
-    await this.sendNym(poolHandle, fromWallet, fromDid, decryptedConnectionResponse['did'], decryptedConnectionResponse['verkey'], null);
+    await sendNym(poolHandle, fromWallet, fromDid, decryptedConnectionResponse['did'], decryptedConnectionResponse['verkey'], null);
 
     return [toWallet, fromToKey, toFromDid, toFromKey, decryptedConnectionResponse];
   }
 
-  sendNym = async function (poolHandle, walletHandle, Did, newDid, newKey, role) {
+  getVerinym = function (poolHandle, From, fromWallet, fromDid, fromToKey, to, toWallet, toFromDid, toFromKey, role) {
+    let [toDid, toKey] = await indy.createAndStoreMyDid(toWallet, {});
+    let didInfoJson = JSON.stringify({
+      'did': toDid,
+      'verkey': toKey
+    });
+
+    let authcryptedDidInfo = await indy.cryptoAuthCrypt(toWallet, toFromKey, fromToKey, Buffer.from(didInfoJson, 'utf8'));
+    let [senderVerkey, authdecryptedDidInfo] =
+      await indy.cryptoAuthDecrypt(fromWallet, fromToKey, Buffer.from(authcryptedDidInfo));
+
+    let authdecryptedDidInfoJson = JSON.parse(Buffer.from(authdecryptedDidInfo));
+    let retrievedVerkey = await indy.keyForDid(poolHandle, fromWallet, toFromDid);
+
+    if (senderVerkey !== retrievedVerkey) {
+      throw Error("Verkey is not the same");
+    }
+
+    await sendNym(poolHandle, fromWallet, fromDid, authdecryptedDidInfoJson['did'], authdecryptedDidInfoJson['verkey'], role);
+    return toDid
+  }
+
+  sendNym = function (poolHandle, walletHandle, Did, newDid, newKey, role) {
     let nymRequest = await indy.buildNymRequest(Did, newDid, newKey, null, role);
     await indy.signAndSubmitRequest(poolHandle, walletHandle, Did, nymRequest);
   }
