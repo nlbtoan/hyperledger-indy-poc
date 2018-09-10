@@ -30,6 +30,5 @@ Dockerfile `ci/indy-pool.dockerfile` supports an optional pool_ip param that all
  
  ```
 cd ./project
-npm install
-npm start
+npm install && npm run prod
 ```
