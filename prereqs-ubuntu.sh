@@ -143,7 +143,7 @@ cd ~/ && \
 cd ~/ && \
 	git clone https://github.com/hyperledger/indy-sdk.git && \
 	cd ./indy-sdk && \
-	git checkout tags/v1.6.0 && \
+	git checkout tags/v1.6.2 && \
 	cd ./libindy && \
 	cargo build && \
 	sudo sudo cp -rf ./target/debug/libindy.so /usr/lib/libindy.so

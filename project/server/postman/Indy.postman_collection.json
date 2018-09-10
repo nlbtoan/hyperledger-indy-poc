@@ -1,0 +1,233 @@
+{
+	"info": {
+		"_postman_id": "e35a0877-64a5-4358-a8c9-efe623c91d1c",
+		"name": "Indy",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "1/ wareHouseRegister",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"poolName\":\"indy28\",\n\t\"stewardWalletName\":\"truong28\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/api/createPoolLedger",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"createPoolLedger"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "2/ addTrustAnchor - Nursing Home",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"nursingHome28\",\n\t\"trustAnchorWalletName\": \"nursingHomeWallet28\",\n\t\"poolHandle\": 2,\n\t\"poolName\": \"indy28\",\n\t\"stewardWallet\": 3,\n\t\"stewardDid\": \"Th7MpTaRZVRYnPiabds81Y\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/api/addTrustAnchor",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"addTrustAnchor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "3/ addTrustAnchor - Doctor",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"doctor28\",\n\t\"trustAnchorWalletName\": \"doctorWallet28\",\n\t\"poolHandle\": 2,\n\t\"poolName\": \"indy28\",\n\t\"stewardWallet\": 3,\n\t\"stewardDid\": \"Th7MpTaRZVRYnPiabds81Y\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/api/addTrustAnchor",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"addTrustAnchor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "4/ addTrustAnchor - Pharmacy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"pharmacy28\",\n\t\"trustAnchorWalletName\": \"pharmacyWallet28\",\n\t\"poolHandle\": 2,\n\t\"poolName\": \"indy28\",\n\t\"stewardWallet\": 3,\n\t\"stewardDid\": \"Th7MpTaRZVRYnPiabds81Y\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/api/addTrustAnchor",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"addTrustAnchor"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "5/ createSchema - Nursing Home",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"nursingHomeWallet\": 5,\n\t\"nursingHomeDid\": \"Y6rNwv3W43aUTephiQS46r\",\n\t\"poolHandle\": 2,\n\t\"schema\": [\"patient_first_name\", \"patient_last_name\", \"doctor_name\", \"status\", \"dob\", \"link\", \"pdf_hash\", \"isCreated\"]\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/api/createSchema",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"createSchema"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "6/ setupCredentialDefinition - Doctor",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"poolHandle\": 2,\n\t\"doctorDid\": \"KHJ3eaHZj8Z9Zdqk3dqy74\",\n\t\"doctorWallet\": 13,\n\t\"prescriptionSchemaId\": \"Y6rNwv3W43aUTephiQS46r:2:Prescription:1.2\",\n    \"prescriptionSchema\": {\n        \"ver\": \"1.0\",\n        \"id\": \"Y6rNwv3W43aUTephiQS46r:2:Prescription:1.2\",\n        \"name\": \"Prescription\",\n        \"version\": \"1.2\",\n        \"attrNames\": [\n            \"doctor_name\",\n            \"dob\",\n            \"pdf_hash\",\n            \"isCreated\",\n            \"status\",\n            \"patient_last_name\",\n            \"patient_first_name\",\n            \"link\"\n        ],\n        \"seqNo\": null\n    }\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/api/setupCredentialDefinition",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"setupCredentialDefinition"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "7/ gettingPrescription - Doctor",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"patient28\",\n\t\"patientWalletName\": \"patientWallet28\",\n\t\"poolHandle\": 2,\n\t\"poolName\": \"indy28\",\n\t\"doctorWallet\": 13,\n\t\"doctorDid\": \"KHJ3eaHZj8Z9Zdqk3dqy74\",\n\t\"doctorPrescriptionCredDefId\": \"KHJ3eaHZj8Z9Zdqk3dqy74:3:CL:900\",\n\t\"pharmacyWallet\": 21,\n\t\"prescriptionCredValues\": {\n        \"patient_first_name\": { \"raw\": \"Patient\", \"encoded\": \"1139481716457488690172217916278103335\" },\n        \"patient_last_name\": { \"raw\": \"Garcia\", \"encoded\": \"5321642780241790123587902456789123452\" },\n        \"doctor_name\": { \"raw\": \"Dr . James Hold\", \"encoded\": \"12434523576212321\" },\n        \"status\": { \"raw\": \"Cancer\", \"encoded\": \"2213454313412354\" },\n        \"dob\": { \"raw\": \"12-05-1949\", \"encoded\": \"3124141231422543541\" },\n        \"link\": { \"raw\": \"2015\", \"encoded\": \"2015\" },\n        \"pdf_hash\": { \"raw\": \"123456789\", \"encoded\": \"123456789\" },\n        \"isCreated\": { \"raw\": \"1\", \"encoded\": \"1\" }\n    }\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/api/gettingPrescription",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"gettingPrescription"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "8/ applyPrescription - Pharmacy",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"poolHandle\": 2,\n\t\"poolName\": \"indy28\",\n\t\"patientWallet\": 32,\n\t\"patientWalletName\": \"patientWallet28\",\n\t\"patientWalletCredentials\": {\n        \"key\": \"patient28_key\"\n    },\n\t\"patientDoctorDid\": \"JoDvxq2ePKZvqrKmRUcQ7P\",\n\t\"patientMasterSecretId\": \"81d0abeb-8c9f-46c4-a4f9-daa02130c9b7\",\n\t\"pharmacyWallet\": 21,\n\t\"pharmacyDid\": \"Heh4hkvY8aNKTtA6pPjgNS\",\n\t\"doctorPrescriptionCredDefId\": \"KHJ3eaHZj8Z9Zdqk3dqy74:3:CL:900\",\n\t\"patientFirstName\": \"Patient\",\n\t\"patientLastName\": \"Garcia\",\n\t\"dateOfBirth\": \"12-05-1949\",\n\t\"status\": \"Cancer\",\n\t\"doctorName\": \"Dr . James Hold\",\n\t\"pdfHash\": \"123456789\"\n}"
+				},
+				"url": {
+					"raw": "localhost:3000/api/applyPrescription",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"applyPrescription"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

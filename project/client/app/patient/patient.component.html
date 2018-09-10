@@ -1,0 +1,135 @@
+<app-loading [condition]="isLoading"></app-loading>
+<app-toast [message]="toast.message"></app-toast>
+
+<!-- Setup Credential Form -->
+<div class="card" *ngIf="!isLoading">
+  <h4 class="card-header">Step 4: Setup Credential</h4>
+  <div class="card-body">
+    <button class="btn btn-primary" (click)="setupCredentialDefinition()">
+      <i class="fa fa-sign-in"></i> Create Credential Definition</button>
+  </div>
+
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Doctor Prescription Credential Definition</th>
+          <th scope="col">Option</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="credentialDefinitions.length === 0">
+        <tr>
+          <td colspan="5">There are no registered Credential Definitions.</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr *ngFor="let credentialDefinition of credentialDefinitions">
+          <td>{{credentialDefinition.doctorPrescriptionCredDefId}}</td>
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="deleteCredentialDefinition(credentialDefinition)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Patient prescriptions Form -->
+<div class="card" *ngIf="!isLoading">
+  <h4 class="card-header">Step 5: Patient prescriptions</h4>
+  <div class="card-body">
+    <form [formGroup]="patientForm" (ngSubmit)="createPrescription()">
+
+      <div class="input-group" [ngClass]="setClassFirstname()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-odnoklassniki"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="patient_first_name" formControlName="patient_first_name" placeholder="Patient First Name">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassLastname()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-odnoklassniki"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="patient_last_name" formControlName="patient_last_name" placeholder="Patient Last Name">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassDoctorName()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-id-card"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="doctor_name" formControlName="doctor_name" placeholder="Doctor Name">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassStatus()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-heartbeat"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="status" formControlName="status" placeholder="Patient health status">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassBob()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-birthday-cake"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="dob" formControlName="dob" placeholder="Patient Day of birth">
+      </div>
+
+      <div class="form-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-key"></i>
+          </span>
+        </div>
+        <input class="form-control" type="file" name="pdf_hash" formControlName="pdf_hash" (change)="onFileChange($event)" #fileInput>
+      </div>
+
+      <button class="btn btn-primary" type="submit" [disabled]="!patientForm.valid">
+        <i class="fa fa-sign-in"></i> Submit</button>
+    </form>
+  </div>
+
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+            <th scope="col">Patient Doctor DID</th>
+          <th scope="col">Patient Wallet</th>
+          <!-- <th scope="col">Hash</th> -->
+          <!-- <th scope="col">Patient Master Secret ID</th> -->
+          <th scope="col">Option</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="patientPrescriptions.length === 0">
+        <tr>
+          <td colspan="5">There are no patient prescriptions registered.</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr *ngFor="let patientPrescription of patientPrescriptions">
+            <td>{{patientPrescription.patientDoctorDid}}</td>
+          <td>{{patientPrescription.patientWallet}}</td>
+          <!-- <td>{{patientPrescription.prescriptionCredValues.pdf_hash.raw}}</td> -->
+          <!-- <td>{{patientPrescription.patientMasterSecretId}}</td> -->
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="deletePatientPrescription(patientPrescription)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

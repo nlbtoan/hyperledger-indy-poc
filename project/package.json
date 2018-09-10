@@ -1,37 +1,108 @@
 {
-  "name": "gettingstarted",
-  "version": "1.0.0",
-  "private": true,
-  "description": "Getting Started Guide in node.js for the indy-sdk",
-  "main": "gettingStarted.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node gettingStarted.js",
-    "ledger": "cd ../../ && docker build -f ci/indy-pool.dockerfile -t indy_pool . && docker run --name indy_pool -itd -p 9701-9708:9701-9708 indy_pool"
+  "name": "hyperledger-indy-poc",
+  "version": "6.0.3",
+  "license": "MIT",
+  "author": "Nguyen Bao Xuan Truong",
+  "description": "Hyperledger-Indy demo",
+  "angular-cli": {},
+  "engines": {
+    "node": "8.11.1",
+    "npm": "6.1.0"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/hyperledger/indy-sdk.git"
+  "scripts": {
+    "ng": "ng",
+    "build": "ng build --prod",
+    "start": "node dist/server/app.js",
+    "indy": "rm -rf ~/.indy_client && node ./server/indy/gettingStarted.js",
+    "container": "rm -rf ~/.indy_client && docker run --name indy_pool -itd -p 9701-9708:9701-9708 nbxtruong/indy_pool:1.3",
+    "ledger": "rm -rf ~/.indy_client && docker start indy_pool",
+    "predev": "tsc -p server",
+    "dev": "concurrently \"ng serve --proxy-config proxy.conf.json --host 0.0.0.0\" \"tsc -w -p server\" \"nodemon dist/server/app.js\"",
+    "prod": "concurrently \"ng build --aot --prod && tsc -p server && node dist/server/app.js\"",
+    "test": "ng test",
+    "testbe": "tsc -p server && mocha dist/server/test --exit",
+    "lint": "ng lint",
+    "lintbe": "tslint server/**/**.ts{,x}",
+    "e2e": "ng e2e"
   },
   "contributors": [
     {
-      "name": "Spencer Holman",
-      "email": "sah14@byu.edu"
+      "name": "Nguyen Bao Xuan Truong",
+      "email": "nbxtruong@tma.com.vn"
     },
     {
-      "name": "Matthew Hailstone",
-      "email": "matthew_hailstone@byu.edu"
+      "name": "Nguyen Trung Dung",
+      "email": "ntdung1@tma.com.vn"
+    },
+    {
+      "name": "Phi Quang Phuoc",
+      "email": "pqphuoc@tma.com.vn"
+    },
+    {
+      "name": "Le Trung Hieu",
+      "email": "ltrunghieu@tma.com.vn"
     }
   ],
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/hyperledger/indy-sdk/issues"
-  },
-  "homepage": "https://github.com/hyperledger/indy-sdk#readme",
+  "private": true,
   "dependencies": {
+    "@angular/animations": "^6.0.3",
+    "@angular/common": "^6.0.3",
+    "@angular/compiler": "^6.0.3",
+    "@angular/core": "^6.0.3",
+    "@angular/forms": "^6.0.3",
+    "@angular/http": "^6.0.3",
+    "@angular/platform-browser": "^6.0.3",
+    "@angular/platform-browser-dynamic": "^6.0.3",
+    "@angular/router": "^6.0.3",
+    "@auth0/angular-jwt": "^2.0.0",
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.3",
+    "bootstrap": "^4.1.1",
+    "core-js": "^2.5.4",
     "cryptiles": "^4.1.1",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "font-awesome": "^4.7.0",
     "home-dir": "^1.0.0",
-    "indy-sdk": "file:./lib/indy-node",
-    "mkdirp": "^0.5.1"
+    "indy-sdk": "^0.2.5",
+    "jquery": "^3.3.1",
+    "jsonwebtoken": "^8.2.1",
+    "mkdirp": "^0.5.1",
+    "mongoose": "^5.1.2",
+    "morgan": "^1.9.0",
+    "node-file-hash": "^1.0.1",
+    "popper.js": "^1.14.3",
+    "rxjs": "^6.0.0",
+    "rxjs-compat": "^6.2.0",
+    "tether": "^1.4.4",
+    "zone.js": "^0.8.26"
+  },
+  "devDependencies": {
+    "@angular/cli": "~6.0.5",
+    "@angular/compiler-cli": "^6.0.3",
+    "@angular-devkit/build-angular": "~0.6.5",
+    "@angular/language-service": "^6.0.3",
+    "@types/express": "^4.11.1",
+    "@types/jasmine": "~2.8.6",
+    "@types/jasminewd2": "~2.0.3",
+    "@types/node": "~8.9.4",
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "codelyzer": "~4.2.1",
+    "concurrently": "^3.5.1",
+    "jasmine-core": "~2.99.1",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~1.7.1",
+    "karma-chrome-launcher": "~2.2.0",
+    "karma-coverage-istanbul-reporter": "~1.4.2",
+    "karma-jasmine": "~1.1.1",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.17.5",
+    "protractor": "~5.3.0",
+    "ts-node": "~5.0.1",
+    "tslint": "~5.9.1",
+    "typescript": "~2.7.2"
   }
 }

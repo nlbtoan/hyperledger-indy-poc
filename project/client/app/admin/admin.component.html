@@ -1,0 +1,184 @@
+<app-loading [condition]="isLoading"></app-loading>
+
+<app-toast [message]="toast.message"></app-toast>
+
+<div class="card" *ngIf="!isLoading">
+  <h4 class="card-header">List of administrators</h4>
+
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Username</th>
+          <th scope="col">Email</th>
+          <th scope="col">Role</th>
+          <th scope="col">Option</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="users.length === 0">
+        <tr>
+          <td colspan="4">There are no registered users.</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr *ngFor="let user of users">
+          <td>{{user.username}}</td>
+          <td>{{user.email}}</td>
+          <td>{{user.role}}</td>
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="deleteUser(user)" [disabled]="auth.currentUser._id === user._id">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card" *ngIf="!isLoading">
+  <h4 class="card-header">Step 1: Create Pool Ledger</h4>
+  <form class="card-body" [formGroup]="ledgerForm" (ngSubmit)="createPoolLedger()">
+
+    <div class="input-group" [ngClass]="setClassPoolName()">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="fa fa-book"></i>
+        </span>
+      </div>
+      <input class="form-control" type="poolName" name="poolName" formControlName="poolName" placeholder="Pool Name" autofocus>
+    </div>
+
+    <div class="input-group" [ngClass]="setClassStewardWalletName()">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="fa fa-male"></i>
+        </span>
+      </div>
+      <input class="form-control" type="stewardWalletName" name="stewardWalletName" formControlName="stewardWalletName" placeholder="Steward Wallet Name">
+    </div>
+
+    <button class="btn btn-primary" type="submit" [disabled]="!ledgerForm.valid">
+      <i class="fa fa-sign-in"></i> Create Pool Ledger</button>
+  </form>
+
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Steward Did</th>
+          <th scope="col">Steward Wallet</th>
+          <th scope="col">Pool Name</th>
+          <th scope="col">Pool Handle</th>
+          <th scope="col">Option</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="ledgers.length === 0">
+        <tr>
+          <td colspan="5">There are no registered ledgers.</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr *ngFor="let ledger of ledgers">
+          <td>{{ledger.stewardDid}}</td>
+          <td>{{ledger.stewardWallet}}</td>
+          <td>{{ledger.poolName}}</td>
+          <td>{{ledger.poolHandle}}</td>
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="deleteLedger(ledger)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card" *ngIf="!isLoading">
+  <h4 class="card-header">Step 2: Add Trust Anchor</h4>
+  <form class="card-body" [formGroup]="anchorForm" (ngSubmit)="addTrustAnchor()">
+
+    <div class="input-group" [ngClass]="setClassName()">
+      <div class="input-group-prepend">
+        <span class="input-group-text">
+          <i class="fa fa-book"></i>
+        </span>
+      </div>
+      <input class="form-control" type="name" name="name" formControlName="name" placeholder="Trust Anchor Name">
+    </div>
+
+    <button class="btn btn-primary" type="submit" [disabled]="!anchorForm.valid">
+      <i class="fa fa-sign-in"></i> Add Trust Anchor </button>
+  </form>
+
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Trust Anchor DID</th>
+          <th scope="col">Trust Anchor Name</th>
+          <th scope="col">Trust Anchor Wallet</th>
+          <!-- <th scope="col">stewardTrustAnchorKey</th>
+          <th scope="col">trustAnchorStewardDid</th>
+          <th scope="col">trustAnchorStewardKey</th> -->
+          <th scope="col">Option</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="TrustAnchors.length === 0">
+        <tr>
+          <td colspan="4">There are no registered trust anchor.</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr *ngFor="let TrustAnchor of TrustAnchors">
+          <td>{{TrustAnchor.trustAnchorDID}}</td>
+          <td>{{TrustAnchor.trustAnchorName}}</td>
+          <td>{{TrustAnchor.trustAnchorWallet}}</td>
+          <!-- <td>{{TrustAnchor.stewardTrustAnchorKey}}</td>
+          <td>{{TrustAnchor.trustAnchorStewardDid}}</td>
+          <td>{{TrustAnchor.trustAnchorStewardKey}}</td> -->
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="deleteTrustAnchor(TrustAnchor)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card" *ngIf="!isLoading">
+  <h4 class="card-header">Step 3: Create Schema</h4>
+  <form class="card-body">
+    <button class="btn btn-primary" (click)="createSchema()">
+      <i class="fa fa-sign-in"></i> Create Schema </button>
+  </form>
+
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Prescription Schema ID</th>
+          <th scope="col">Option</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="Schemas.length === 0">
+        <tr>
+          <td colspan="2">There are no registered schema.</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr *ngFor="let Schema of Schemas">
+          <td>{{Schema.prescriptionSchemaId}}</td>
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="deleteSchema(Schema)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

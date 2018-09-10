@@ -1,0 +1,96 @@
+<app-loading [condition]="isLoading"></app-loading>
+<app-toast [message]="toast.message"></app-toast>
+
+<div class="card" *ngIf="!isLoading">
+  <h4 class="card-header">Step 6: Apply Prescription</h4>
+  <div class="card-body">
+    <form [formGroup]="pharmacyForm" (ngSubmit)="applyPrescription()">
+
+      <div class="input-group" [ngClass]="setClassPatientFirstName()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-odnoklassniki"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="patientFirstName" formControlName="patientFirstName" placeholder="Patient First Name">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassPatientLastName()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-odnoklassniki"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="patientLastName" formControlName="patientLastName" placeholder="Patient Last Name">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassStatus()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-odnoklassniki"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="status" formControlName="status" placeholder="Patient Health Status">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassDateOfBirth()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-odnoklassniki"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="dateOfBirth" formControlName="dateOfBirth" placeholder="Patient Date Of Birth">
+      </div>
+
+      <div class="input-group" [ngClass]="setClassDoctorName()">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-odnoklassniki"></i>
+          </span>
+        </div>
+        <input class="form-control" type="text" name="doctorName" formControlName="doctorName" placeholder="Doctor Name">
+      </div>
+
+      <div class="form-group">
+        <div class="input-group-prepend">
+          <span class="input-group-text">
+            <i class="fa fa-key"></i>
+          </span>
+        </div>
+        <input class="form-control" type="file" name="pdfHash" formControlName="pdfHash" (change)="onFileChange($event)" #fileInput>
+      </div>
+
+      <button class="btn btn-primary" type="submit" [disabled]="!pharmacyForm.valid">
+        <i class="fa fa-sign-in"></i> Submit</button>
+
+    </form>
+  </div>
+
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Patient Doctor DID</th>
+          <th scope="col">Doctor Prescription Credential Definition</th>
+          <th scope="col">Option</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="pharmacyPrescriptions.length === 0">
+        <tr>
+          <td colspan="5">There are no patient prescriptions registered.</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr *ngFor="let pharmacyPrescription of pharmacyPrescriptions">
+          <td>{{pharmacyPrescription.patientDoctorDid}}</td>
+          <td>{{pharmacyPrescription.doctorPrescriptionCredDefId}}</td>
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="deletePharmacyPrescription(pharmacyPrescription)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
