@@ -57,18 +57,21 @@ export default class wareHouseCtrl extends BaseCtrl {
   //   "stewardDid": "Th7MpTaRZVRYnPiabds81Y"
   // }
   addTrustAnchor = async (req, res) => {
-    let trustAnchorWalletName = req.body.trustAnchorWalletName;
-    let trustAnchorWalletCredentials = { 'key': req.body.name + '_key' };
-    let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] =
-      await this.onboarding(req.body.poolHandle, req.body.poolName, "Sovrin Steward", req.body.stewardWallet, req.body.stewardDid, req.body.name, null, trustAnchorWalletName, trustAnchorWalletCredentials);
+    let poolHandle = req.body.poolHandle;
+    let stewardWallet = req.body.stewardWallet;
+    let stewardDid = req.body.stewardDid;
+    let entityName = req.body.name;
+    let trustAnchorWalletConfig = { 'id': req.body.trustAnchorWalletName };
+    let trustAnchorWalletCredentials = { 'key': entityName + '_key' };
+    let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] = await this.onboarding(poolHandle, "Sovrin Steward", stewardWallet, stewardDid, entityName, null, trustAnchorWalletConfig, trustAnchorWalletCredentials);
 
-    let trustAnchorDID = await this.getVerinym(req.body.poolHandle, "Sovrin Steward", req.body.stewardWallet, req.body.stewardDid,
-      stewardTrustAnchorKey, req.body.name, trustAnchorWallet, trustAnchorStewardDid,
+    let trustAnchorDID = await this.getVerinym(poolHandle, "Sovrin Steward", stewardWallet, stewardDid,
+      stewardTrustAnchorKey, entityName, trustAnchorWallet, trustAnchorStewardDid,
       trustAnchorStewardKey, 'TRUST_ANCHOR');
 
     if (trustAnchorDID) {
       res.status(200).json({
-        trustAnchorName: req.body.name,
+        trustAnchorName: entityName,
         trustAnchorDID: trustAnchorDID,
         trustAnchorWallet: trustAnchorWallet,
         stewardTrustAnchorKey: stewardTrustAnchorKey,
