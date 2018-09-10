@@ -212,7 +212,7 @@ export default class wareHouseCtrl extends BaseCtrl {
     });
 
     let anoncryptedConnectionResponse = await indy.cryptoAnonCrypt(fromToVerkey, Buffer.from(connectionResponse, 'utf8'));
-    let decryptedConnectionResponse = JSON.parse(Buffer.from(await indy.cryptoAnonDecrypt(fromWallet, fromToKey, anoncryptedConnectionResponse)));
+    let decryptedConnectionResponse = JSON.parse(Buffer.from(await indy.cryptoAnonDecrypt(fromWallet, fromToKey, anoncryptedConnectionResponse)).toString());
     if (connectionRequest['nonce'] !== decryptedConnectionResponse['nonce']) {
       throw Error("nonces don't match!");
     }
@@ -233,7 +233,7 @@ export default class wareHouseCtrl extends BaseCtrl {
     let [senderVerkey, authdecryptedDidInfo] =
       await indy.cryptoAuthDecrypt(fromWallet, fromToKey, Buffer.from(authcryptedDidInfo));
 
-    let authdecryptedDidInfoJson = JSON.parse(Buffer.from(authdecryptedDidInfo));
+    let authdecryptedDidInfoJson = JSON.parse(Buffer.from(authdecryptedDidInfo).toString());
     let retrievedVerkey = await indy.keyForDid(poolHandle, fromWallet, toFromDid);
 
     if (senderVerkey !== retrievedVerkey) {
