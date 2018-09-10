@@ -16,11 +16,13 @@ async function run() {
     };
     try {
         await indy.createPoolLedgerConfig(poolName, poolConfig);
-    } catch (e) {
-        if (e.message !== "PoolLedgerConfigAlreadyExistsError") {
+    } catch(e) {
+        if(e.message !== "PoolLedgerConfigAlreadyExistsError") {
             throw e;
         }
     }
+
+    await indy.setProtocolVersion(2)
 
     let poolHandle = await indy.openPoolLedger(poolName);
 
@@ -29,17 +31,17 @@ async function run() {
     console.log("------------------------------");
 
     console.log("\"Sovrin Steward\" -> Create wallet");
-    let stewardWalletName = 'sovrinStewardWallet';
-    let stewardWalletCredentials = { 'key': 'steward_key' };
+    let stewardWalletConfig = {'id': 'stewardWalletName'}
+    let stewardWalletCredentials = {'key': 'steward_key'}
     try {
-        await indy.createWallet(poolName, stewardWalletName, 'default', null, toJson(stewardWalletCredentials))
-    } catch (e) {
-        if (e.message !== "WalletAlreadyExistsError") {
+        await indy.createWallet(stewardWalletConfig, stewardWalletCredentials)
+    } catch(e) {
+        if(e.message !== "WalletAlreadyExistsError") {
             throw e;
         }
     }
 
-    let stewardWallet = await indy.openWallet(stewardWalletName, null, toJson(stewardWalletCredentials));
+    let stewardWallet = await indy.openWallet(stewardWalletConfig, stewardWalletCredentials);
 
     console.log("\"Sovrin Steward\" -> Create and store in Wallet DID from seed");
     let stewardDidInfo = {
@@ -52,9 +54,9 @@ async function run() {
     console.log("== Getting Trust Anchor credentials - Government Onboarding  ==");
     console.log("------------------------------");
 
-    let governmentWalletName = 'governmentWallet'
-    let governmentWalletCredentials = { 'key': 'government_key' }
-    let [governmentWallet, stewardGovernmentKey, governmentStewardDid, governmentStewardKey] = await onboarding(poolHandle, poolName, "Sovrin Steward", stewardWallet, stewardDid, "Government", null, governmentWalletName, governmentWalletCredentials);
+    let governmentWalletConfig = {'id': 'governmentWallet'}
+    let governmentWalletCredentials = {'key': 'government_key'}
+    let [governmentWallet, stewardGovernmentKey, governmentStewardDid, governmentStewardKey] = await onboarding(poolHandle, "Sovrin Steward", stewardWallet, stewardDid, "Government", null, governmentWalletConfig, governmentWalletCredentials);
 
     console.log("==============================");
     console.log("== Getting Trust Anchor credentials - Government getting Verinym  ==");
@@ -68,9 +70,9 @@ async function run() {
     console.log("== Getting Trust Anchor credentials - Faber Onboarding  ==");
     console.log("------------------------------");
 
-    let faberWalletName = 'faberWallet'
-    let faberWalletCredentials = { 'key': 'faber_key' }
-    let [faberWallet, stewardFaberKey, faberStewardDid, faberStewardKey] = await onboarding(poolHandle, poolName, "Sovrin Steward", stewardWallet, stewardDid, "Faber", null, faberWalletName, faberWalletCredentials);
+    let faberWalletConfig = {'id': 'faberWallet'}
+    let faberWalletCredentials = {'key': 'faber_key'}
+    let [faberWallet, stewardFaberKey, faberStewardDid, faberStewardKey] = await onboarding(poolHandle, "Sovrin Steward", stewardWallet, stewardDid, "Faber", null, faberWalletConfig, faberWalletCredentials);
 
     console.log("==============================");
     console.log("== Getting Trust Anchor credentials - Faber getting Verinym  ==");
@@ -83,9 +85,9 @@ async function run() {
     console.log("== Getting Trust Anchor credentials - Acme Onboarding  ==");
     console.log("------------------------------");
 
-    let acmeWalletName = 'acmeWallet'
-    let acmeWalletCredentials = { 'key': 'acme_key' }
-    let [acmeWallet, stewardAcmeKey, acmeStewardDid, acmeStewardKey] = await onboarding(poolHandle, poolName, "Sovrin Steward", stewardWallet, stewardDid, "Acme", null, acmeWalletName, acmeWalletCredentials);
+    let acmeWalletConfig = {'id': 'acmeWallet'}
+    let acmeWalletCredentials = {'key': 'acme_key'}
+    let [acmeWallet, stewardAcmeKey, acmeStewardDid, acmeStewardKey] = await onboarding(poolHandle, "Sovrin Steward", stewardWallet, stewardDid, "Acme", null, acmeWalletConfig, acmeWalletCredentials);
 
     console.log("==============================");
     console.log("== Getting Trust Anchor credentials - Acme getting Verinym  ==");
@@ -98,9 +100,9 @@ async function run() {
     console.log("== Getting Trust Anchor credentials - Thrift Onboarding  ==");
     console.log("------------------------------");
 
-    let thriftWalletName = 'thriftWallet'
-    let thriftWalletCredentials = { 'key': 'thrift_key' }
-    let [thriftWallet, stewardThriftKey, thriftStewardDid, thriftStewardKey] = await onboarding(poolHandle, poolName, "Sovrin Steward", stewardWallet, stewardDid, "Thrift", null, thriftWalletName, thriftWalletCredentials);
+    let thriftWalletConfig = {'id': 'thriftWallet'}
+    let thriftWalletCredentials = {'key': 'thrift_key'}
+    let [thriftWallet, stewardThriftKey, thriftStewardDid, thriftStewardKey] = await onboarding(poolHandle, "Sovrin Steward", stewardWallet, stewardDid, "Thrift", null, thriftWalletConfig, thriftWalletCredentials);
 
     console.log("==============================");
     console.log("== Getting Trust Anchor credentials - Thrift getting Verinym  ==");
@@ -160,9 +162,9 @@ async function run() {
     console.log("== Getting Transcript with Faber - Onboarding ==");
     console.log("------------------------------");
 
-    let aliceWalletName = 'aliceWallet'
-    let aliceWalletCredentials = { 'key': 'alice_key' }
-    let [aliceWallet, faberAliceKey, aliceFaberDid, aliceFaberKey, faberAliceConnectionResponse] = await onboarding(poolHandle, poolName, "Faber", faberWallet, faberDid, "Alice", null, aliceWalletName, aliceWalletCredentials);
+    let aliceWalletConfig = {'id': 'aliceWallet'}
+    let aliceWalletCredentials = {'key': 'alice_key'}
+    let [aliceWallet, faberAliceKey, aliceFaberDid, aliceFaberKey, faberAliceConnectionResponse] = await onboarding(poolHandle, "Faber", faberWallet, faberDid, "Alice", null, aliceWalletConfig, aliceWalletCredentials);
 
     console.log("==============================");
     console.log("== Getting Transcript with Faber - Getting Transcript Credential ==");
@@ -175,7 +177,7 @@ async function run() {
     let aliceFaberVerkey = await indy.keyForDid(poolHandle, acmeWallet, faberAliceConnectionResponse['did']);
 
     console.log("\"Faber\" -> Authcrypt \"Transcript\" Credential Offer for Alice");
-    let authcryptedTranscriptCredOffer = await indy.cryptoAuthCrypt(faberWallet, faberAliceKey, aliceFaberVerkey, Buffer.from(JSON.stringify(transcriptCredOfferJson), 'utf8'));
+    let authcryptedTranscriptCredOffer = await indy.cryptoAuthCrypt(faberWallet, faberAliceKey, aliceFaberVerkey, Buffer.from(JSON.stringify(transcriptCredOfferJson),'utf8'));
 
     console.log("\"Faber\" -> Send authcrypted \"Transcript\" Credential Offer to Alice");
 
@@ -193,7 +195,7 @@ async function run() {
     let [transcriptCredRequestJson, transcriptCredRequestMetadataJson] = await indy.proverCreateCredentialReq(aliceWallet, aliceFaberDid, authdecryptedTranscriptCredOfferJson, faberTranscriptCredDef, aliceMasterSecretId);
 
     console.log("\"Alice\" -> Authcrypt \"Transcript\" Credential Request for Faber");
-    let authcryptedTranscriptCredRequest = await indy.cryptoAuthCrypt(aliceWallet, aliceFaberKey, faberAliceVerkey, Buffer.from(JSON.stringify(transcriptCredRequestJson), 'utf8'));
+    let authcryptedTranscriptCredRequest = await indy.cryptoAuthCrypt(aliceWallet, aliceFaberKey, faberAliceVerkey, Buffer.from(JSON.stringify(transcriptCredRequestJson),'utf8'));
 
     console.log("\"Alice\" -> Send authcrypted \"Transcript\" Credential Request to Faber");
 
@@ -202,20 +204,21 @@ async function run() {
     [aliceFaberVerkey, authdecryptedTranscriptCredRequestJson] = await authDecrypt(faberWallet, faberAliceKey, authcryptedTranscriptCredRequest);
 
     console.log("\"Faber\" -> Create \"Transcript\" Credential for Alice");
+    // note that encoding is not standardized by Indy except that 32-bit integers are encoded as themselves. IS-786
     let transcriptCredValues = {
-        "first_name": { "raw": "Alice", "encoded": "1139481716457488690172217916278103335" },
-        "last_name": { "raw": "Garcia", "encoded": "5321642780241790123587902456789123452" },
-        "degree": { "raw": "Bachelor of Science, Marketing", "encoded": "12434523576212321" },
-        "status": { "raw": "graduated", "encoded": "2213454313412354" },
-        "ssn": { "raw": "123-45-6789", "encoded": "3124141231422543541" },
-        "year": { "raw": "2015", "encoded": "2015" },
-        "average": { "raw": "5", "encoded": "5" }
+        "first_name": {"raw": "Alice", "encoded": "1139481716457488690172217916278103335"},
+        "last_name": {"raw": "Garcia", "encoded": "5321642780241790123587902456789123452"},
+        "degree": {"raw": "Bachelor of Science, Marketing", "encoded": "12434523576212321"},
+        "status": {"raw": "graduated", "encoded": "2213454313412354"},
+        "ssn": {"raw": "123-45-6789", "encoded": "3124141231422543541"},
+        "year": {"raw": "2015", "encoded": "2015"},
+        "average": {"raw": "5", "encoded": "5"}
     };
 
     let [transcriptCredJson] = await indy.issuerCreateCredential(faberWallet, transcriptCredOfferJson, authdecryptedTranscriptCredRequestJson, transcriptCredValues, null, -1);
 
     console.log("\"Faber\" -> Authcrypt \"Transcript\" Credential for Alice");
-    let authcryptedTranscriptCredJson = await indy.cryptoAuthCrypt(faberWallet, faberAliceKey, aliceFaberVerkey, Buffer.from(JSON.stringify(transcriptCredJson), 'utf8'));
+    let authcryptedTranscriptCredJson = await indy.cryptoAuthCrypt(faberWallet, faberAliceKey, aliceFaberVerkey, Buffer.from(JSON.stringify(transcriptCredJson),'utf8'));
 
     console.log("\"Faber\" -> Send authcrypted \"Transcript\" Credential to Alice");
 
@@ -233,7 +236,7 @@ async function run() {
     console.log("------------------------------");
     let acmeAliceKey, aliceAcmeDid, aliceAcmeKey, acmeAliceConnectionResponse;
 
-    [aliceWallet, acmeAliceKey, aliceAcmeDid, aliceAcmeKey, acmeAliceConnectionResponse] = await onboarding(poolHandle, poolName, "Acme", acmeWallet, acmeDid, "Alice", aliceWallet, aliceWalletName, aliceWalletCredentials);
+    [aliceWallet, acmeAliceKey, aliceAcmeDid, aliceAcmeKey, acmeAliceConnectionResponse] = await onboarding(poolHandle, "Acme", acmeWallet, acmeDid, "Alice", aliceWallet, aliceWalletConfig, aliceWalletCredentials);
 
     console.log("==============================");
     console.log("== Apply for the job with Acme - Transcript proving ==");
@@ -253,15 +256,15 @@ async function run() {
             },
             'attr3_referent': {
                 'name': 'degree',
-                'restrictions': [{ 'cred_def_id': faberTranscriptCredDefId }]
+                'restrictions': [{'cred_def_id': faberTranscriptCredDefId}]
             },
             'attr4_referent': {
                 'name': 'status',
-                'restrictions': [{ 'cred_def_id': faberTranscriptCredDefId }]
+                'restrictions': [{'cred_def_id': faberTranscriptCredDefId}]
             },
             'attr5_referent': {
                 'name': 'ssn',
-                'restrictions': [{ 'cred_def_id': faberTranscriptCredDefId }]
+                'restrictions': [{'cred_def_id': faberTranscriptCredDefId}]
             },
             'attr6_referent': {
                 'name': 'phone_number'
@@ -272,7 +275,7 @@ async function run() {
                 'name': 'average',
                 'p_type': '>=',
                 'p_value': 4,
-                'restrictions': [{ 'cred_def_id': faberTranscriptCredDefId }]
+                'restrictions': [{'cred_def_id': faberTranscriptCredDefId}]
             }
         }
     };
@@ -281,7 +284,7 @@ async function run() {
     let aliceAcmeVerkey = await indy.keyForDid(poolHandle, acmeWallet, acmeAliceConnectionResponse['did']);
 
     console.log("\"Acme\" -> Authcrypt \"Job-Application\" Proof Request for Alice");
-    let authcryptedJobApplicationProofRequestJson = await indy.cryptoAuthCrypt(acmeWallet, acmeAliceKey, aliceAcmeVerkey, Buffer.from(JSON.stringify(jobApplicationProofRequestJson), 'utf8'));
+    let authcryptedJobApplicationProofRequestJson = await indy.cryptoAuthCrypt(acmeWallet, acmeAliceKey, aliceAcmeVerkey,Buffer.from(JSON.stringify(jobApplicationProofRequestJson),'utf8'));
 
     console.log("\"Acme\" -> Send authcrypted \"Job-Application\" Proof Request to Alice");
 
@@ -289,14 +292,27 @@ async function run() {
     let [acmeAliceVerkey, authdecryptedJobApplicationProofRequestJson] = await authDecrypt(aliceWallet, aliceAcmeKey, authcryptedJobApplicationProofRequestJson);
 
     console.log("\"Alice\" -> Get credentials for \"Job-Application\" Proof Request");
-    let credsForJobApplicationProofRequest = await indy.proverGetCredentialsForProofReq(aliceWallet, authdecryptedJobApplicationProofRequestJson);
+    let searchForJobApplicationProofRequest = await indy.proverSearchCredentialsForProofReq(aliceWallet, authdecryptedJobApplicationProofRequestJson, null)
 
-    let credForAttr1 = credsForJobApplicationProofRequest['attrs']['attr1_referent'][0]['cred_info'];
-    let credForAttr2 = credsForJobApplicationProofRequest['attrs']['attr2_referent'][0]['cred_info'];
-    let credForAttr3 = credsForJobApplicationProofRequest['attrs']['attr3_referent'][0]['cred_info'];
-    let credForAttr4 = credsForJobApplicationProofRequest['attrs']['attr4_referent'][0]['cred_info'];
-    let credForAttr5 = credsForJobApplicationProofRequest['attrs']['attr5_referent'][0]['cred_info'];
-    let credForPredicate1 = credsForJobApplicationProofRequest['predicates']['predicate1_referent'][0]['cred_info'];
+    let credentials = await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr1_referent', 100)
+    let credForAttr1 = credentials[0]['cred_info'];
+
+    await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr2_referent', 100)
+    let credForAttr2 = credentials[0]['cred_info'];
+
+    await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr3_referent', 100)
+    let credForAttr3 = credentials[0]['cred_info'];
+
+    await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr4_referent', 100)
+    let credForAttr4 = credentials[0]['cred_info'];
+
+    await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr5_referent', 100)
+    let credForAttr5 = credentials[0]['cred_info'];
+
+    await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'predicate1_referent', 100)
+    let credForPredicate1 = credentials[0]['cred_info'];
+
+    await indy.proverCloseCredentialsSearchForProofReq(searchForJobApplicationProofRequest)
 
     let credsForJobApplicationProof = {};
     credsForJobApplicationProof[`${credForAttr1['referent']}`] = credForAttr1;
@@ -316,11 +332,11 @@ async function run() {
             'attr6_referent': '123-45-6789'
         },
         'requested_attributes': {
-            'attr3_referent': { 'cred_id': credForAttr3['referent'], 'revealed': true },
-            'attr4_referent': { 'cred_id': credForAttr4['referent'], 'revealed': true },
-            'attr5_referent': { 'cred_id': credForAttr5['referent'], 'revealed': true },
+            'attr3_referent': {'cred_id': credForAttr3['referent'], 'revealed': true},
+            'attr4_referent': {'cred_id': credForAttr4['referent'], 'revealed': true},
+            'attr5_referent': {'cred_id': credForAttr5['referent'], 'revealed': true},
         },
-        'requested_predicates': { 'predicate1_referent': { 'cred_id': credForPredicate1['referent'] } }
+        'requested_predicates': {'predicate1_referent': {'cred_id': credForPredicate1['referent']}}
     };
 
     let jobApplicationProofJson = await indy.proverCreateProof(aliceWallet, authdecryptedJobApplicationProofRequestJson,
@@ -328,7 +344,7 @@ async function run() {
         schemasJson, credDefsJson, revocStatesJson);
 
     console.log("\"Alice\" -> Authcrypt \"Job-Application\" Proof for Acme");
-    let authcryptedJobApplicationProofJson = await indy.cryptoAuthCrypt(aliceWallet, aliceAcmeKey, acmeAliceVerkey, Buffer.from(JSON.stringify(jobApplicationProofJson), 'utf8'));
+    let authcryptedJobApplicationProofJson = await indy.cryptoAuthCrypt(aliceWallet, aliceAcmeKey, acmeAliceVerkey,Buffer.from(JSON.stringify(jobApplicationProofJson),'utf8'));
 
     console.log("\"Alice\" -> Send authcrypted \"Job-Application\" Proof to Acme");
 
@@ -361,7 +377,7 @@ async function run() {
     aliceAcmeVerkey = await indy.keyForDid(poolHandle, acmeWallet, acmeAliceConnectionResponse['did']);
 
     console.log("\"Acme\" -> Authcrypt \"Job-Certificate\" Credential Offer for Alice");
-    let authcryptedJobCertificateCredOffer = await indy.cryptoAuthCrypt(acmeWallet, acmeAliceKey, aliceAcmeVerkey, Buffer.from(JSON.stringify(jobCertificateCredOfferJson), 'utf8'));
+    let authcryptedJobCertificateCredOffer = await indy.cryptoAuthCrypt(acmeWallet, acmeAliceKey, aliceAcmeVerkey,Buffer.from(JSON.stringify(jobCertificateCredOfferJson),'utf8'));
 
     console.log("\"Acme\" -> Send authcrypted \"Job-Certificate\" Credential Offer to Alice");
 
@@ -377,7 +393,7 @@ async function run() {
     let [jobCertificateCredRequestJson, jobCertificateCredRequestMetadataJson] = await indy.proverCreateCredentialReq(aliceWallet, aliceAcmeDid, authdecryptedJobCertificateCredOfferJson, acmeJobCertificateCredDef, aliceMasterSecretId);
 
     console.log("\"Alice\" -> Authcrypt \"Job-Certificate\" Credential Request for Acme");
-    let authcryptedJobCertificateCredRequestJson = await indy.cryptoAuthCrypt(aliceWallet, aliceAcmeKey, acmeAliceVerkey, Buffer.from(JSON.stringify(jobCertificateCredRequestJson), 'utf8'));
+    let authcryptedJobCertificateCredRequestJson = await indy.cryptoAuthCrypt(aliceWallet, aliceAcmeKey, acmeAliceVerkey,Buffer.from(JSON.stringify(jobCertificateCredRequestJson),'utf8'));
 
     console.log("\"Alice\" -> Send authcrypted \"Job-Certificate\" Credential Request to Acme");
 
@@ -387,17 +403,17 @@ async function run() {
 
     console.log("\"Acme\" -> Create \"Job-Certificate\" Credential for Alice");
     let aliceJobCertificateCredValuesJson = {
-        "first_name": { "raw": "Alice", "encoded": "245712572474217942457235975012103335" },
-        "last_name": { "raw": "Garcia", "encoded": "312643218496194691632153761283356127" },
-        "employee_status": { "raw": "Permanent", "encoded": "2143135425425143112321314321" },
-        "salary": { "raw": "2400", "encoded": "2400" },
-        "experience": { "raw": "10", "encoded": "10" }
+        "first_name": {"raw": "Alice", "encoded": "245712572474217942457235975012103335"},
+        "last_name": {"raw": "Garcia", "encoded": "312643218496194691632153761283356127"},
+        "employee_status": {"raw": "Permanent", "encoded": "2143135425425143112321314321"},
+        "salary": {"raw": "2400", "encoded": "2400"},
+        "experience": {"raw": "10", "encoded": "10"}
     };
 
     let [jobCertificateCredJson] = await indy.issuerCreateCredential(acmeWallet, jobCertificateCredOfferJson, authdecryptedJobCertificateCredRequestJson, aliceJobCertificateCredValuesJson, null, -1);
 
     console.log("\"Acme\" ->  Authcrypt \"Job-Certificate\" Credential for Alice");
-    let authcryptedJobCertificateCredJson = await indy.cryptoAuthCrypt(acmeWallet, acmeAliceKey, aliceAcmeVerkey, Buffer.from(JSON.stringify(jobCertificateCredJson), 'utf8'));
+    let authcryptedJobCertificateCredJson = await indy.cryptoAuthCrypt(acmeWallet, acmeAliceKey, aliceAcmeVerkey,Buffer.from(JSON.stringify(jobCertificateCredJson),'utf8'));
 
     console.log("\"Acme\" ->  Send authcrypted \"Job-Certificate\" Credential to Alice");
 
@@ -415,8 +431,8 @@ async function run() {
     console.log("------------------------------");
 
     let thriftAliceKey, aliceThriftDid, aliceThriftKey, thriftAliceConnectionResponse;
-    [aliceWallet, thriftAliceKey, aliceThriftDid, aliceThriftKey, thriftAliceConnectionResponse] = await onboarding(poolHandle, poolName, "Thrift", thriftWallet, thriftDid,
-        "Alice", aliceWallet, aliceWalletName, aliceWalletCredentials);
+    [aliceWallet, thriftAliceKey, aliceThriftDid, aliceThriftKey, thriftAliceConnectionResponse] = await onboarding(poolHandle, "Thrift", thriftWallet, thriftDid,
+        "Alice", aliceWallet, aliceWalletConfig, aliceWalletCredentials);
 
     console.log("==============================");
     console.log("== Apply for the loan with Thrift - Job-Certificate proving  ==");
@@ -430,7 +446,7 @@ async function run() {
         'requested_attributes': {
             'attr1_referent': {
                 'name': 'employee_status',
-                'restrictions': [{ 'cred_def_id': acmeJobCertificateCredDefId }]
+                'restrictions': [{'cred_def_id': acmeJobCertificateCredDefId}]
             }
         },
         'requested_predicates': {
@@ -438,13 +454,13 @@ async function run() {
                 'name': 'salary',
                 'p_type': '>=',
                 'p_value': 2000,
-                'restrictions': [{ 'cred_def_id': acmeJobCertificateCredDefId }]
+                'restrictions': [{'cred_def_id': acmeJobCertificateCredDefId}]
             },
             'predicate2_referent': {
                 'name': 'experience',
                 'p_type': '>=',
                 'p_value': 1,
-                'restrictions': [{ 'cred_def_id': acmeJobCertificateCredDefId }]
+                'restrictions': [{'cred_def_id': acmeJobCertificateCredDefId}]
             }
         }
     };
@@ -453,7 +469,7 @@ async function run() {
     let aliceThriftVerkey = await indy.keyForDid(poolHandle, thriftWallet, thriftAliceConnectionResponse['did']);
 
     console.log("\"Thrift\" -> Authcrypt \"Loan-Application-Basic\" Proof Request for Alice");
-    let authcryptedApplyLoanProofRequestJson = await indy.cryptoAuthCrypt(thriftWallet, thriftAliceKey, aliceThriftVerkey, Buffer.from(JSON.stringify(applyLoanProofRequestJson), 'utf8'));
+    let authcryptedApplyLoanProofRequestJson = await indy.cryptoAuthCrypt(thriftWallet, thriftAliceKey, aliceThriftVerkey,Buffer.from(JSON.stringify(applyLoanProofRequestJson),'utf8'));
 
     console.log("\"Thrift\" -> Send authcrypted \"Loan-Application-Basic\" Proof Request to Alice");
 
@@ -461,12 +477,19 @@ async function run() {
     let [thriftAliceVerkey, authdecryptedApplyLoanProofRequestJson] = await authDecrypt(aliceWallet, aliceThriftKey, authcryptedApplyLoanProofRequestJson);
 
     console.log("\"Alice\" -> Get credentials for \"Loan-Application-Basic\" Proof Request");
-    let credsForApplyLoanProofRequest = await indy.proverGetCredentialsForProofReq(aliceWallet, authdecryptedApplyLoanProofRequestJson);
-    // FIXME: Check here for JSON error. Needs parsing?
 
-    credForAttr1 = credsForApplyLoanProofRequest['attrs']['attr1_referent'][0]['cred_info'];
-    credForPredicate1 = credsForApplyLoanProofRequest['predicates']['predicate1_referent'][0]['cred_info'];
-    let credForPredicate2 = credsForApplyLoanProofRequest['predicates']['predicate2_referent'][0]['cred_info'];
+    let searchForJApplyLoanProofRequest = await indy.proverSearchCredentialsForProofReq(aliceWallet, authdecryptedApplyLoanProofRequestJson, null)
+
+    credentials = await indy.proverFetchCredentialsForProofReq(searchForJApplyLoanProofRequest, 'attr1_referent', 100)
+    credForAttr1 = credentials[0]['cred_info'];
+
+    await indy.proverFetchCredentialsForProofReq(searchForJApplyLoanProofRequest, 'predicate1_referent', 100)
+    credForPredicate1 = credentials[0]['cred_info'];
+
+    await indy.proverFetchCredentialsForProofReq(searchForJApplyLoanProofRequest, 'predicate2_referent', 100)
+    let credForPredicate2 = credentials[0]['cred_info'];
+
+    await indy.proverCloseCredentialsSearchForProofReq(searchForJApplyLoanProofRequest)
 
     let credsForApplyLoanProof = {};
     credsForApplyLoanProof[`${credForAttr1['referent']}`] = credForAttr1;
@@ -479,11 +502,11 @@ async function run() {
     let applyLoanRequestedCredsJson = {
         'self_attested_attributes': {},
         'requested_attributes': {
-            'attr1_referent': { 'cred_id': credForAttr1['referent'], 'revealed': true }
+            'attr1_referent': {'cred_id': credForAttr1['referent'], 'revealed': true}
         },
         'requested_predicates': {
-            'predicate1_referent': { 'cred_id': credForPredicate1['referent'] },
-            'predicate2_referent': { 'cred_id': credForPredicate2['referent'] }
+            'predicate1_referent': {'cred_id': credForPredicate1['referent']},
+            'predicate2_referent': {'cred_id': credForPredicate2['referent']}
         }
     };
     let aliceApplyLoanProofJson = await indy.proverCreateProof(aliceWallet, authdecryptedApplyLoanProofRequestJson,
@@ -491,7 +514,7 @@ async function run() {
         credDefsJson, revocStatesJson);
 
     console.log("\"Alice\" -> Authcrypt \"Loan-Application-Basic\" Proof for Thrift");
-    let authcryptedAliceApplyLoanProofJson = await indy.cryptoAuthCrypt(aliceWallet, aliceThriftKey, thriftAliceVerkey, Buffer.from(JSON.stringify(aliceApplyLoanProofJson), 'utf8'));
+    let authcryptedAliceApplyLoanProofJson = await indy.cryptoAuthCrypt(aliceWallet, aliceThriftKey, thriftAliceVerkey,Buffer.from(JSON.stringify(aliceApplyLoanProofJson),'utf8'));
 
     console.log("\"Alice\" -> Send authcrypted \"Loan-Application-Basic\" Proof to Thrift");
 
@@ -522,9 +545,9 @@ async function run() {
         'name': 'Loan-Application-KYC',
         'version': '0.1',
         'requested_attributes': {
-            'attr1_referent': { 'name': 'first_name' },
-            'attr2_referent': { 'name': 'last_name' },
-            'attr3_referent': { 'name': 'ssn' }
+            'attr1_referent': {'name': 'first_name'},
+            'attr2_referent': {'name': 'last_name'},
+            'attr3_referent': {'name': 'ssn'}
         },
         'requested_predicates': {}
     };
@@ -533,7 +556,7 @@ async function run() {
     aliceThriftVerkey = await indy.keyForDid(poolHandle, thriftWallet, thriftAliceConnectionResponse['did']);
 
     console.log("\"Thrift\" -> Authcrypt \"Loan-Application-KYC\" Proof Request for Alice");
-    let authcryptedApplyLoanKycProofRequestJson = await indy.cryptoAuthCrypt(thriftWallet, thriftAliceKey, aliceThriftVerkey, Buffer.from(JSON.stringify(applyLoanKycProofRequestJson), 'utf8'));
+    let authcryptedApplyLoanKycProofRequestJson = await indy.cryptoAuthCrypt(thriftWallet, thriftAliceKey, aliceThriftVerkey,Buffer.from(JSON.stringify(applyLoanKycProofRequestJson),'utf8'));
 
     console.log("\"Thrift\" -> Send authcrypted \"Loan-Application-KYC\" Proof Request to Alice");
 
@@ -542,12 +565,19 @@ async function run() {
     [thriftAliceVerkey, authdecryptedApplyLoanKycProofRequestJson] = await authDecrypt(aliceWallet, aliceThriftKey, authcryptedApplyLoanKycProofRequestJson);
 
     console.log("\"Alice\" -> Get credentials for \"Loan-Application-KYC\" Proof Request");
-    let credsForApplyLoanKycProofRequest = await indy.proverGetCredentialsForProofReq(aliceWallet, authdecryptedApplyLoanKycProofRequestJson);
-    // FIXME: Check for JSON parsing error here. Needs parsing?
 
-    credForAttr1 = credsForApplyLoanKycProofRequest['attrs']['attr1_referent'][0]['cred_info'];
-    credForAttr2 = credsForApplyLoanKycProofRequest['attrs']['attr2_referent'][0]['cred_info'];
-    credForAttr3 = credsForApplyLoanKycProofRequest['attrs']['attr3_referent'][0]['cred_info'];
+    let searchForApplyLoanKycProofRequest = await indy.proverSearchCredentialsForProofReq(aliceWallet, authdecryptedApplyLoanKycProofRequestJson, null)
+
+    credentials = await indy.proverFetchCredentialsForProofReq(searchForApplyLoanKycProofRequest, 'attr1_referent', 100)
+    credForAttr1 = credentials[0]['cred_info'];
+
+    credentials = await indy.proverFetchCredentialsForProofReq(searchForApplyLoanKycProofRequest, 'attr2_referent', 100)
+    credForAttr2 = credentials[0]['cred_info'];
+
+    credentials = await indy.proverFetchCredentialsForProofReq(searchForApplyLoanKycProofRequest, 'attr3_referent', 100)
+    credForAttr3 = credentials[0]['cred_info'];
+
+    await indy.proverCloseCredentialsSearchForProofReq(searchForApplyLoanKycProofRequest)
 
     let credsForApplyLoanKycProof = {};
     credsForApplyLoanKycProof[`${credForAttr1['referent']}`] = credForAttr1;
@@ -561,9 +591,9 @@ async function run() {
     let applyLoanKycRequestedCredsJson = {
         'self_attested_attributes': {},
         'requested_attributes': {
-            'attr1_referent': { 'cred_id': credForAttr1['referent'], 'revealed': true },
-            'attr2_referent': { 'cred_id': credForAttr2['referent'], 'revealed': true },
-            'attr3_referent': { 'cred_id': credForAttr3['referent'], 'revealed': true }
+            'attr1_referent': {'cred_id': credForAttr1['referent'], 'revealed': true},
+            'attr2_referent': {'cred_id': credForAttr2['referent'], 'revealed': true},
+            'attr3_referent': {'cred_id': credForAttr3['referent'], 'revealed': true}
         },
         'requested_predicates': {}
     };
@@ -573,7 +603,7 @@ async function run() {
         schemasJson, credDefsJson, revocStatesJson);
 
     console.log("\"Alice\" -> Authcrypt \"Loan-Application-KYC\" Proof for Thrift");
-    let authcryptedAliceApplyLoanKycProofJson = await indy.cryptoAuthCrypt(aliceWallet, aliceThriftKey, thriftAliceVerkey, Buffer.from(JSON.stringify(aliceApplyLoanKycProofJson), 'utf8'));
+    let authcryptedAliceApplyLoanKycProofJson = await indy.cryptoAuthCrypt(aliceWallet, aliceThriftKey, thriftAliceVerkey,Buffer.from(JSON.stringify(aliceApplyLoanKycProofJson),'utf8'));
 
     console.log("\"Alice\" -> Send authcrypted \"Loan-Application-KYC\" Proof to Thrift");
 
@@ -596,27 +626,27 @@ async function run() {
 
     console.log(" \"Sovrin Steward\" -> Close and Delete wallet");
     await indy.closeWallet(stewardWallet);
-    await indy.deleteWallet(stewardWalletName, toJson(stewardWalletCredentials));
+    await indy.deleteWallet(stewardWalletConfig, stewardWalletCredentials);
 
     console.log("\"Government\" -> Close and Delete wallet");
     await indy.closeWallet(governmentWallet);
-    await indy.deleteWallet(governmentWalletName, toJson(governmentWalletCredentials));
+    await indy.deleteWallet(governmentWalletConfig, governmentWalletCredentials);
 
     console.log("\"Faber\" -> Close and Delete wallet");
     await indy.closeWallet(faberWallet);
-    await indy.deleteWallet(faberWalletName, toJson(faberWalletCredentials));
+    await indy.deleteWallet(faberWalletConfig, faberWalletCredentials);
 
     console.log("\"Acme\" -> Close and Delete wallet");
     await indy.closeWallet(acmeWallet);
-    await indy.deleteWallet(acmeWalletName, toJson(acmeWalletCredentials));
+    await indy.deleteWallet(acmeWalletConfig, acmeWalletCredentials);
 
     console.log("\"Thrift\" -> Close and Delete wallet");
     await indy.closeWallet(thriftWallet);
-    await indy.deleteWallet(thriftWalletName, toJson(thriftWalletCredentials));
+    await indy.deleteWallet(thriftWalletConfig, thriftWalletCredentials);
 
     console.log("\"Alice\" -> Close and Delete wallet");
     await indy.closeWallet(aliceWallet);
-    await indy.deleteWallet(aliceWalletName, toJson(aliceWalletCredentials));
+    await indy.deleteWallet(aliceWalletConfig, aliceWalletCredentials);
 
     console.log("Close and Delete pool");
     await indy.closePoolLedger(poolHandle);
@@ -625,17 +655,7 @@ async function run() {
     console.log("Getting started -> done")
 }
 
-function toJson(val) {
-    if (val === null || val === void 0) {
-        return null
-    }
-    if (typeof val === 'string') {
-        return val
-    }
-    return JSON.stringify(val)
-}
-
-async function onboarding(poolHandle, poolName, From, fromWallet, fromDid, to, toWallet, toWalletName, toWalletCredentials) {
+async function onboarding(poolHandle, From, fromWallet, fromDid, to, toWallet, toWalletConfig, toWalletCredentials) {
     console.log(`\"${From}\" > Create and store in Wallet \"${From} ${to}\" DID`);
     let [fromToDid, fromToKey] = await indy.createAndStoreMyDid(fromWallet, {});
 
@@ -651,13 +671,13 @@ async function onboarding(poolHandle, poolName, From, fromWallet, fromDid, to, t
     if (!toWallet) {
         console.log(`\"${to}\" > Create wallet"`);
         try {
-            await indy.createWallet(poolName, toWalletName, 'default', null, toJson(toWalletCredentials))
-        } catch (e) {
-            if (e.message !== "WalletAlreadyExistsError") {
+            await indy.createWallet(toWalletConfig, toWalletCredentials)
+        } catch(e) {
+            if(e.message !== "WalletAlreadyExistsError") {
                 throw e;
             }
         }
-        toWallet = await indy.openWallet(toWalletName, null, toJson(toWalletCredentials));
+        toWallet = await indy.openWallet(toWalletConfig, toWalletCredentials);
     }
 
     console.log(`\"${to}\" > Create and store in Wallet \"${to} ${From}\" DID`);
@@ -753,7 +773,7 @@ async function proverGetEntitiesFromLedger(poolHandle, did, identifiers, actor) 
     let credDefs = {};
     let revStates = {};
 
-    for (let referent of Object.keys(identifiers)) {
+    for(let referent of Object.keys(identifiers)) {
         let item = identifiers[referent];
         console.log(`\"${actor}\" -> Get Schema from Ledger`);
         let [receivedSchemaId, receivedSchema] = await getSchema(poolHandle, did, item['schema_id']);
@@ -778,7 +798,7 @@ async function verifierGetEntitiesFromLedger(poolHandle, did, identifiers, actor
     let revRegDefs = {};
     let revRegs = {};
 
-    for (let referent of Object.keys(identifiers)) {
+    for(let referent of Object.keys(identifiers)) {
         let item = identifiers[referent];
         console.log(`"${actor}" -> Get Schema from Ledger`);
         let [receivedSchemaId, receivedSchema] = await getSchema(poolHandle, did, item['schema_id']);
