@@ -209,11 +209,12 @@ export class AdminComponent implements OnInit {
       nursingHomeWallet: 'null',
       nursingHomeDid: 'null',
       poolHandle: parseInt(this.ledgers[this.ledgers.length - 1].poolHandle),
-      schema: ["patient_first_name", "patient_last_name", "doctor_name", "status", "dob", "link", "pdf_hash", "isCreated"]
+      schema: ["No", "full_name", "dob", "gender", "nationality", "hometown", "created_at"]
     };
 
     this.TrustAnchors.forEach(TrustAnchor => {
-      if (TrustAnchor.trustAnchorWallet == 5) {
+      let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
+      if (anchorName === 'government' || anchorName === 'gov') {
         setupSchema.nursingHomeWallet = TrustAnchor.trustAnchorWallet;
         setupSchema.nursingHomeDid = TrustAnchor.trustAnchorDID;
       }
