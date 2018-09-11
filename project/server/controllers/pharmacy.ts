@@ -141,16 +141,26 @@ export default class pharmacyCtrl extends BaseCtrl {
       let revocRefDefsJson, revocRegsJson;
       [schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson] = await this.verifierGetEntitiesFromLedger(req.body.poolHandle, req.body.pharmacyDid, decryptedPrescriptionApplicationProof['identifiers'], 'Pharmacy');
 
+      let decryptedData = decryptedPrescriptionApplicationProof['requested_proof'];
       //DEBUG
       console.log(req.body.data);
-      console.log(JSON.stringify(decryptedPrescriptionApplicationProof));
+      console.log(JSON.stringify(decryptedData));
       //DEBUG
 
-      assert(req.body.data.id === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr1_referent']['raw']);
-      assert(req.body.data.name === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr2_referent']['raw']);
-      assert(req.body.data.dob === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr3_referent']);
-      assert(req.body.data.gender === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr4_referent']);
-      assert(req.body.data.created_at === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr5_referent']['raw']);
+      assert(req.body.data.id === decryptedData['revealed_attrs']['attr1_referent']['raw']);
+      console.log(`\"${req.body.data.id}\" > Create and store in Wallet \"${req.body.data.id} ${decryptedData['revealed_attrs']['attr1_referent']['raw']}\" DID`);
+
+      assert(req.body.data.name === decryptedData['revealed_attrs']['attr2_referent']['raw']);
+      console.log(`\"${req.body.data.name}\" > Create and store in Wallet \"${req.body.data.name} ${decryptedData['revealed_attrs']['attr2_referent']['raw']}\" DID`);
+
+      assert(req.body.data.dob === decryptedData['self_attested_attrs']['attr3_referent']);
+      console.log(`\"${req.body.data.dob}\" > Create and store in Wallet \"${req.body.data.dob} ${decryptedData['self_attested_attrs']['attr3_referent']}\" DID`);
+
+      assert(req.body.data.gender === decryptedData['self_attested_attrs']['attr4_referent']);
+      console.log(`\"${req.body.data.gender}\" > Create and store in Wallet \"${req.body.data.gender} ${decryptedData['self_attested_attrs']['attr4_referent']}\" DID`);
+
+      assert(req.body.data.created_at === decryptedData['revealed_attrs']['attr5_referent']['raw']);
+      console.log(`\"${req.body.data.created_at}\" > Create and store in Wallet \"${req.body.data.created_at} ${decryptedData['revealed_attrs']['attr5_referent']['raw']}\" DID`);
 
       await indy.verifierVerifyProof(prescriptionApplicationProofRequestJson, decryptedPrescriptionApplicationProofJson, schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson);
       res.status(200).json();
