@@ -45,14 +45,14 @@ export default class doctorCtrl extends BaseCtrl {
   //     }
   // }
   gettingPrescription = async (req, res) => {
-    try {
-      let poolHandle = req.body.poolHandle;
-      let doctorWallet = req.body.doctorWallet;
-      let doctorDid = req.body.doctorDid;
-      let pharmacyWallet = req.body.pharmacyWallet;
+    let poolHandle = req.body.poolHandle;
+    let doctorWallet = req.body.doctorWallet;
+    let doctorDid = req.body.doctorDid;
+    let pharmacyWallet = req.body.pharmacyWallet;
+    let patientWalletConfig = { 'id': req.body.patientWalletName };
+    let patientWalletCredentials = { 'key': req.body.name + '_key' };
 
-      let patientWalletConfig = { 'id': req.body.patientWalletName };
-      let patientWalletCredentials = { 'key': req.body.name + '_key' };
+    try {
       let [patientWallet, doctorPatientKey, patientDoctorDid, patientDoctorKey, doctorPatientConnectionResponse] = await this.onboarding(poolHandle, "Government", doctorWallet, doctorDid, "Personal", null, patientWalletConfig, patientWalletCredentials);
 
       let prescriptionCredOfferJson = await indy.issuerCreateCredentialOffer(doctorWallet, req.body.doctorPrescriptionCredDefId);
@@ -96,6 +96,9 @@ export default class doctorCtrl extends BaseCtrl {
       });
     } catch (error) {
       console.log(error);
+      //Close and delete wallet
+      await indy.closeWallet(patientWalletConfig.id);
+      await indy.deleteWallet(patientWalletConfig, patientWalletCredentials);
       res.sendStatus(403);
     }
   }

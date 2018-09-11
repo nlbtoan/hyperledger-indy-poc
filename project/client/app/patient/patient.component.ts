@@ -196,7 +196,7 @@ export class PatientComponent implements OnInit {
         hometown: { raw: this.patientForm.value.hometown, encoded: '1' },
         profile_image_hash: { raw: this.hashResponse, encoded: '1' },
         created_at: { raw: new Date().toISOString().slice(0, 10), encoded: '1' },
-        status: { raw: 1, encoded: '1' }
+        status: { raw: '1', encoded: '1' }
       }
     };
 
