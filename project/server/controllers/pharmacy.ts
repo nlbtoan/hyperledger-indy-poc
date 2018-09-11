@@ -63,16 +63,20 @@ export default class pharmacyCtrl extends BaseCtrl {
             'name': 'dob'
           },
           'attr4_referent': {
-            'name': 'gender'
+            'name': 'gender',
+            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
           },
           'attr5_referent': {
-            'name': 'nationality'
+            'name': 'nationality',
+            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
           },
           'attr6_referent': {
-            'name': 'hometown'
+            'name': 'hometown',
+            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
           },
           'attr7_referent': {
-            'name': 'profile_image_hash'
+            'name': 'profile_image_hash',
+            
           }
         },
         'requested_predicates': {
@@ -86,15 +90,32 @@ export default class pharmacyCtrl extends BaseCtrl {
       let patientPharmacyVerkey = await indy.keyForDid(req.body.poolHandle, req.body.pharmacyWallet, pharmacyPatientConnectionResponse['did']);
       let authcryptedPrescriptionApplicationProofRequestJson = await indy.cryptoAuthCrypt(req.body.pharmacyWallet, pharmacyPatientKey, patientPharmacyVerkey, Buffer.from(JSON.stringify(prescriptionApplicationProofRequestJson), 'utf8'));
       let [pharmacyPatientVerkey, authdecryptedPrescriptionApplicationProofRequestJson] = await this.authDecrypt(req.body.patientWallet, patientPharmacyKey, authcryptedPrescriptionApplicationProofRequestJson);
-      let credsForPrescriptionApplicationProofRequest = await indy.proverGetCredentialsForProofReq(req.body.patientWallet, authdecryptedPrescriptionApplicationProofRequestJson);
-      let credForAttr1 = credsForPrescriptionApplicationProofRequest['attrs']['attr1_referent'][0]['cred_info'];
-      let credForAttr2 = credsForPrescriptionApplicationProofRequest['attrs']['attr2_referent'][0]['cred_info'];
-      let credForAttr3 = credsForPrescriptionApplicationProofRequest['attrs']['attr3_referent'][0]['cred_info'];
-      let credForAttr4 = credsForPrescriptionApplicationProofRequest['attrs']['attr4_referent'][0]['cred_info'];
-      let credForAttr5 = credsForPrescriptionApplicationProofRequest['attrs']['attr5_referent'][0]['cred_info'];
-      let credForAttr6 = credsForPrescriptionApplicationProofRequest['attrs']['attr6_referent'][0]['cred_info'];
-      let credForAttr7 = credsForPrescriptionApplicationProofRequest['attrs']['attr7_referent'][0]['cred_info'];
-      let credForPredicate1 = credsForPrescriptionApplicationProofRequest['predicates']['predicate1_referent'][0]['cred_info'];
+      let searchForJobApplicationProofRequest = await indy.proverSearchCredentialsForProofReq(req.body.patientWallet, authdecryptedPrescriptionApplicationProofRequestJson, null)
+      let credsForPrescriptionApplicationProofRequest = await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr1_referent', 100)
+      let credForAttr1 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      
+      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr2_referent', 100);
+      let credForAttr2 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      
+      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr3_referent', 100)
+      let credForAttr3 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      
+      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr4_referent', 100)
+      let credForAttr4 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      
+      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr5_referent', 100)
+      let credForAttr5 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      
+      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr6_referent', 100)
+      let credForAttr6 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      
+      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr7_referent', 100)
+      let credForAttr7 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      
+      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'predicate1_referent', 100)
+      let credForPredicate1 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+
+      await indy.proverCloseCredentialsSearchForProofReq(searchForJobApplicationProofRequest);
 
       let credsForPrescriptionApplicationProof = {};
       credsForPrescriptionApplicationProof[`${credForAttr1['referent']}`] = credForAttr1;
@@ -140,7 +161,7 @@ export default class pharmacyCtrl extends BaseCtrl {
       assert(req.body.gender === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr4_referent']['raw']);
       assert(req.body.nationality === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr5_referent']['raw']);
       assert(req.body.hometown === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr6_referent']['raw']);
-      assert(req.body.profile_image_hash === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr7_referent']['raw']);
+      // assert(req.body.profile_image_hash === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr7_referent']['raw']);
 
       await indy.verifierVerifyProof(prescriptionApplicationProofRequestJson, decryptedPrescriptionApplicationProofJson, schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson);
       res.status(200).json();
