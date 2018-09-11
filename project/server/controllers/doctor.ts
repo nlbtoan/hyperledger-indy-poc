@@ -95,6 +95,7 @@ export default class doctorCtrl extends BaseCtrl {
         prescriptionCredJson: prescriptionCredJson
       });
     } catch (error) {
+      console.log(error);
       res.sendStatus(403);
     }
   }
