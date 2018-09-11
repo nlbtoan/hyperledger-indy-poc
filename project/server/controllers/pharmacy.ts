@@ -143,7 +143,7 @@ export default class pharmacyCtrl extends BaseCtrl {
 
       //DEBUG
       console.log(req.body.data);
-      console.log(decryptedPrescriptionApplicationProof);
+      console.log(JSON.stringify(decryptedPrescriptionApplicationProof));
       //DEBUG
 
       assert(req.body.data.id === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr1_referent']['raw']);
