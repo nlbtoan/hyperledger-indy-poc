@@ -186,6 +186,7 @@ export class PatientComponent implements OnInit {
       doctorDid: 'null',
       doctorWallet: 'null',
       pharmacyWallet: 'null',
+      pharmacyDid: 'null',
       prescriptionCredValues: {
         id: { raw: this.patientForm.value.id, encoded: '1' },
         name: { raw: this.patientForm.value.name, encoded: '1' },
@@ -206,6 +207,7 @@ export class PatientComponent implements OnInit {
         prescription.doctorWallet = TrustAnchor.trustAnchorWallet;
       } else if (anchorName === 'banking' || anchorName === 'bank') {
         prescription.pharmacyWallet = TrustAnchor.trustAnchorWallet;
+        prescription.pharmacyDid = TrustAnchor.trustAnchorDID;
       }
     });
 
