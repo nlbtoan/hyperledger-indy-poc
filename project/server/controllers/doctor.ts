@@ -51,9 +51,10 @@ export default class doctorCtrl extends BaseCtrl {
     let pharmacyWallet = req.body.pharmacyWallet;
     let patientWalletConfig = { 'id': req.body.patientWalletName };
     let patientWalletCredentials = { 'key': req.body.name + '_key' };
+    let patientWallet, doctorPatientKey, patientDoctorDid, patientDoctorKey, doctorPatientConnectionResponse;
 
     try {
-      let [patientWallet, doctorPatientKey, patientDoctorDid, patientDoctorKey, doctorPatientConnectionResponse] = await this.onboarding(poolHandle, "Government", doctorWallet, doctorDid, "Personal", null, patientWalletConfig, patientWalletCredentials);
+      [patientWallet, doctorPatientKey, patientDoctorDid, patientDoctorKey, doctorPatientConnectionResponse] = await this.onboarding(poolHandle, "Government", doctorWallet, doctorDid, "Personal", null, patientWalletConfig, patientWalletCredentials);
 
       let prescriptionCredOfferJson = await indy.issuerCreateCredentialOffer(doctorWallet, req.body.doctorPrescriptionCredDefId);
       let patientDoctorVerkey = await indy.keyForDid(poolHandle, pharmacyWallet, doctorPatientConnectionResponse['did']);
@@ -96,10 +97,17 @@ export default class doctorCtrl extends BaseCtrl {
       });
     } catch (error) {
       console.log(error);
-      //Close and delete wallet
-      await indy.closeWallet(patientWalletConfig.id);
-      await indy.deleteWallet(patientWalletConfig, patientWalletCredentials);
-      res.sendStatus(403);
+      try {
+        //Close and delete wallet
+        if (patientWallet) {
+          await indy.closeWallet(patientWallet);
+          await indy.deleteWallet(patientWalletConfig, patientWalletCredentials);
+        }
+        res.sendStatus(403);
+      } catch (e) {
+        console.log(e);
+        res.sendStatus(403);
+      }
     }
   }
 
