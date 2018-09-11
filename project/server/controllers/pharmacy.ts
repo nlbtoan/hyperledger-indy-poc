@@ -141,11 +141,16 @@ export default class pharmacyCtrl extends BaseCtrl {
       let revocRefDefsJson, revocRegsJson;
       [schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson] = await this.verifierGetEntitiesFromLedger(req.body.poolHandle, req.body.pharmacyDid, decryptedPrescriptionApplicationProof['identifiers'], 'Pharmacy');
 
-      assert(req.body.id === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr1_referent']['raw']);
-      assert(req.body.name === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr2_referent']['raw']);
-      assert(req.body.dob === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr3_referent']);
-      assert(req.body.gender === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr4_referent']);
-      assert(req.body.created_at === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr5_referent']['raw']);
+      //DEBUG
+      console.log(req.body.data);
+      console.log(decryptedPrescriptionApplicationProof);
+      //DEBUG
+
+      assert(req.body.data.id === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr1_referent']['raw']);
+      assert(req.body.data.name === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr2_referent']['raw']);
+      assert(req.body.data.dob === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr3_referent']);
+      assert(req.body.data.gender === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr4_referent']);
+      assert(req.body.data.created_at === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr5_referent']['raw']);
 
       await indy.verifierVerifyProof(prescriptionApplicationProofRequestJson, decryptedPrescriptionApplicationProofJson, schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson);
       res.status(200).json();
