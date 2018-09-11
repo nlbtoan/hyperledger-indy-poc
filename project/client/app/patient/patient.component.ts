@@ -179,7 +179,7 @@ export class PatientComponent implements OnInit {
     this.isLoading = true;
     let data = this.patientForm.value;
     let prescription = {
-      patientWalletName: data.name.split(' ').join('-') + 'Wallet',
+      patientWalletName: data.name.split(' ').join('') + 'Wallet',
       poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
       poolName: this.ledgers[this.ledgers.length - 1].poolName,
       doctorPrescriptionCredDefId: this.credentialDefinitions[this.credentialDefinitions.length - 1].doctorPrescriptionCredDefId,

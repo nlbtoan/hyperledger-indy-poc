@@ -183,7 +183,7 @@ export class PharmacyComponent implements OnInit {
       poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
       poolName: this.ledgers[this.ledgers.length - 1].poolName,
       patientWallet: this.patientPrescriptions[this.patientPrescriptions.length - 1].patientWallet,
-      patientWalletName: data.name.split(' ').join('-') + 'Wallet',
+      patientWalletName: data.name.split(' ').join('') + 'Wallet',
       patientDoctorDid: this.patientPrescriptions[this.patientPrescriptions.length - 1].patientDoctorDid,
       patientMasterSecretId: this.patientPrescriptions[this.patientPrescriptions.length - 1].patientMasterSecretId,
       doctorPrescriptionCredDefId: this.credentialDefinitions[this.credentialDefinitions.length - 1].doctorPrescriptionCredDefId,
@@ -191,7 +191,7 @@ export class PharmacyComponent implements OnInit {
       pharmacyWallet: 'null',
       pharmacyDid: 'null',
       patientWalletCredentials: {
-        key: data.name.split(' ').join('-') + "_key"
+        key: data.name.split(' ').join('') + "_key"
       },
       data: data
     };
