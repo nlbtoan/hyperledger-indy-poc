@@ -58,7 +58,8 @@ export default class pharmacyCtrl extends BaseCtrl {
             'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
           },
           'attr2_referent': {
-            'name': 'name'
+            'name': 'name',
+            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
           },
           'attr3_referent': {
             'name': 'dob'
@@ -117,12 +118,12 @@ export default class pharmacyCtrl extends BaseCtrl {
 
       let prescriptionApplicationRequestedCredsJson = {
         'self_attested_attributes': {
-          'attr2_referent': req.body.data.name,
           'attr3_referent': req.body.data.dob,
           'attr4_referent': req.body.data.gender
         },
         'requested_attributes': {
           'attr1_referent': { 'cred_id': credForAttr1['referent'], 'revealed': true },
+          'attr2_referent': { 'cred_id': credForAttr2['referent'], 'revealed': true },
           'attr5_referent': { 'cred_id': credForAttr5['referent'], 'revealed': true }
         },
         'requested_predicates': { 'predicate1_referent': { 'cred_id': credForPredicate1['referent'] } }
@@ -140,10 +141,10 @@ export default class pharmacyCtrl extends BaseCtrl {
       let revocRefDefsJson, revocRegsJson;
       [schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson] = await this.verifierGetEntitiesFromLedger(req.body.poolHandle, req.body.pharmacyDid, decryptedPrescriptionApplicationProof['identifiers'], 'Pharmacy');
 
-      assert(req.body.id === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr1_referent']);
-      assert(req.body.name === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr2_referent']);
+      assert(req.body.id === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr1_referent']['raw']);
+      assert(req.body.name === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr2_referent']['raw']);
       assert(req.body.dob === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr3_referent']);
-      assert(req.body.gender === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr4_referent']['raw']);
+      assert(req.body.gender === decryptedPrescriptionApplicationProof['requested_proof']['self_attested_attrs']['attr4_referent']);
       assert(req.body.created_at === decryptedPrescriptionApplicationProof['requested_proof']['revealed_attrs']['attr5_referent']['raw']);
 
       await indy.verifierVerifyProof(prescriptionApplicationProofRequestJson, decryptedPrescriptionApplicationProofJson, schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson);
