@@ -40,7 +40,7 @@ export class PharmacyComponent implements OnInit {
   // hometown = new FormControl('', [
   //   Validators.required
   // ]);
-  createdAt = new FormControl('', [
+  created_at = new FormControl('', [
     Validators.required
   ]);
   // profile_image_hash = new FormControl('', [
@@ -72,7 +72,7 @@ export class PharmacyComponent implements OnInit {
       gender: this.gender,
       // nationality: this.nationality,
       // hometown: this.hometown,
-      createdAt: this.createdAt,
+      created_at: this.created_at,
       // profile_image_hash: this.profile_image_hash,
       money: this.money
     });
@@ -113,7 +113,7 @@ export class PharmacyComponent implements OnInit {
   }
 
   setClassCreatedAt() {
-    return { 'has-danger': !this.createdAt.pristine && !this.createdAt.valid };
+    return { 'has-danger': !this.created_at.pristine && !this.created_at.valid };
   }
 
   getPharmacyPrescriptions() {
