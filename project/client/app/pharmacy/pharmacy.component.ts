@@ -34,18 +34,18 @@ export class PharmacyComponent implements OnInit {
   gender = new FormControl('', [
     Validators.required
   ]);
-  nationality = new FormControl('', [
-    Validators.required
-  ]);
-  hometown = new FormControl('', [
-    Validators.required
-  ]);
+  // nationality = new FormControl('', [
+  //   Validators.required
+  // ]);
+  // hometown = new FormControl('', [
+  //   Validators.required
+  // ]);
   createdAt = new FormControl('', [
     Validators.required
   ]);
-  profile_image_hash = new FormControl('', [
-    Validators.required
-  ]);
+  // profile_image_hash = new FormControl('', [
+  //   Validators.required
+  // ]);
   money = new FormControl('', [
     Validators.required
   ]);
@@ -70,10 +70,10 @@ export class PharmacyComponent implements OnInit {
       name: this.name,
       dob: this.dob,
       gender: this.gender,
-      nationality: this.nationality,
-      hometown: this.hometown,
+      // nationality: this.nationality,
+      // hometown: this.hometown,
       createdAt: this.createdAt,
-      profile_image_hash: this.profile_image_hash,
+      // profile_image_hash: this.profile_image_hash,
       money: this.money
     });
 
@@ -96,17 +96,17 @@ export class PharmacyComponent implements OnInit {
     return { 'has-danger': !this.gender.pristine && !this.gender.valid };
   }
 
-  setClassNationality() {
-    return { 'has-danger': !this.nationality.pristine && !this.nationality.valid };
-  }
+  // setClassNationality() {
+  //   return { 'has-danger': !this.nationality.pristine && !this.nationality.valid };
+  // }
 
-  setClassHometown() {
-    return { 'has-danger': !this.hometown.pristine && !this.hometown.valid };
-  }
+  // setClassHometown() {
+  //   return { 'has-danger': !this.hometown.pristine && !this.hometown.valid };
+  // }
 
-  setClassProfileImageHash() {
-    return { 'has-danger': !this.profile_image_hash.pristine && !this.profile_image_hash.valid };
-  }
+  // setClassProfileImageHash() {
+  //   return { 'has-danger': !this.profile_image_hash.pristine && !this.profile_image_hash.valid };
+  // }
 
   setClassMoney() {
     return { 'has-danger': !this.money.pristine && !this.money.valid };
@@ -177,6 +177,8 @@ export class PharmacyComponent implements OnInit {
   applyPrescription() {
     this.isLoading = true;
     let data = this.pharmacyForm.value;
+    data.status = 1;
+
     let prescription = {
       poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
       poolName: this.ledgers[this.ledgers.length - 1].poolName,
@@ -190,7 +192,8 @@ export class PharmacyComponent implements OnInit {
       pharmacyDid: 'null',
       patientWalletCredentials: {
         key: data.name.split(' ').join('-') + "_key"
-      }
+      },
+      data: data
     };
 
     this.TrustAnchors.forEach(TrustAnchor => {
