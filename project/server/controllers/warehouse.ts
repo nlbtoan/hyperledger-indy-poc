@@ -26,19 +26,19 @@ export default class wareHouseCtrl extends BaseCtrl {
   // URL: /api/createSchema
   // Body:
   // {
-  //   "nursingHomeWallet": 5,
-  //   "nursingHomeDid": "AFJZeQZk3utUA2kcbvK1Zd",
+  //   "governmentWallet": 5,
+  //   "governmentDid": "AFJZeQZk3utUA2kcbvK1Zd",
   //   "poolHandle": 2,
   //   "schema": ["patient_first_name", "patient_last_name", "doctor_name", "status", "dob", "link", "pdf_hash", "isCreated"]
   // }
   createSchema = async (req, res) => {
     try {
-      let [prescriptionSchemaId, prescriptionSchema] = await indy.issuerCreateSchema(req.body.nursingHomeDid, 'id-card', '1.0', req.body.schema);
+      let [idCardSchemaId, idCardSchema] = await indy.issuerCreateSchema(req.body.governmentDid, 'id-card', '1.0', req.body.schema);
 
-      await this.sendSchema(req.body.poolHandle, req.body.nursingHomeWallet, req.body.nursingHomeDid, prescriptionSchema);
+      await this.sendSchema(req.body.poolHandle, req.body.governmentWallet, req.body.governmentDid, idCardSchema);
       res.status(200).json({
-        prescriptionSchemaId: prescriptionSchemaId,
-        prescriptionSchema: prescriptionSchema
+        idCardSchemaId: idCardSchemaId,
+        idCardSchema: idCardSchema
       });
     } catch (error) {
       console.log(error);
@@ -50,8 +50,8 @@ export default class wareHouseCtrl extends BaseCtrl {
   // URL: /api/addTrustAnchor
   // Body:
   // {
-  //   "name": "nursingHome22",
-  //   "trustAnchorWalletName": "nursingHomeWallet22",
+  //   "name": "government22",
+  //   "trustAnchorWalletName": "governmentWallet22",
   //   "poolHandle": 2,
   //   "poolName": "indy22",
   //   "stewardWallet": 3,

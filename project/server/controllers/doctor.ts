@@ -118,11 +118,11 @@ export default class doctorCtrl extends BaseCtrl {
   //   "poolHandle": 2,
   //   "doctorDid": "BMkm2SzCDifFVFWGu9PEGY",
   //   "doctorWallet": 13,
-  //   "prescriptionSchemaId": "UAyYVcKCQuNKGCztZUn3WX:2:Prescription:1.2",
-  //   "prescriptionSchema": {
+  //   "idCardSchemaId": "UAyYVcKCQuNKGCztZUn3WX:2:IdCard:1.2",
+  //   "idCardSchema": {
   //     "ver": "1.0",
-  //     "id": "UAyYVcKCQuNKGCztZUn3WX:2:Prescription:1.2",
-  //     "name": "Prescription",
+  //     "id": "UAyYVcKCQuNKGCztZUn3WX:2:IdCard:1.2",
+  //     "name": "IdCard",
   //     "version": "1.2",
   //     "attrNames": [
   //         "doctor_name",
@@ -140,17 +140,17 @@ export default class doctorCtrl extends BaseCtrl {
   setupCredentialDefinition = async (req, res) => {
     try {
       let poolHandle = req.body.poolHandle;
-      let doctorWallet = req.body.doctorWallet;
-      let doctorDid = req.body.doctorDid;
+      let governmentWallet = req.body.governmentWallet;
+      let governmentDid = req.body.governmentDid;
 
-      [, req.body.prescriptionSchema] = await this.getSchema(poolHandle, doctorDid, req.body.prescriptionSchemaId);
+      [, req.body.IdCardSchema] = await this.getSchema(poolHandle, governmentDid, req.body.idCardSchemaId);
 
-      let [doctorPrescriptionCredDefId, doctorPrescriptionCredDefJson] = await indy.issuerCreateAndStoreCredentialDef(doctorWallet, doctorDid, req.body.prescriptionSchema, 'TAG1', 'CL', '{"support_revocation": false}');
-      await this.sendCredDef(poolHandle, doctorWallet, doctorDid, doctorPrescriptionCredDefJson);
+      let [governmentIdCardCredDefId, governmentIdCardCredDefJson] = await indy.issuerCreateAndStoreCredentialDef(governmentWallet, governmentDid, req.body.idCardSchema, 'TAG1', 'CL', '{"support_revocation": false}');
+      await this.sendCredDef(poolHandle, governmentWallet, governmentDid, governmentIdCardCredDefJson);
 
       res.status(200).json({
-        doctorPrescriptionCredDefId: doctorPrescriptionCredDefId,
-        doctorPrescriptionCredDefJson: doctorPrescriptionCredDefJson
+        governmentIdCardCredDefId: governmentIdCardCredDefId,
+        governmentIdCardCredDefJson: governmentIdCardCredDefJson
       });
     } catch (error) {
       console.log(error);

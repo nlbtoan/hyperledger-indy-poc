@@ -206,8 +206,8 @@ export class AdminComponent implements OnInit {
   createSchema() {
     this.isLoading = true;
     let setupSchema = {
-      nursingHomeWallet: 'null',
-      nursingHomeDid: 'null',
+      governmentWallet: 'null',
+      governmentDid: 'null',
       poolHandle: parseInt(this.ledgers[this.ledgers.length - 1].poolHandle),
       schema: ["id", "name", "dob", "gender", "nationality", "hometown", "profile_image_hash", "created_at", "status"]
     };
@@ -215,8 +215,8 @@ export class AdminComponent implements OnInit {
     this.TrustAnchors.forEach(TrustAnchor => {
       let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
       if (anchorName === 'government' || anchorName === 'gov') {
-        setupSchema.nursingHomeWallet = TrustAnchor.trustAnchorWallet;
-        setupSchema.nursingHomeDid = TrustAnchor.trustAnchorDID;
+        setupSchema.governmentWallet = TrustAnchor.trustAnchorWallet;
+        setupSchema.governmentDid = TrustAnchor.trustAnchorDID;
       }
     });
 
@@ -226,7 +226,7 @@ export class AdminComponent implements OnInit {
           res => {
             this.getShema();
             this.isLoading = false;
-            this.toast.setMessage('Trust Anchor created successfully.', 'success');
+            this.toast.setMessage('Schema created successfully.', 'success');
           }
         );
       },

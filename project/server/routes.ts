@@ -8,7 +8,7 @@ import Pharmacy from './controllers/pharmacy';
 import HashFile from './controllers/hashFile';
 import Ledger from './controllers/ledger';
 import TrustAnchor from './controllers/trustAnchor';
-import Prescription from './controllers/prescription';
+import IdCard from './controllers/idCard';
 import CredentialDefinition from './controllers/credentialDefinition';
 import PatientPrescription from './controllers/patientPrescription';
 import PharmacyPrescription from './controllers/PharmacyPrescription';
@@ -25,7 +25,7 @@ export default function setRoutes(app) {
   const hashFile = new HashFile();
   const ledger = new Ledger();
   const trustAnchor = new TrustAnchor();
-  const prescription = new Prescription();
+  const idCard = new IdCard();
   const credentialDefinition = new CredentialDefinition();
   const patientPrescription = new PatientPrescription();
   const pharmacyPrescription = new PharmacyPrescription();
@@ -48,12 +48,12 @@ export default function setRoutes(app) {
   router.route('/trustAnchor/:id').delete(trustAnchor.delete);
 
   // Prescription schema
-  router.route('/prescriptions').get(prescription.getAll);
-  router.route('/prescriptions/count').get(prescription.count);
-  router.route('/prescription').post(prescription.insert);
-  router.route('/prescription/:id').get(prescription.get);
-  router.route('/prescription/:id').put(prescription.update);
-  router.route('/prescription/:id').delete(prescription.delete);
+  router.route('/prescriptions').get(idCard.getAll);
+  router.route('/prescriptions/count').get(idCard.count);
+  router.route('/prescription').post(idCard.insert);
+  router.route('/prescription/:id').get(idCard.get);
+  router.route('/prescription/:id').put(idCard.update);
+  router.route('/prescription/:id').delete(idCard.delete);
 
   // Credential Definition
   router.route('/credentialDefinitions').get(credentialDefinition.getAll);
