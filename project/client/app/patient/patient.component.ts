@@ -18,14 +18,14 @@ export class PatientComponent implements OnInit {
   hashResponse;
   binaryConverted;
   credentialDefinitions = [];
-  patientPrescriptions = [];
+  residentIdcard = [];
   ledgers = [];
   TrustAnchors = [];
   Schemas = [];
   isLoading = true;
 
   // Patient validation
-  patientForm: FormGroup;
+  residentForm: FormGroup;
 
   id = new FormControl('', [
     Validators.required
@@ -59,13 +59,13 @@ export class PatientComponent implements OnInit {
 
   ngOnInit() {
     this.getCredentialDefinitions();
-    this.getPatientPrescription();
+    this.gettingIdCard();
     this.getTrustAnchor();
     this.getLedger();
     this.getShema();
 
     // Build form for patient
-    this.patientForm = this.formBuilder.group({
+    this.residentForm = this.formBuilder.group({
       id: this.id,
       name: this.name,
       dob: this.dob,
@@ -114,9 +114,9 @@ export class PatientComponent implements OnInit {
     );
   }
 
-  getPatientPrescription() {
+  gettingIdCard() {
     this.patientService.getAllPatientPrescription().subscribe(
-      data => this.patientPrescriptions = data,
+      data => this.residentIdcard = data,
       error => console.log(error),
       () => this.isLoading = false
     );
@@ -164,7 +164,7 @@ export class PatientComponent implements OnInit {
     if (window.confirm('Are you sure you want to delete this prescription?')) {
       this.patientService.deletePatientPrescription(patientPrescription).subscribe(
         data => {
-          this.getPatientPrescription();
+          this.gettingIdCard();
           this.toast.setMessage('Patient Prescription deleted successfully.', 'success');
         },
         error => {
@@ -175,25 +175,25 @@ export class PatientComponent implements OnInit {
     }
   }
 
-  createPrescription() {
+  createIdCard() {
     this.isLoading = true;
-    let data = this.patientForm.value;
-    let prescription = {
-      patientWalletName: data.name.split(' ').join('') + 'Wallet',
+    let data = this.residentForm.value;
+    let idCard = {
+      residentWalletName: data.name.split(' ').join('') + 'Wallet',
       poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
       poolName: this.ledgers[this.ledgers.length - 1].poolName,
-      doctorPrescriptionCredDefId: this.credentialDefinitions[this.credentialDefinitions.length - 1].doctorPrescriptionCredDefId,
-      doctorDid: 'null',
-      doctorWallet: 'null',
-      pharmacyWallet: 'null',
-      pharmacyDid: 'null',
-      prescriptionCredValues: {
-        id: { raw: this.patientForm.value.id, encoded: '1' },
-        name: { raw: this.patientForm.value.name, encoded: '1' },
-        dob: { raw: this.patientForm.value.dob, encoded: '1' },
-        gender: { raw: this.patientForm.value.gender, encoded: '1' },
-        nationality: { raw: this.patientForm.value.nationality, encoded: '1' },
-        hometown: { raw: this.patientForm.value.hometown, encoded: '1' },
+      governmentIdCardCredDefId: this.credentialDefinitions[this.credentialDefinitions.length - 1].governmentIdCardCredDefId,
+      governmentDid: 'null',
+      governmentWallet: 'null',
+      bankWallet: 'null',
+      bankDid: 'null',
+      idCardCredValues: {
+        id: { raw: this.residentForm.value.id, encoded: '1' },
+        name: { raw: this.residentForm.value.name, encoded: '1' },
+        dob: { raw: this.residentForm.value.dob, encoded: '1' },
+        gender: { raw: this.residentForm.value.gender, encoded: '1' },
+        nationality: { raw: this.residentForm.value.nationality, encoded: '1' },
+        hometown: { raw: this.residentForm.value.hometown, encoded: '1' },
         profile_image_hash: { raw: this.hashResponse, encoded: '1' },
         created_at: { raw: new Date().toISOString().slice(0, 10), encoded: '1' },
         status: { raw: '1', encoded: '1' }
@@ -203,33 +203,33 @@ export class PatientComponent implements OnInit {
     this.TrustAnchors.forEach(TrustAnchor => {
       let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
       if (anchorName === 'government' || anchorName === 'gov') {
-        prescription.doctorDid = TrustAnchor.trustAnchorDID;
-        prescription.doctorWallet = TrustAnchor.trustAnchorWallet;
+        idCard.governmentDid = TrustAnchor.trustAnchorDID;
+        idCard.governmentWallet = TrustAnchor.trustAnchorWallet;
       } else if (anchorName === 'banking' || anchorName === 'bank') {
-        prescription.pharmacyWallet = TrustAnchor.trustAnchorWallet;
-        prescription.pharmacyDid = TrustAnchor.trustAnchorDID;
+        idCard.bankWallet = TrustAnchor.trustAnchorWallet;
+        idCard.bankDid = TrustAnchor.trustAnchorDID;
       }
     });
 
-    this.patientService.createPrescription(prescription).subscribe(
+    this.patientService.createIdCard(idCard).subscribe(
       res => {
         this.patientService.insertPatientPrescription(res).subscribe(
           res => {
-            this.getPatientPrescription();
+            this.gettingIdCard();
             this.isLoading = false;
-            this.toast.setMessage('Patient prescription created successfully.', 'success');
+            this.toast.setMessage('Resident Id Card created successfully.', 'success');
           },
           error => {
             console.log(error);
             this.isLoading = false;
-            this.toast.setMessage('Patient prescription can not created', 'danger');
+            this.toast.setMessage('Resident Id Card can not created', 'danger');
           }
         );
       },
       error => {
         console.log(error);
         this.isLoading = false;
-        this.toast.setMessage('Patient prescription can not created', 'danger');
+        this.toast.setMessage('Resident Id Card can not created', 'danger');
       }
     );
   }
@@ -239,15 +239,15 @@ export class PatientComponent implements OnInit {
 
     let credentialDefinition = {
       poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
-      doctorDid: 'none',
-      doctorWallet: 'none'
+      governmentDid: 'none',
+      governmentWallet: 'none'
     }
 
     this.TrustAnchors.forEach(TrustAnchor => {
       let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
       if (anchorName === 'government' || anchorName === 'gov') {
-        credentialDefinition.doctorDid = TrustAnchor.trustAnchorDID,
-          credentialDefinition.doctorWallet = TrustAnchor.trustAnchorWallet
+        credentialDefinition.governmentDid = TrustAnchor.trustAnchorDID,
+          credentialDefinition.governmentWallet = TrustAnchor.trustAnchorWallet
       }
     });
 

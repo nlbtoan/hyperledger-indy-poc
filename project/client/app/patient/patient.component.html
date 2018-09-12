@@ -13,7 +13,7 @@
     <table class="table table-bordered">
       <thead class="thead-light">
         <tr>
-          <th scope="col">Doctor Prescription Credential Definition</th>
+          <th scope="col">Government Credential Definition</th>
           <th scope="col">Option</th>
         </tr>
       </thead>
@@ -23,8 +23,9 @@
         </tr>
       </tbody>
       <tbody>
+      <!-- NEED TO REVIEW  -->
         <tr *ngFor="let credentialDefinition of credentialDefinitions">
-          <td>{{credentialDefinition.doctorPrescriptionCredDefId}}</td>
+          <td>{{credentialDefinition.governmentIdCardCredDefId}}</td>
           <td>
             <button class="btn btn-sm btn-danger" (click)="deleteCredentialDefinition(credentialDefinition)">
               <i class="fa fa-trash"></i> Delete
@@ -36,11 +37,11 @@
   </div>
 </div>
 
-<!-- Patient prescriptions Form -->
+<!-- Resident Id Card Form -->
 <div class="card" *ngIf="!isLoading">
-  <h4 class="card-header">Step 5: Patient prescriptions</h4>
+  <h4 class="card-header">Step 5: Resident Id Card</h4>
   <div class="card-body">
-    <form [formGroup]="patientForm" (ngSubmit)="createPrescription()">
+    <form [formGroup]="residentForm" (ngSubmit)="createIdCard()">
 
       <div class="input-group" [ngClass]="setClassID()">
         <div class="input-group-prepend">
@@ -106,7 +107,7 @@
           #fileInput>
       </div>
 
-      <button class="btn btn-primary" type="submit" [disabled]="!patientForm.valid">
+      <button class="btn btn-primary" type="submit" [disabled]="!residentForm.valid">
         <i class="fa fa-sign-in"></i> Submit</button>
     </form>
   </div>
@@ -115,8 +116,8 @@
     <table class="table table-bordered">
       <thead class="thead-light">
         <tr>
-          <th scope="col">Patient Doctor DID</th>
-          <th scope="col">Patient Wallet</th>
+          <th scope="col">Resident Id Card DID</th>
+          <th scope="col">Resident Id Card Wallet</th>
           <!-- <th scope="col">Hash</th> -->
           <!-- <th scope="col">Patient Master Secret ID</th> -->
           <th scope="col">Option</th>

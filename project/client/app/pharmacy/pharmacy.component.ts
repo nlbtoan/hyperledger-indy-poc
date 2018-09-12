@@ -61,7 +61,7 @@ export class PharmacyComponent implements OnInit {
   ngOnInit() {
     this.getPharmacyPrescriptions();
     this.getLedger();
-    this.getPatientPrescription();
+    this.gettingIdCard();
     this.getTrustAnchor();
     this.getCredentialDefinitions();
 
@@ -136,7 +136,7 @@ export class PharmacyComponent implements OnInit {
     );
   }
 
-  getPatientPrescription() {
+  gettingIdCard() {
     this.patientService.getAllPatientPrescription().subscribe(
       data => this.patientPrescriptions = data,
       error => console.log(error),

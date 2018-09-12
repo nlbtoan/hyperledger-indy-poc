@@ -1,4 +1,4 @@
-import Doctor from '../models/doctor';
+import Government from '../models/gov';
 import BaseCtrl from './base';
 import * as jwt from 'jsonwebtoken';
 
@@ -8,8 +8,8 @@ import mkdirp = require('mkdirp');
 import fs = require('fs');
 import os = require('os');
 
-export default class doctorCtrl extends BaseCtrl {
-  model = Doctor;
+export default class govCtrl extends BaseCtrl {
+  model = Government;
 
   login = (req, res) => {
     this.model.findOne({ email: req.body.email }, (err, user) => {
@@ -25,17 +25,17 @@ export default class doctorCtrl extends BaseCtrl {
   // Step: 5
   // URL: /api/gettingPrescription
   // {
-  //   "name":"patient22",
-  //   "patientWalletName": "patientWallet22",
+  //   "name":"resident22",
+  //   "residentWalletName": "residentWallet22",
   //   "poolHandle": 2,
   //   "poolName": "indy22",
   //   "doctorWallet": 13,
   //   "doctorDid": "BMkm2SzCDifFVFWGu9PEGY",
   //   "doctorPrescriptionCredDefId": "BMkm2SzCDifFVFWGu9PEGY:3:CL:810",
-  //   "pharmacyWallet": 21,
+  //   "bankWallet": 21,
   //   "prescriptionCredValues": {
-  //         "patient_first_name": { "raw": "Patient", "encoded": "1139481716457488690172217916278103335" },
-  //         "patient_last_name": { "raw": "Garcia", "encoded": "5321642780241790123587902456789123452" },
+  //         "resident_first_name": { "raw": "resident", "encoded": "1139481716457488690172217916278103335" },
+  //         "resident_last_name": { "raw": "Garcia", "encoded": "5321642780241790123587902456789123452" },
   //         "doctor_name": { "raw": "Dr . James Hold", "encoded": "12434523576212321" },
   //         "status": { "raw": "Cancer", "encoded": "2213454313412354" },
   //         "dob": { "raw": "12-05-1949", "encoded": "3124141231422543541" },
@@ -44,64 +44,64 @@ export default class doctorCtrl extends BaseCtrl {
   //         "isCreated": { "raw": "1", "encoded": "1" }
   //     }
   // }
-  gettingPrescription = async (req, res) => {
+  gettingIdCard = async (req, res) => {
     let poolHandle = req.body.poolHandle;
-    let doctorWallet = req.body.doctorWallet;
-    let doctorDid = req.body.doctorDid;
-    let pharmacyWallet = req.body.pharmacyWallet;
-    let patientWalletConfig = { 'id': req.body.patientWalletName };
-    let patientWalletCredentials = { 'key': req.body.name + '_key' };
-    let patientWallet, doctorPatientKey, patientDoctorDid, patientDoctorKey, doctorPatientConnectionResponse;
+    let governmentWallet = req.body.governmentWallet;
+    let governmentDid = req.body.governmentDid;
+    let bankWallet = req.body.bankWallet;
+    let residentWalletConfig = { 'id': req.body.residentWalletName };
+    let residentWalletCredentials = { 'key': req.body.name + '_key' };
+    let residentWallet, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse;
 
     try {
-      [patientWallet, doctorPatientKey, patientDoctorDid, patientDoctorKey, doctorPatientConnectionResponse] = await this.onboarding(poolHandle, "Government", doctorWallet, doctorDid, "Personal", null, patientWalletConfig, patientWalletCredentials);
+      [residentWallet, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse] = await this.onboarding(poolHandle, "Government", governmentWallet, governmentDid, "Personal", null, residentWalletConfig, residentWalletCredentials);
 
-      let prescriptionCredOfferJson = await indy.issuerCreateCredentialOffer(doctorWallet, req.body.doctorPrescriptionCredDefId);
-      let patientDoctorVerkey = await indy.keyForDid(poolHandle, pharmacyWallet, doctorPatientConnectionResponse['did']);
-      let authcryptedPrescriptionCredOffer = await indy.cryptoAuthCrypt(doctorWallet, doctorPatientKey, patientDoctorVerkey, Buffer.from(JSON.stringify(prescriptionCredOfferJson), 'utf8'));
-      let [doctorPatientVerkey, authdecryptedPrescriptionCredOfferJson, authdecryptedPrescriptionCredOffer] = await this.authDecrypt(patientWallet, patientDoctorKey, authcryptedPrescriptionCredOffer);
-      let patientMasterSecretId = await indy.proverCreateMasterSecret(patientWallet, null);
+      let idCardCredOfferJson = await indy.issuerCreateCredentialOffer(governmentWallet, req.body.governmentIdCardCredDefId);
+      let residentGovernmentVerkey = await indy.keyForDid(poolHandle, bankWallet, governmentResidentConnectionResponse['did']);
+      let authcryptedIdCardCredOffer = await indy.cryptoAuthCrypt(governmentWallet, governmentResidentKey, residentGovernmentVerkey, Buffer.from(JSON.stringify(idCardCredOfferJson), 'utf8'));
+      let [governmentResidentVerkey, authdecryptedIdCardCredOfferJson, authdecryptedIdCardCredOffer] = await this.authDecrypt(residentWallet, residentGovernmentKey, authcryptedIdCardCredOffer);
+      let residentMasterSecretId = await indy.proverCreateMasterSecret(residentWallet, null);
 
-      let doctorPrescriptionCredDef;
-      [req.body.doctorPrescriptionCredDefId, doctorPrescriptionCredDef] = await this.getCredDef(poolHandle, patientDoctorDid, authdecryptedPrescriptionCredOffer['cred_def_id']);
-      let [prescriptionCredRequestJson, prescriptionCredRequestMetadataJson] = await indy.proverCreateCredentialReq(patientWallet, patientDoctorDid, authdecryptedPrescriptionCredOfferJson, doctorPrescriptionCredDef, patientMasterSecretId);
-      let authcryptedPrescriptionCredRequest = await indy.cryptoAuthCrypt(patientWallet, patientDoctorKey, doctorPatientVerkey, Buffer.from(JSON.stringify(prescriptionCredRequestJson), 'utf8'));
+      let governmentIdCardCredDef;
+      [req.body.governmentIdCardCredDefId, governmentIdCardCredDef] = await this.getCredDef(poolHandle, residentGovernmentDid, authdecryptedIdCardCredOffer['cred_def_id']);
+      let [idCardCredRequestJson, idCardCredRequestMetadataJson] = await indy.proverCreateCredentialReq(residentWallet, residentGovernmentDid, authdecryptedIdCardCredOfferJson, governmentIdCardCredDef, residentMasterSecretId);
+      let authcryptedIdCardCredRequest = await indy.cryptoAuthCrypt(residentWallet, residentGovernmentKey, governmentResidentVerkey, Buffer.from(JSON.stringify(idCardCredRequestJson), 'utf8'));
 
-      let authdecryptedPrescriptionCredRequestJson;
-      [patientDoctorVerkey, authdecryptedPrescriptionCredRequestJson] = await this.authDecrypt(doctorWallet, doctorPatientKey, authcryptedPrescriptionCredRequest);
-      let prescriptionCredValues = req.body.prescriptionCredValues;
-      let [prescriptionCredJson] = await indy.issuerCreateCredential(doctorWallet, prescriptionCredOfferJson, authdecryptedPrescriptionCredRequestJson, prescriptionCredValues, null, -1);
-      let authcryptedPrescriptionCredJson = await indy.cryptoAuthCrypt(doctorWallet, doctorPatientKey, patientDoctorVerkey, Buffer.from(JSON.stringify(prescriptionCredJson), 'utf8'));
-      let [, authdecryptedPrescriptionCredJson] = await this.authDecrypt(patientWallet, patientDoctorKey, authcryptedPrescriptionCredJson);
+      let authdecryptedIdCardCredRequestJson;
+      [residentGovernmentVerkey, authdecryptedIdCardCredRequestJson] = await this.authDecrypt(governmentWallet, governmentResidentKey, authcryptedIdCardCredRequest);
+      let idCardCredValues = req.body.idCardCredValues;
+      let [idCardCredJson] = await indy.issuerCreateCredential(governmentWallet, idCardCredOfferJson, authdecryptedIdCardCredRequestJson, idCardCredValues, null, -1);
+      let authcryptedidCardCredJson = await indy.cryptoAuthCrypt(governmentWallet, governmentResidentKey, residentGovernmentVerkey, Buffer.from(JSON.stringify(idCardCredJson), 'utf8'));
+      let [, authdecryptedidCardCredJson] = await this.authDecrypt(residentWallet, residentGovernmentKey, authcryptedidCardCredJson);
 
-      await indy.proverStoreCredential(patientWallet, null, prescriptionCredRequestMetadataJson,
-        authdecryptedPrescriptionCredJson, doctorPrescriptionCredDef, null);
+      await indy.proverStoreCredential(residentWallet, null, idCardCredRequestMetadataJson,
+        authdecryptedidCardCredJson, governmentIdCardCredDef, null);
 
       res.status(200).json({
-        patientWallet: patientWallet,
-        patientWalletCredentials: patientWalletCredentials,
-        doctorPatientKey: doctorPatientKey,
-        patientDoctorDid: patientDoctorDid,
-        patientDoctorKey: patientDoctorKey,
-        doctorPatientConnectionResponse: doctorPatientConnectionResponse,
-        prescriptionCredOfferJson: prescriptionCredOfferJson,
-        patientDoctorVerkey: patientDoctorVerkey,
-        doctorPatientVerkey: doctorPatientVerkey,
-        authdecryptedPrescriptionCredOffer: authdecryptedPrescriptionCredOffer,
-        patientMasterSecretId: patientMasterSecretId,
-        doctorPrescriptionCredDef: doctorPrescriptionCredDef,
-        prescriptionCredRequestJson: prescriptionCredRequestJson,
-        prescriptionCredRequestMetadataJson: prescriptionCredRequestMetadataJson,
-        prescriptionCredValues: prescriptionCredValues,
-        prescriptionCredJson: prescriptionCredJson
+        residentWallet: residentWallet,
+        residentWalletCredentials: residentWalletCredentials,
+        governmentResidentKey: governmentResidentKey,
+        residentgovernmentDid: residentGovernmentDid,
+        residentgovernmentKey: residentGovernmentKey,
+        governmentResidentConnectionResponse: governmentResidentConnectionResponse,
+        idCardCredOfferJson: idCardCredOfferJson,
+        residentgovernmentVerkey: residentGovernmentVerkey,
+        governmentResidentVerkey: governmentResidentVerkey,
+        authdecryptedidCardCredOffer: authdecryptedIdCardCredOffer,
+        residentMasterSecretId: residentMasterSecretId,
+        governmentidCardCredDef: governmentIdCardCredDef,
+        idCardCredRequestJson: idCardCredRequestJson,
+        idCardCredRequestMetadataJson: idCardCredRequestMetadataJson,
+        idCardCredValues: idCardCredValues,
+        idCardCredJson: idCardCredJson
       });
     } catch (error) {
       console.log(error);
       try {
         //Close and delete wallet
-        if (patientWallet) {
-          await indy.closeWallet(patientWallet);
-          await indy.deleteWallet(patientWalletConfig, patientWalletCredentials);
+        if (residentWallet) {
+          await indy.closeWallet(residentWallet);
+          await indy.deleteWallet(residentWalletConfig, residentWalletCredentials);
         }
         res.sendStatus(403);
       } catch (e) {

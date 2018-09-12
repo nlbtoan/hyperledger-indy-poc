@@ -1,8 +1,8 @@
 import * as mongoose from 'mongoose';
 
 const credentialDefinitionSchema = new mongoose.Schema({
-  doctorPrescriptionCredDefId: String,
-  doctorPrescriptionCredDefJson: Object
+  governmentIdCardCredDefId: String,
+  governmentIdCardCredDefJson: Object
 });
 
 const CredentialDefinition = mongoose.model('CredentialDefinition', credentialDefinitionSchema);

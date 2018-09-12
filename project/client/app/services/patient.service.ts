@@ -9,8 +9,8 @@ export class PatientService {
 
   constructor(private http: HttpClient) { }
 
-  createPrescription(patient: any): Observable<any> {
-    return this.http.post<any>('/api/gettingPrescription', patient);
+  createIdCard(resident: any): Observable<any> {
+    return this.http.post<any>('/api/gettingIdCard', resident);
   }
 
   setupCredentialDefinition(credential: Credential): Observable<Credential> {

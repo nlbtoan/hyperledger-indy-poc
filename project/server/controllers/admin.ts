@@ -1,4 +1,4 @@
-import WareHouse from '../models/warehouse';
+import Admin from '../models/admin';
 import BaseCtrl from './base';
 import * as jwt from 'jsonwebtoken';
 
@@ -8,8 +8,8 @@ import mkdirp = require('mkdirp');
 import fs = require('fs');
 import os = require('os');
 
-export default class wareHouseCtrl extends BaseCtrl {
-  model = WareHouse;
+export default class adminCtrl extends BaseCtrl {
+  model = Admin;
 
   login = (req, res) => {
     this.model.findOne({ email: req.body.email }, (err, user) => {

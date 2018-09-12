@@ -1,16 +1,16 @@
 import * as express from 'express';
 
 import UserCtrl from './controllers/user';
-import WareHouse from './controllers/warehouse';
+import Admin from './controllers/admin';
 import NursingHome from './controllers/nursingHome';
-import Doctor from './controllers/doctor';
+import Government from './controllers/gov';
 import Pharmacy from './controllers/pharmacy';
 import HashFile from './controllers/hashFile';
 import Ledger from './controllers/ledger';
 import TrustAnchor from './controllers/trustAnchor';
 import IdCard from './controllers/idCard';
 import CredentialDefinition from './controllers/credentialDefinition';
-import PatientPrescription from './controllers/patientPrescription';
+import ResidentIdCard from './controllers/residentIdCard';
 import PharmacyPrescription from './controllers/PharmacyPrescription';
 
 export default function setRoutes(app) {
@@ -18,16 +18,16 @@ export default function setRoutes(app) {
   const router = express.Router();
 
   const userCtrl = new UserCtrl();
-  const wareHouse = new WareHouse();
+  const admin = new Admin();
   const nursingHome = new NursingHome();
-  const doctor = new Doctor();
+  const gov = new Government();
   const pharmacy = new Pharmacy();
   const hashFile = new HashFile();
   const ledger = new Ledger();
   const trustAnchor = new TrustAnchor();
   const idCard = new IdCard();
   const credentialDefinition = new CredentialDefinition();
-  const patientPrescription = new PatientPrescription();
+  const residentIdCard = new ResidentIdCard();
   const pharmacyPrescription = new PharmacyPrescription();
 
   //// Ledger data managerment ////
@@ -47,7 +47,7 @@ export default function setRoutes(app) {
   router.route('/trustAnchor/:id').put(trustAnchor.update);
   router.route('/trustAnchor/:id').delete(trustAnchor.delete);
 
-  // Prescription schema
+  // idCard schema
   router.route('/prescriptions').get(idCard.getAll);
   router.route('/prescriptions/count').get(idCard.count);
   router.route('/prescription').post(idCard.insert);
@@ -64,12 +64,12 @@ export default function setRoutes(app) {
   router.route('/credentialDefinition/:id').delete(credentialDefinition.delete);
 
   // Prescription
-  router.route('/patientPrescriptions').get(patientPrescription.getAll);
-  router.route('/patientPrescriptions/count').get(patientPrescription.count);
-  router.route('/patientPrescription').post(patientPrescription.insert);
-  router.route('/patientPrescription/:id').get(patientPrescription.get);
-  router.route('/patientPrescription/:id').put(patientPrescription.update);
-  router.route('/patientPrescription/:id').delete(patientPrescription.delete);
+  router.route('/patientPrescriptions').get(residentIdCard.getAll);
+  router.route('/patientPrescriptions/count').get(residentIdCard.count);
+  router.route('/patientPrescription').post(residentIdCard.insert);
+  router.route('/patientPrescription/:id').get(residentIdCard.get);
+  router.route('/patientPrescription/:id').put(residentIdCard.update);
+  router.route('/patientPrescription/:id').delete(residentIdCard.delete);
 
   // Pharmacy Prescription Lists
   router.route('/pharmacyPrescriptions').get(pharmacyPrescription.getAll);
@@ -80,10 +80,10 @@ export default function setRoutes(app) {
   router.route('/pharmacyPrescription/:id').delete(pharmacyPrescription.delete);
 
   //// Interation with the ledger ////
-  // Warehouse
-  router.route('/createPoolLedger').post(wareHouse.createPoolLedger);
-  router.route('/addTrustAnchor').post(wareHouse.addTrustAnchor);
-  router.route('/createSchema').post(wareHouse.createSchema);
+  // Admin
+  router.route('/createPoolLedger').post(admin.createPoolLedger);
+  router.route('/addTrustAnchor').post(admin.addTrustAnchor);
+  router.route('/createSchema').post(admin.createSchema);
   router.route('/login').post(userCtrl.login);
   router.route('/users').get(userCtrl.getAll);
   router.route('/users/count').get(userCtrl.count);
@@ -100,15 +100,15 @@ export default function setRoutes(app) {
   router.route('/nursingHome/:id').put(nursingHome.update);
   router.route('/nursingHome/:id').delete(nursingHome.delete);
 
-  // Doctor
-  router.route('/setupCredentialDefinition').post(doctor.setupCredentialDefinition);
-  router.route('/gettingPrescription').post(doctor.gettingPrescription);
-  router.route('/doctorLogin').post(doctor.login);
-  router.route('/doctors').get(doctor.getAll);
-  router.route('/doctors/count').get(doctor.count);
-  router.route('/doctor/:id').get(doctor.get);
-  router.route('/doctor/:id').put(doctor.update);
-  router.route('/doctor/:id').delete(doctor.delete);
+  // Gov
+  router.route('/setupCredentialDefinition').post(gov.setupCredentialDefinition);
+  router.route('/gettingIdCard').post(gov.gettingIdCard);
+  router.route('/doctorLogin').post(gov.login);
+  router.route('/doctors').get(gov.getAll);
+  router.route('/doctors/count').get(gov.count);
+  router.route('/doctor/:id').get(gov.get);
+  router.route('/doctor/:id').put(gov.update);
+  router.route('/doctor/:id').delete(gov.delete);
 
   // Pharmacy
   router.route('/applyPrescription').post(pharmacy.applyPrescription);
