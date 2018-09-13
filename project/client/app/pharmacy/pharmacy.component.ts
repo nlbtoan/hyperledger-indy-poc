@@ -14,14 +14,14 @@ import { TrustAnchorService } from '../services/anchor.service';
 export class PharmacyComponent implements OnInit {
 
   hashResponse;
-  pharmacyPrescriptions = [];
+  bankIdCards = [];
   ledgers = [];
-  patientPrescriptions = [];
+  residentIdCards = [];
   TrustAnchors = [];
   credentialDefinitions = [];
   isLoading = true;
 
-  pharmacyForm: FormGroup;
+  bankForm: FormGroup;
   id = new FormControl('', [
     Validators.required
   ]);
@@ -59,13 +59,13 @@ export class PharmacyComponent implements OnInit {
     private trustAnchorService: TrustAnchorService) { }
 
   ngOnInit() {
-    this.getPharmacyPrescriptions();
+    this.getBankIdCards();
     this.getLedger();
     this.gettingIdCard();
     this.getTrustAnchor();
     this.getCredentialDefinitions();
 
-    this.pharmacyForm = this.formBuilder.group({
+    this.bankForm = this.formBuilder.group({
       id: this.id,
       name: this.name,
       dob: this.dob,
@@ -116,10 +116,10 @@ export class PharmacyComponent implements OnInit {
     return { 'has-danger': !this.created_at.pristine && !this.created_at.valid };
   }
 
-  getPharmacyPrescriptions() {
+  getBankIdCards() {
     this.pharmacyService.getAllPharmacyPrescription().subscribe(
       data => {
-        this.pharmacyPrescriptions = data;
+        this.bankIdCards = data;
       },
       error => {
         console.log(error);
@@ -138,7 +138,7 @@ export class PharmacyComponent implements OnInit {
 
   gettingIdCard() {
     this.patientService.getAllPatientPrescription().subscribe(
-      data => this.patientPrescriptions = data,
+      data => this.residentIdCards = data,
       error => console.log(error),
       () => this.isLoading = false
     );
@@ -164,7 +164,7 @@ export class PharmacyComponent implements OnInit {
     if (window.confirm('Are you sure you want to delete this prescription?')) {
       this.pharmacyService.deletePharmacyPrescription(pharmacyPrescription).subscribe(
         res => {
-          this.getPharmacyPrescriptions();
+          this.getBankIdCards();
         },
         error => {
           console.log(error);
@@ -174,23 +174,23 @@ export class PharmacyComponent implements OnInit {
     }
   }
 
-  applyPrescription() {
+  applyIdCard() {
     this.isLoading = true;
-    let data = this.pharmacyForm.value;
+    let data = this.bankForm.value;
     data.status = 1;
 
-    let prescription = {
+    let idCard = {
       poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
       poolName: this.ledgers[this.ledgers.length - 1].poolName,
-      patientWallet: this.patientPrescriptions[this.patientPrescriptions.length - 1].patientWallet,
-      patientWalletName: data.name.split(' ').join('') + 'Wallet',
-      patientDoctorDid: this.patientPrescriptions[this.patientPrescriptions.length - 1].patientDoctorDid,
-      patientMasterSecretId: this.patientPrescriptions[this.patientPrescriptions.length - 1].patientMasterSecretId,
-      doctorPrescriptionCredDefId: this.credentialDefinitions[this.credentialDefinitions.length - 1].doctorPrescriptionCredDefId,
+      residentWallet: this.residentIdCards[this.residentIdCards.length - 1].residentWallet,
+      residentWalletName: data.name.split(' ').join('') + 'Wallet',
+      residentGovernmentDid: this.residentIdCards[this.residentIdCards.length - 1].residentGovernmentDid,
+      residentMasterSecretId: this.residentIdCards[this.residentIdCards.length - 1].residentMasterSecretId,
+      governmentIdCardCredDefId: this.credentialDefinitions[this.credentialDefinitions.length - 1].governmentIdCardCredDefId,
       pdfHash: this.hashResponse,
-      pharmacyWallet: 'null',
-      pharmacyDid: 'null',
-      patientWalletCredentials: {
+      bankWallet: 'null',
+      bankDid: 'null',
+      residentWalletCredentials: {
         key: data.name.split(' ').join('') + "_key"
       },
       data: data
@@ -199,16 +199,16 @@ export class PharmacyComponent implements OnInit {
     this.TrustAnchors.forEach(TrustAnchor => {
       let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
       if (anchorName === 'banking' || anchorName === 'bank') {
-        prescription.pharmacyWallet = TrustAnchor.trustAnchorWallet;
-        prescription.pharmacyDid = TrustAnchor.trustAnchorDID;
+        idCard.bankWallet = TrustAnchor.trustAnchorWallet;
+        idCard.bankDid = TrustAnchor.trustAnchorDID;
       }
     });
 
-    this.pharmacyService.applyPrescription(prescription).subscribe(
+    this.pharmacyService.applyPrescription(idCard).subscribe(
       res => {
-        this.pharmacyService.insertPharmacyPrescription({ patientDoctorDid: prescription.patientDoctorDid, doctorPrescriptionCredDefId: prescription.doctorPrescriptionCredDefId }).subscribe(
+        this.pharmacyService.insertPharmacyPrescription({ residentGovernmentDid: idCard.residentGovernmentDid, governmentIdCardCredDefId: idCard.governmentIdCardCredDefId }).subscribe(
           res => {
-            this.getPharmacyPrescriptions();
+            this.getBankIdCards();
             this.isLoading = false;
             this.toast.setMessage('This claim is verified.', 'success');
           },

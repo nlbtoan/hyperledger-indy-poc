@@ -4,7 +4,7 @@
 <div class="card" *ngIf="!isLoading">
   <h4 class="card-header">Step 6: Apply Prescription</h4>
   <div class="card-body">
-    <form [formGroup]="pharmacyForm" (ngSubmit)="applyPrescription()">
+    <form [formGroup]="bankForm" (ngSubmit)="applyIdCard()">
 
       <div class="input-group" [ngClass]="setClassID()">
         <div class="input-group-prepend">
@@ -88,7 +88,7 @@
         <input class="form-control" type="text" name="money" formControlName="money" placeholder="Money">
       </div>
 
-      <button class="btn btn-primary" type="submit" [disabled]="!pharmacyForm.valid">
+      <button class="btn btn-primary" type="submit" [disabled]="!bankForm.valid">
         <i class="fa fa-sign-in"></i> Submit</button>
     </form>
   </div>
@@ -97,22 +97,22 @@
     <table class="table table-bordered">
       <thead class="thead-light">
         <tr>
-          <th scope="col">Patient Doctor DID</th>
-          <th scope="col">Doctor Prescription Credential Definition</th>
+          <th scope="col">Resident Government DID</th>
+          <th scope="col"> Government Id Card Credential Definition</th>
           <th scope="col">Option</th>
         </tr>
       </thead>
-      <tbody *ngIf="pharmacyPrescriptions.length === 0">
+      <tbody *ngIf="bankIdCards.length === 0">
         <tr>
           <td colspan="5">There are no patient prescriptions registered.</td>
         </tr>
       </tbody>
       <tbody>
-        <tr *ngFor="let pharmacyPrescription of pharmacyPrescriptions">
-          <td>{{pharmacyPrescription.patientDoctorDid}}</td>
-          <td>{{pharmacyPrescription.doctorPrescriptionCredDefId}}</td>
+        <tr *ngFor="let bankIdCard of bankIdCards">
+          <td>{{bankIdCard.residentGovernmentDid}}</td>
+          <td>{{bankIdCard.governmanetIdCardCredDefId}}</td>
           <td>
-            <button class="btn btn-sm btn-danger" (click)="deletePharmacyPrescription(pharmacyPrescription)">
+            <button class="btn btn-sm btn-danger" (click)="deletePharmacyPrescription(bankIdCard)">
               <i class="fa fa-trash"></i> Delete
             </button>
           </td>

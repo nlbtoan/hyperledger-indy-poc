@@ -4,7 +4,7 @@ import UserCtrl from './controllers/user';
 import Admin from './controllers/admin';
 import NursingHome from './controllers/nursingHome';
 import Government from './controllers/gov';
-import Pharmacy from './controllers/pharmacy';
+import Pharmacy from './controllers/bank';
 import HashFile from './controllers/hashFile';
 import Ledger from './controllers/ledger';
 import TrustAnchor from './controllers/trustAnchor';
@@ -111,7 +111,7 @@ export default function setRoutes(app) {
   router.route('/doctor/:id').delete(gov.delete);
 
   // Pharmacy
-  router.route('/applyPrescription').post(pharmacy.applyPrescription);
+  router.route('/applyIdCard').post(pharmacy.applyIdCard);
   router.route('/pharmacyLogin').post(pharmacy.login);
   router.route('/pharmacys').get(pharmacy.getAll);
   router.route('/pharmacys/count').get(pharmacy.count);

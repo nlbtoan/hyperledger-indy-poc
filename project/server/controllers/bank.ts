@@ -1,4 +1,4 @@
-import Pharmacy from '../models/pharmacy';
+import Bank from '../models/bank';
 import BaseCtrl from './base';
 import * as jwt from 'jsonwebtoken';
 
@@ -8,8 +8,8 @@ import mkdirp = require('mkdirp');
 import fs = require('fs');
 import os = require('os');
 
-export default class pharmacyCtrl extends BaseCtrl {
-  model = Pharmacy;
+export default class BankCtrl extends BaseCtrl {
+  model = Bank;
 
   login = (req, res) => {
     this.model.findOne({ email: req.body.email }, (err, user) => {
@@ -23,43 +23,43 @@ export default class pharmacyCtrl extends BaseCtrl {
   }
 
   // Step: 6
-  // URL: /api/applyPrescription
+  // URL: /api/applyIdCard
   // Body: 
   // {
   //   "poolHandle": "",
   //   "poolName": "",
-  //   "patientWallet": "",
-  //   "patientWalletName": "",
-  //   "patientWalletCredentials": "",
-  //   "patientDoctorDid": "",
-  //   "patientMasterSecretId": "",
-  //   "pharmacyWallet": "",
-  //   "pharmacyDid": "",
-  //   "doctorPrescriptionCredDefId": "",
+  //   "residentWallet": "",
+  //   "residentWalletName": "",
+  //   "residentWalletCredentials": "",
+  //   "ResidentGovernmentDid": "",
+  //   "ResidentMasterSecretId": "",
+  //   "bankWallet": "",
+  //   "bankDid": "",
+  //   "GovernmentIdCardCredDefId": "",
   //   "status": "",
-  //   "doctorName": "",
+  //   "GovernmentName": "",
   //   "pdfHash": "",
-  //   "patientFirstName": "",
-  //   "patientLastName": "",
+  //   "ResidentFirstName": "",
+  //   "ResidentLastName": "",
   //   "dateOfBirth": ""
   // }
-  applyPrescription = async (req, res) => {
+  applyIdCard = async (req, res) => {
     try {
-      let pharmacyPatientKey, patientPharmacyDid, patientPharmacyKey, pharmacyPatientConnectionResponse;
-      [req.body.patientWallet, pharmacyPatientKey, patientPharmacyDid, patientPharmacyKey, pharmacyPatientConnectionResponse] = await this.onboarding(req.body.poolHandle, "Bank", req.body.pharmacyWallet, req.body.pharmacyDid, "Personal", req.body.patientWallet, { 'id': req.body.patientWalletName }, req.body.patientWalletCredentials);
+      let bankResidentKey, residentbankDid, residentBankKey, bankResidentConnectionResponse;
+      [req.body.residentWallet, bankResidentKey, residentbankDid, residentBankKey, bankResidentConnectionResponse] = await this.onboarding(req.body.poolHandle, "Bank", req.body.bankWallet, req.body.bankDid, "Personal", req.body.residentWallet, { 'id': req.body.residentWalletName }, req.body.residentWalletCredentials);
 
-      let prescriptionApplicationProofRequestJson = {
+      let IdCardApplicationProofRequestJson = {
         'nonce': '1432422343242122312411212',
         'name': 'Loan-Application',
         'version': '0.1',
         'requested_attributes': {
           'attr1_referent': {
             'name': 'id',
-            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
+            'restrictions': [{ 'cred_def_id': req.body.governmentIdCardCredDefId }]
           },
           'attr2_referent': {
             'name': 'name',
-            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
+            'restrictions': [{ 'cred_def_id': req.body.governmentIdCardCredDefId }]
           },
           'attr3_referent': {
             'name': 'dob'
@@ -69,7 +69,7 @@ export default class pharmacyCtrl extends BaseCtrl {
           },
           'attr5_referent': {
             'name': 'created_at',
-            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
+            'restrictions': [{ 'cred_def_id': req.body.governmentIdCardCredDefId }]
           }
         },
         'requested_predicates': {
@@ -77,46 +77,46 @@ export default class pharmacyCtrl extends BaseCtrl {
             'name': 'status',
             'p_type': '>=',
             'p_value': 1,
-            'restrictions': [{ 'cred_def_id': req.body.doctorPrescriptionCredDefId }]
+            'restrictions': [{ 'cred_def_id': req.body.governmentIdCardCredDefId }]
           }
         }
       };
 
-      let patientPharmacyVerkey = await indy.keyForDid(req.body.poolHandle, req.body.pharmacyWallet, pharmacyPatientConnectionResponse['did']);
-      let authcryptedPrescriptionApplicationProofRequestJson = await indy.cryptoAuthCrypt(req.body.pharmacyWallet, pharmacyPatientKey, patientPharmacyVerkey, Buffer.from(JSON.stringify(prescriptionApplicationProofRequestJson), 'utf8'));
-      let [pharmacyPatientVerkey, authdecryptedPrescriptionApplicationProofRequestJson] = await this.authDecrypt(req.body.patientWallet, patientPharmacyKey, authcryptedPrescriptionApplicationProofRequestJson);
-      let searchForJobApplicationProofRequest = await indy.proverSearchCredentialsForProofReq(req.body.patientWallet, authdecryptedPrescriptionApplicationProofRequestJson, null)
-      let credsForPrescriptionApplicationProofRequest = await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr1_referent', 100)
-      let credForAttr1 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      let residentBankVerkey = await indy.keyForDid(req.body.poolHandle, req.body.bankWallet, bankResidentConnectionResponse['did']);
+      let authcryptedIdCardApplicationProofRequestJson = await indy.cryptoAuthCrypt(req.body.bankWallet, bankResidentKey, residentBankVerkey, Buffer.from(JSON.stringify(IdCardApplicationProofRequestJson), 'utf8'));
+      let [bankResidentVerkey, authdecryptedIdCardApplicationProofRequestJson] = await this.authDecrypt(req.body.residentWallet, residentBankKey, authcryptedIdCardApplicationProofRequestJson);
+      let searchForIdCardApplicationProofRequest = await indy.proverSearchCredentialsForProofReq(req.body.residentWallet, authdecryptedIdCardApplicationProofRequestJson, null)
+      let credsForIdCardApplicationProofRequest = await indy.proverFetchCredentialsForProofReq(searchForIdCardApplicationProofRequest, 'attr1_referent', 100)
+      let credForAttr1 = credsForIdCardApplicationProofRequest[0]['cred_info'];
 
-      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr2_referent', 100);
-      let credForAttr2 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      await indy.proverFetchCredentialsForProofReq(searchForIdCardApplicationProofRequest, 'attr2_referent', 100);
+      let credForAttr2 = credsForIdCardApplicationProofRequest[0]['cred_info'];
 
-      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr3_referent', 100)
-      let credForAttr3 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      await indy.proverFetchCredentialsForProofReq(searchForIdCardApplicationProofRequest, 'attr3_referent', 100)
+      let credForAttr3 = credsForIdCardApplicationProofRequest[0]['cred_info'];
 
-      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr4_referent', 100)
-      let credForAttr4 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      await indy.proverFetchCredentialsForProofReq(searchForIdCardApplicationProofRequest, 'attr4_referent', 100)
+      let credForAttr4 = credsForIdCardApplicationProofRequest[0]['cred_info'];
 
-      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'attr5_referent', 100)
-      let credForAttr5 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      await indy.proverFetchCredentialsForProofReq(searchForIdCardApplicationProofRequest, 'attr5_referent', 100)
+      let credForAttr5 = credsForIdCardApplicationProofRequest[0]['cred_info'];
 
-      await indy.proverFetchCredentialsForProofReq(searchForJobApplicationProofRequest, 'predicate1_referent', 100)
-      let credForPredicate1 = credsForPrescriptionApplicationProofRequest[0]['cred_info'];
+      await indy.proverFetchCredentialsForProofReq(searchForIdCardApplicationProofRequest, 'predicate1_referent', 100)
+      let credForPredicate1 = credsForIdCardApplicationProofRequest[0]['cred_info'];
 
-      await indy.proverCloseCredentialsSearchForProofReq(searchForJobApplicationProofRequest);
+      await indy.proverCloseCredentialsSearchForProofReq(searchForIdCardApplicationProofRequest);
 
-      let credsForPrescriptionApplicationProof = {};
-      credsForPrescriptionApplicationProof[`${credForAttr1['referent']}`] = credForAttr1;
-      credsForPrescriptionApplicationProof[`${credForAttr2['referent']}`] = credForAttr2;
-      credsForPrescriptionApplicationProof[`${credForAttr3['referent']}`] = credForAttr3;
-      credsForPrescriptionApplicationProof[`${credForAttr4['referent']}`] = credForAttr4;
-      credsForPrescriptionApplicationProof[`${credForAttr5['referent']}`] = credForAttr5;
-      credsForPrescriptionApplicationProof[`${credForPredicate1['referent']}`] = credForPredicate1;
+      let credsForIdCardApplicationProof = {};
+      credsForIdCardApplicationProof[`${credForAttr1['referent']}`] = credForAttr1;
+      credsForIdCardApplicationProof[`${credForAttr2['referent']}`] = credForAttr2;
+      credsForIdCardApplicationProof[`${credForAttr3['referent']}`] = credForAttr3;
+      credsForIdCardApplicationProof[`${credForAttr4['referent']}`] = credForAttr4;
+      credsForIdCardApplicationProof[`${credForAttr5['referent']}`] = credForAttr5;
+      credsForIdCardApplicationProof[`${credForPredicate1['referent']}`] = credForPredicate1;
 
-      let [schemasJson, credDefsJson, revocStatesJson] = await this.proverGetEntitiesFromLedger(req.body.poolHandle, req.body.patientDoctorDid, credsForPrescriptionApplicationProof, 'Personal');
+      let [schemasJson, credDefsJson, revocStatesJson] = await this.proverGetEntitiesFromLedger(req.body.poolHandle, req.body.ResidentGovernmentDid, credsForIdCardApplicationProof, 'Personal');
 
-      let prescriptionApplicationRequestedCredsJson = {
+      let IdCardApplicationRequestedCredsJson = {
         'self_attested_attributes': {
           'attr3_referent': req.body.data.dob,
           'attr4_referent': req.body.data.gender
@@ -129,26 +129,26 @@ export default class pharmacyCtrl extends BaseCtrl {
         'requested_predicates': { 'predicate1_referent': { 'cred_id': credForPredicate1['referent'] } }
       };
 
-      let prescriptionApplicationProofJson = await indy.proverCreateProof(req.body.patientWallet, authdecryptedPrescriptionApplicationProofRequestJson,
-        prescriptionApplicationRequestedCredsJson, req.body.patientMasterSecretId,
+      let IdCardApplicationProofJson = await indy.proverCreateProof(req.body.residentWallet, authdecryptedIdCardApplicationProofRequestJson,
+        IdCardApplicationRequestedCredsJson, req.body.ResidentMasterSecretId,
         schemasJson, credDefsJson, revocStatesJson);
 
-      let authcryptedPrescriptionApplicationProofJson = await indy.cryptoAuthCrypt(req.body.patientWallet, patientPharmacyKey, pharmacyPatientVerkey, Buffer.from(JSON.stringify(prescriptionApplicationProofJson), 'utf8'));
+      let authcryptedIdCardApplicationProofJson = await indy.cryptoAuthCrypt(req.body.residentWallet, residentBankKey, bankResidentVerkey, Buffer.from(JSON.stringify(IdCardApplicationProofJson), 'utf8'));
 
-      let decryptedPrescriptionApplicationProofJson, decryptedPrescriptionApplicationProof;
-      [, decryptedPrescriptionApplicationProofJson, decryptedPrescriptionApplicationProof] = await this.authDecrypt(req.body.pharmacyWallet, pharmacyPatientKey, authcryptedPrescriptionApplicationProofJson);
+      let decryptedIdCardApplicationProofJson, decryptedIdCardApplicationProof;
+      [, decryptedIdCardApplicationProofJson, decryptedIdCardApplicationProof] = await this.authDecrypt(req.body.bankWallet, bankResidentKey, authcryptedIdCardApplicationProofJson);
 
       let revocRefDefsJson, revocRegsJson;
-      [schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson] = await this.verifierGetEntitiesFromLedger(req.body.poolHandle, req.body.pharmacyDid, decryptedPrescriptionApplicationProof['identifiers'], 'Pharmacy');
+      [schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson] = await this.verifierGetEntitiesFromLedger(req.body.poolHandle, req.body.bankDid, decryptedIdCardApplicationProof['identifiers'], 'Bank');
 
-      let decryptedData = decryptedPrescriptionApplicationProof['requested_proof'];
+      let decryptedData = decryptedIdCardApplicationProof['requested_proof'];
       assert(req.body.data.id === decryptedData['revealed_attrs']['attr1_referent']['raw']);
       assert(req.body.data.name === decryptedData['revealed_attrs']['attr2_referent']['raw']);
       assert(req.body.data.dob === decryptedData['self_attested_attrs']['attr3_referent']);
       assert(req.body.data.gender === decryptedData['self_attested_attrs']['attr4_referent']);
       assert(req.body.data.created_at === decryptedData['revealed_attrs']['attr5_referent']['raw']);
 
-      await indy.verifierVerifyProof(prescriptionApplicationProofRequestJson, decryptedPrescriptionApplicationProofJson, schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson);
+      await indy.verifierVerifyProof(IdCardApplicationProofRequestJson, decryptedIdCardApplicationProofJson, schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson);
       res.status(200).json();
     } catch (error) {
       console.log(error);
