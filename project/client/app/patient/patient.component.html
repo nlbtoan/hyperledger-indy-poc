@@ -123,19 +123,19 @@
           <th scope="col">Option</th>
         </tr>
       </thead>
-      <tbody *ngIf="patientPrescriptions.length === 0">
+      <tbody *ngIf="residentIdCards.length === 0">
         <tr>
           <td colspan="5">There are no patient prescriptions registered.</td>
         </tr>
       </tbody>
       <tbody>
-        <tr *ngFor="let patientPrescription of patientPrescriptions">
-          <td>{{patientPrescription.patientDoctorDid}}</td>
-          <td>{{patientPrescription.patientWallet}}</td>
+        <tr *ngFor="let residentIdCard of residentIdCards">
+          <td>{{residentIdCard.residentGovernmentDid}}</td>
+          <td>{{residentIdCard.residentGovernmentKey}}</td>
           <!-- <td>{{patientPrescription.prescriptionCredValues.pdf_hash.raw}}</td> -->
           <!-- <td>{{patientPrescription.patientMasterSecretId}}</td> -->
           <td>
-            <button class="btn btn-sm btn-danger" (click)="deletePatientPrescription(patientPrescription)">
+            <button class="btn btn-sm btn-danger" (click)="deletePatientPrescription(residentIdCard)">
               <i class="fa fa-trash"></i> Delete
             </button>
           </td>

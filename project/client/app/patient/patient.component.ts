@@ -18,7 +18,7 @@ export class PatientComponent implements OnInit {
   hashResponse;
   binaryConverted;
   credentialDefinitions = [];
-  residentIdcard = [];
+  residentIdCards = [];
   ledgers = [];
   TrustAnchors = [];
   Schemas = [];
@@ -116,7 +116,7 @@ export class PatientComponent implements OnInit {
 
   gettingIdCard() {
     this.patientService.getAllPatientPrescription().subscribe(
-      data => this.residentIdcard = data,
+      data => this.residentIdCards = data,
       error => console.log(error),
       () => this.isLoading = false
     );
