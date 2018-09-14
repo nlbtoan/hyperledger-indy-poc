@@ -49,7 +49,6 @@ export class AdminComponent implements OnInit {
     this.getUsers();
     this.getLedger();
     this.getTrustAnchor();
-    this.getShema();
 
     // For Pool Ledger
     this.ledgerForm = this.formBuilder.group({
