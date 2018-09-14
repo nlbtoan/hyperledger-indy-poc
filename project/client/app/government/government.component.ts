@@ -332,4 +332,14 @@ export class GovernmentComponent implements OnInit {
     );
   }
 
+  deleteSchema(schema: any) {
+    if (window.confirm('Are you sure you want to delete ' + schema.prescriptionSchemaId + '?')) {
+      this.createSchemaService.deleteSchema(schema).subscribe(
+        data => this.toast.setMessage('Schema deleted successfully.', 'success'),
+        error => console.log(error),
+        () => this.getSchema()
+      );
+    }
+  }
+
 }

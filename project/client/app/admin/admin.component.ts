@@ -101,14 +101,6 @@ export class AdminComponent implements OnInit {
     );
   }
 
-  getShema() {
-    this.createSchemaService.getAllSchema().subscribe(
-      data => this.Schemas = data,
-      error => console.log(error),
-      () => this.isLoading = false
-    );
-  }
-
   deleteUser(user: User) {
     if (window.confirm('Are you sure you want to delete ' + user.username + '?')) {
       this.userService.deleteUser(user).subscribe(
@@ -135,16 +127,6 @@ export class AdminComponent implements OnInit {
         data => this.toast.setMessage('Trust anchor deleted successfully.', 'success'),
         error => console.log(error),
         () => this.getLedger()
-      );
-    }
-  }
-
-  deleteSchema(schema: any) {
-    if (window.confirm('Are you sure you want to delete ' + schema.prescriptionSchemaId + '?')) {
-      this.createSchemaService.deleteSchema(schema).subscribe(
-        data => this.toast.setMessage('Schema deleted successfully.', 'success'),
-        error => console.log(error),
-        () => this.getShema()
       );
     }
   }
