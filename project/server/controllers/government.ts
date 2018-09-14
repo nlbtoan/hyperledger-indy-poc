@@ -1,4 +1,4 @@
-import Government from 'models/government';
+import Government from '../models/government';
 import BaseCtrl from './base';
 import * as jwt from 'jsonwebtoken';
 
