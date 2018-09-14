@@ -2,10 +2,8 @@ import * as express from 'express';
 
 import UserCtrl from './controllers/user';
 import Admin from './controllers/admin';
-import NursingHome from './controllers/nursingHome';
-import Government from './controllers/gov';
+import Government from './controllers/government';
 import Bank from './controllers/bank';
-import HashFile from './controllers/hashFile';
 import Ledger from './controllers/ledger';
 import TrustAnchor from './controllers/trustAnchor';
 import IdCard from './controllers/idCard';
@@ -19,10 +17,8 @@ export default function setRoutes(app) {
 
   const userCtrl = new UserCtrl();
   const admin = new Admin();
-  const nursingHome = new NursingHome();
-  const gov = new Government();
+  const government = new Government();
   const bank = new Bank();
-  const hashFile = new HashFile();
   const ledger = new Ledger();
   const trustAnchor = new TrustAnchor();
   const idCard = new IdCard();
@@ -48,12 +44,12 @@ export default function setRoutes(app) {
   router.route('/trustAnchor/:id').delete(trustAnchor.delete);
 
   // idCard schema
-  router.route('/prescriptions').get(idCard.getAll);
-  router.route('/prescriptions/count').get(idCard.count);
-  router.route('/prescription').post(idCard.insert);
-  router.route('/prescription/:id').get(idCard.get);
-  router.route('/prescription/:id').put(idCard.update);
-  router.route('/prescription/:id').delete(idCard.delete);
+  router.route('/schemas').get(idCard.getAll);
+  router.route('/schema/count').get(idCard.count);
+  router.route('/schema').post(idCard.insert);
+  router.route('/schema/:id').get(idCard.get);
+  router.route('/schema/:id').put(idCard.update);
+  router.route('/schema/:id').delete(idCard.delete);
 
   // Credential Definition
   router.route('/credentialDefinitions').get(credentialDefinition.getAll);
@@ -92,25 +88,17 @@ export default function setRoutes(app) {
   router.route('/user/:id').put(userCtrl.update);
   router.route('/user/:id').delete(userCtrl.delete);
 
-  // Nursing Home
-  router.route('/nursingHomeLogin').post(nursingHome.login);
-  router.route('/nursingHomes').get(nursingHome.getAll);
-  router.route('/nursingHomes/count').get(nursingHome.count);
-  router.route('/nursingHome/:id').get(nursingHome.get);
-  router.route('/nursingHome/:id').put(nursingHome.update);
-  router.route('/nursingHome/:id').delete(nursingHome.delete);
+  // Government
+  router.route('/setupCredentialDefinition').post(government.setupCredentialDefinition);
+  router.route('/gettingIdCard').post(government.gettingIdCard);
+  router.route('/doctorLogin').post(government.login);
+  router.route('/doctors').get(government.getAll);
+  router.route('/doctors/count').get(government.count);
+  router.route('/doctor/:id').get(government.get);
+  router.route('/doctor/:id').put(government.update);
+  router.route('/doctor/:id').delete(government.delete);
 
-  // Gov
-  router.route('/setupCredentialDefinition').post(gov.setupCredentialDefinition);
-  router.route('/gettingIdCard').post(gov.gettingIdCard);
-  router.route('/doctorLogin').post(gov.login);
-  router.route('/doctors').get(gov.getAll);
-  router.route('/doctors/count').get(gov.count);
-  router.route('/doctor/:id').get(gov.get);
-  router.route('/doctor/:id').put(gov.update);
-  router.route('/doctor/:id').delete(gov.delete);
-
-  // Pharmacy
+  // Bank
   router.route('/applyLoan').post(bank.applyLoan);
   router.route('/pharmacyLogin').post(bank.login);
   router.route('/pharmacys').get(bank.getAll);
@@ -120,7 +108,7 @@ export default function setRoutes(app) {
   router.route('/pharmacy/:id').delete(bank.delete);
 
   // Hash
-  router.route('/hash').post(hashFile.hashFile);
+  router.route('/hash').post(government.hashFile);
 
   // Apply the routes to our application with the prefix /api
   app.use('/api', router);

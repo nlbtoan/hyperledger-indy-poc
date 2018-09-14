@@ -12,15 +12,15 @@ export class CreateSchemaService {
   }
 
   insertSchema(schema: any): Observable<any> {
-    return this.http.post<any>('/api/prescription', schema);
+    return this.http.post<any>('/api/schema', schema);
   }
 
   deleteSchema(schema: any): Observable<any> {
-    return this.http.delete(`/api/prescription/${schema._id}`, { responseType: 'text' });
+    return this.http.delete(`/api/schema/${schema._id}`, { responseType: 'text' });
   }
 
   getAllSchema(): Observable<any> {
-    return this.http.get<any>('/api/prescriptions');
+    return this.http.get<any>('/api/schemas');
   }
 
 }

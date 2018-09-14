@@ -1,3 +1,5 @@
+const nodeFileHashLib = require('node-file-hash');
+
 abstract class BaseCtrl {
 
   abstract model: any;
@@ -55,6 +57,16 @@ abstract class BaseCtrl {
       if (err) { return console.error(err); }
       res.sendStatus(200);
     });
+  }
+
+  hashFile = (req, res) => {
+    nodeFileHashLib.createHash(req.body.binary)
+      .then((hash) => {
+        res.status(200).json({
+          hash: hash
+        });
+      })
+      .catch((err) => console.error(err));
   }
 }
 

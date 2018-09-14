@@ -1,4 +1,4 @@
-import Government from '../models/gov';
+import Government from 'models/government';
 import BaseCtrl from './base';
 import * as jwt from 'jsonwebtoken';
 
@@ -8,7 +8,7 @@ import mkdirp = require('mkdirp');
 import fs = require('fs');
 import os = require('os');
 
-export default class govCtrl extends BaseCtrl {
+export default class GovernmentCtrl extends BaseCtrl {
   model = Government;
 
   login = (req, res) => {
