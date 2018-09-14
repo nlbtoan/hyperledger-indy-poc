@@ -62,7 +62,7 @@ export class GovernmentComponent implements OnInit {
     this.gettingIdCard();
     this.getTrustAnchor();
     this.getLedger();
-    this.getShema();
+    this.getSchema();
 
     // Build form for patient
     this.residentForm = this.formBuilder.group({
@@ -138,7 +138,7 @@ export class GovernmentComponent implements OnInit {
     );
   }
 
-  getShema() {
+  getSchema() {
     this.createSchemaService.getAllSchema().subscribe(
       data => this.Schemas = data,
       error => console.log(error)
@@ -319,7 +319,7 @@ export class GovernmentComponent implements OnInit {
       res => {
         this.createSchemaService.insertSchema(res).subscribe(
           res => {
-            this.getShema();
+            this.getSchema();
             this.isLoading = false;
             this.toast.setMessage('Schema created successfully.', 'success');
           }
