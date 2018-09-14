@@ -8,7 +8,7 @@ import { CatService } from './services/cat.service';
 import { UserService } from './services/user.service';
 import { AuthService } from './services/auth.service';
 import { PatientService } from './services/patient.service';
-import { PharmacyService } from './services/pharmacy.service';
+import { BankService } from './services/bank.service';
 import { LedgerService } from './services/ledger.service';
 import { TrustAnchorService } from './services/anchor.service';
 import { CreateSchemaService } from './services/schema.service';
@@ -61,7 +61,7 @@ export function tokenGetter() {
     PatientService,
     TrustAnchorService,
     CreateSchemaService,
-    PharmacyService,
+    BankService,
     LedgerService
   ],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

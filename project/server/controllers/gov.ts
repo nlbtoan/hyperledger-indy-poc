@@ -45,6 +45,7 @@ export default class govCtrl extends BaseCtrl {
   //     }
   // }
   gettingIdCard = async (req, res) => {
+    console.log(req.body);
     let poolHandle = req.body.poolHandle;
     let governmentWallet = req.body.governmentWallet;
     let governmentDid = req.body.governmentDid;
@@ -54,29 +55,40 @@ export default class govCtrl extends BaseCtrl {
     let residentWallet, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse;
 
     try {
+    console.log('111111111111111111111111111111111111');
       [residentWallet, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse] = await this.onboarding(poolHandle, "Government", governmentWallet, governmentDid, "Personal", null, residentWalletConfig, residentWalletCredentials);
-
+      console.log('22222222222222222222222222222222222');
       let idCardCredOfferJson = await indy.issuerCreateCredentialOffer(governmentWallet, req.body.governmentIdCardCredDefId);
+      console.log('333333333333333333333333333333');
       let residentGovernmentVerkey = await indy.keyForDid(poolHandle, bankWallet, governmentResidentConnectionResponse['did']);
+      console.log('44444444444444444444444444444');
       let authcryptedIdCardCredOffer = await indy.cryptoAuthCrypt(governmentWallet, governmentResidentKey, residentGovernmentVerkey, Buffer.from(JSON.stringify(idCardCredOfferJson), 'utf8'));
+      console.log('555555555555555555555');
       let [governmentResidentVerkey, authdecryptedIdCardCredOfferJson, authdecryptedIdCardCredOffer] = await this.authDecrypt(residentWallet, residentGovernmentKey, authcryptedIdCardCredOffer);
+      console.log('6666666666666666666666666666');
       let residentMasterSecretId = await indy.proverCreateMasterSecret(residentWallet, null);
-
+      console.log('777777777777777777777777777777777777777');
       let governmentIdCardCredDef;
+      console.log('888888888888888888888888888888888');
       [req.body.governmentIdCardCredDefId, governmentIdCardCredDef] = await this.getCredDef(poolHandle, residentGovernmentDid, authdecryptedIdCardCredOffer['cred_def_id']);
+      console.log('9999999999999999999999999999999999');
       let [idCardCredRequestJson, idCardCredRequestMetadataJson] = await indy.proverCreateCredentialReq(residentWallet, residentGovernmentDid, authdecryptedIdCardCredOfferJson, governmentIdCardCredDef, residentMasterSecretId);
+      console.log('1010101010101010101010101010');
       let authcryptedIdCardCredRequest = await indy.cryptoAuthCrypt(residentWallet, residentGovernmentKey, governmentResidentVerkey, Buffer.from(JSON.stringify(idCardCredRequestJson), 'utf8'));
 
       let authdecryptedIdCardCredRequestJson;
       [residentGovernmentVerkey, authdecryptedIdCardCredRequestJson] = await this.authDecrypt(governmentWallet, governmentResidentKey, authcryptedIdCardCredRequest);
+      console.log('11 11 11 11 11 11 11 11 11 ');
       let idCardCredValues = req.body.idCardCredValues;
       let [idCardCredJson] = await indy.issuerCreateCredential(governmentWallet, idCardCredOfferJson, authdecryptedIdCardCredRequestJson, idCardCredValues, null, -1);
+      console.log('121212121212121212');
       let authcryptedidCardCredJson = await indy.cryptoAuthCrypt(governmentWallet, governmentResidentKey, residentGovernmentVerkey, Buffer.from(JSON.stringify(idCardCredJson), 'utf8'));
+      console.log('131313131313131313');
       let [, authdecryptedidCardCredJson] = await this.authDecrypt(residentWallet, residentGovernmentKey, authcryptedidCardCredJson);
-
+      console.log('14141414141414141414');
       await indy.proverStoreCredential(residentWallet, null, idCardCredRequestMetadataJson,
         authdecryptedidCardCredJson, governmentIdCardCredDef, null);
-
+        console.log('15151515151515151515');
       res.status(200).json({
         residentWallet: residentWallet,
         residentWalletCredentials: residentWalletCredentials,
@@ -143,7 +155,7 @@ export default class govCtrl extends BaseCtrl {
       let governmentWallet = req.body.governmentWallet;
       let governmentDid = req.body.governmentDid;
 
-      [, req.body.IdCardSchema] = await this.getSchema(poolHandle, governmentDid, req.body.idCardSchemaId);
+      [, req.body.idCardSchema] = await this.getSchema(poolHandle, governmentDid, req.body.idCardSchemaId);
 
       let [governmentIdCardCredDefId, governmentIdCardCredDefJson] = await indy.issuerCreateAndStoreCredentialDef(governmentWallet, governmentDid, req.body.idCardSchema, 'TAG1', 'CL', '{"support_revocation": false}');
       await this.sendCredDef(poolHandle, governmentWallet, governmentDid, governmentIdCardCredDefJson);

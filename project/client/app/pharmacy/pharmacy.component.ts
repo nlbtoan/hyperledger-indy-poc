@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
-import { PharmacyService } from '../services/pharmacy.service';
+import { BankService } from '../services/bank.service';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { LedgerService } from '../services/ledger.service';
 import { PatientService } from '../services/patient.service';
@@ -51,7 +51,7 @@ export class PharmacyComponent implements OnInit {
   ]);
 
   constructor(
-    private pharmacyService: PharmacyService,
+    private bankService: BankService,
     private formBuilder: FormBuilder,
     public toast: ToastComponent,
     private ledgerService: LedgerService,
@@ -117,13 +117,13 @@ export class PharmacyComponent implements OnInit {
   }
 
   getBankIdCards() {
-    this.pharmacyService.getAllPharmacyPrescription().subscribe(
+    this.bankService.getAllBankIdCard().subscribe(
       data => {
         this.bankIdCards = data;
       },
       error => {
         console.log(error);
-        this.toast.setMessage('Can not pharmacy prescription lists', 'danger');
+        this.toast.setMessage('Can not Bank Id Card lists', 'danger');
       }
     );
   }
@@ -160,15 +160,15 @@ export class PharmacyComponent implements OnInit {
     );
   }
 
-  deletePharmacyPrescription(pharmacyPrescription: any) {
-    if (window.confirm('Are you sure you want to delete this prescription?')) {
-      this.pharmacyService.deletePharmacyPrescription(pharmacyPrescription).subscribe(
+  deleteBankIdCard(bankIdCard: any) {
+    if (window.confirm('Are you sure you want to delete this bankIdCard?')) {
+      this.bankService.deleteBankIdCard(bankIdCard).subscribe(
         res => {
           this.getBankIdCards();
         },
         error => {
           console.log(error);
-          this.toast.setMessage('Can not delete this pharmacy prescription', 'danger');
+          this.toast.setMessage('Can not delete this bankIdCard', 'danger');
         }
       );
     }
@@ -204,9 +204,9 @@ export class PharmacyComponent implements OnInit {
       }
     });
 
-    this.pharmacyService.applyPrescription(idCard).subscribe(
+    this.bankService.applyIdCard(idCard).subscribe(
       res => {
-        this.pharmacyService.insertPharmacyPrescription({ residentGovernmentDid: idCard.residentGovernmentDid, governmentIdCardCredDefId: idCard.governmentIdCardCredDefId }).subscribe(
+        this.bankService.insertBankIdCard({ residentGovernmentDid: idCard.residentGovernmentDid, governmentIdCardCredDefId: idCard.governmentIdCardCredDefId }).subscribe(
           res => {
             this.getBankIdCards();
             this.isLoading = false;
@@ -215,7 +215,7 @@ export class PharmacyComponent implements OnInit {
           error => {
             console.log(error);
             this.isLoading = false
-            this.toast.setMessage('This claim can not save to pharmacy table.', 'danger');
+            this.toast.setMessage('This claim can not save to Bank table.', 'danger');
           }
         );
       },
