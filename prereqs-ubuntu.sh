@@ -84,6 +84,9 @@ nvm alias default 'lts/*'
 echo "# Installing npm"
 npm install npm@latest -g
 
+# Install Angular CLI 
+npm install -g @angular/cli
+
 # Ensure that CA certificates are installed
 sudo apt-get -y install apt-transport-https ca-certificates
 
