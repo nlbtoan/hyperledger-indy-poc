@@ -202,38 +202,4 @@ export class AdminComponent implements OnInit {
       }
     );
   }
-
-  createSchema() {
-    this.isLoading = true;
-    let setupSchema = {
-      governmentWallet: 'null',
-      governmentDid: 'null',
-      poolHandle: parseInt(this.ledgers[this.ledgers.length - 1].poolHandle),
-      schema: ["id", "name", "dob", "gender", "nationality", "hometown", "profile_image_hash", "created_at", "status"]
-    };
-
-    this.TrustAnchors.forEach(TrustAnchor => {
-      let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
-      if (anchorName === 'government' || anchorName === 'gov') {
-        setupSchema.governmentWallet = TrustAnchor.trustAnchorWallet;
-        setupSchema.governmentDid = TrustAnchor.trustAnchorDID;
-      }
-    });
-
-    this.createSchemaService.createSchema(setupSchema).subscribe(
-      res => {
-        this.createSchemaService.insertSchema(res).subscribe(
-          res => {
-            this.getShema();
-            this.isLoading = false;
-            this.toast.setMessage('Schema created successfully.', 'success');
-          }
-        );
-      },
-      error => {
-        this.isLoading = false;
-        console.log(error);
-      }
-    );
-  }
 }

@@ -2,16 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 
 import { BankService } from '../services/bank.service';
+import { GovernmentService } from '../services/government.service';
 import { ToastComponent } from '../shared/toast/toast.component';
 import { LedgerService } from '../services/ledger.service';
-import { PatientService } from '../services/patient.service';
 import { TrustAnchorService } from '../services/anchor.service';
 
 @Component({
-  selector: 'app-pharmacy',
-  templateUrl: './pharmacy.component.html'
+  selector: 'app-bank',
+  templateUrl: './bank.component.html'
 })
-export class PharmacyComponent implements OnInit {
+export class BankComponent implements OnInit {
 
   hashResponse;
   bankIdCards = [];
@@ -52,10 +52,10 @@ export class PharmacyComponent implements OnInit {
 
   constructor(
     private bankService: BankService,
+    private governmentService: GovernmentService,
     private formBuilder: FormBuilder,
     public toast: ToastComponent,
     private ledgerService: LedgerService,
-    private patientService: PatientService,
     private trustAnchorService: TrustAnchorService) { }
 
   ngOnInit() {
@@ -137,7 +137,7 @@ export class PharmacyComponent implements OnInit {
   }
 
   gettingIdCard() {
-    this.patientService.getAllPatientPrescription().subscribe(
+    this.governmentService.getAllPatientPrescription().subscribe(
       data => this.residentIdCards = data,
       error => console.log(error),
       () => this.isLoading = false
@@ -153,7 +153,7 @@ export class PharmacyComponent implements OnInit {
   }
 
   getCredentialDefinitions() {
-    this.patientService.getAllCredentialDefinition().subscribe(
+    this.governmentService.getAllCredentialDefinition().subscribe(
       data => this.credentialDefinitions = data,
       error => console.log(error),
       () => this.isLoading = false
@@ -233,7 +233,7 @@ export class PharmacyComponent implements OnInit {
       let file = event.target.files[0];
       reader.readAsDataURL(file);
       reader.onload = () => {
-        this.patientService.hashFile({ binary: reader.result }).subscribe(
+        this.governmentService.hashFile({ binary: reader.result }).subscribe(
           res => {
             this.hashResponse = res.hash.sha256;
             this.toast.setMessage('Hash successfully.', 'success');

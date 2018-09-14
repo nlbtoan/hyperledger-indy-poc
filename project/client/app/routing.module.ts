@@ -5,9 +5,9 @@ import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { LogoutComponent } from './logout/logout.component';
 import { AccountComponent } from './account/account.component';
-import { PatientComponent } from './patient/patient.component';
+import { GovernmentComponent } from './government/government.component';
 import { AdminComponent } from './admin/admin.component';
-import { PharmacyComponent } from './pharmacy/pharmacy.component'
+import { BankComponent } from './bank/bank.component'
 import { NotFoundComponent } from './not-found/not-found.component';
 
 import { AuthGuardLogin } from './services/auth-guard-login.service';
@@ -19,8 +19,8 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'logout', component: LogoutComponent },
   { path: 'account', component: AccountComponent, canActivate: [AuthGuardLogin] },
-  { path: 'government', component: PatientComponent, canActivate: [AuthGuardLogin] },
-  { path: 'bank', component: PharmacyComponent, canActivate: [AuthGuardLogin] },
+  { path: 'government', component: GovernmentComponent, canActivate: [AuthGuardLogin] },
+  { path: 'bank', component: BankComponent, canActivate: [AuthGuardLogin] },
   { path: 'admin', component: AdminComponent, canActivate: [AuthGuardAdmin] },
   { path: 'notfound', component: NotFoundComponent },
   { path: '**', redirectTo: '/notfound' },

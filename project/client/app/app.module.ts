@@ -4,10 +4,9 @@ import { JwtModule } from '@auth0/angular-jwt';
 // Services
 import { RoutingModule } from './routing.module';
 import { SharedModule } from './shared/shared.module';
-import { CatService } from './services/cat.service';
 import { UserService } from './services/user.service';
 import { AuthService } from './services/auth.service';
-import { PatientService } from './services/patient.service';
+import { GovernmentService } from './services/government.service';
 import { BankService } from './services/bank.service';
 import { LedgerService } from './services/ledger.service';
 import { TrustAnchorService } from './services/anchor.service';
@@ -23,8 +22,8 @@ import { LogoutComponent } from './logout/logout.component';
 import { AccountComponent } from './account/account.component';
 import { AdminComponent } from './admin/admin.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { PatientComponent } from './patient/patient.component';
-import { PharmacyComponent } from './pharmacy/pharmacy.component';
+import { GovernmentComponent } from './government/government.component';
+import { BankComponent } from './bank/bank.component';
 
 export function tokenGetter() {
   return localStorage.getItem('token');
@@ -39,8 +38,8 @@ export function tokenGetter() {
     AccountComponent,
     AdminComponent,
     NotFoundComponent,
-    PatientComponent,
-    PharmacyComponent
+    GovernmentComponent,
+    BankComponent
   ],
   imports: [
     RoutingModule,
@@ -56,9 +55,8 @@ export function tokenGetter() {
     AuthService,
     AuthGuardLogin,
     AuthGuardAdmin,
-    CatService,
     UserService,
-    PatientService,
+    GovernmentService,
     TrustAnchorService,
     CreateSchemaService,
     BankService,

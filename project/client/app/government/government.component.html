@@ -1,6 +1,40 @@
 <app-loading [condition]="isLoading"></app-loading>
 <app-toast [message]="toast.message"></app-toast>
 
+<div class="card" *ngIf="!isLoading">
+  <h4 class="card-header">Step 3: Create ID Card Schema</h4>
+  <form class="card-body">
+    <button class="btn btn-primary" (click)="createSchema()">
+      <i class="fa fa-sign-in"></i> Create Schema </button>
+  </form>
+
+  <div class="card-body">
+    <table class="table table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th scope="col">Schema ID</th>
+          <th scope="col">Option</th>
+        </tr>
+      </thead>
+      <tbody *ngIf="Schemas.length === 0">
+        <tr>
+          <td colspan="2">There are no registered schema.</td>
+        </tr>
+      </tbody>
+      <tbody>
+        <tr *ngFor="let Schema of Schemas">
+          <td>{{Schema.idCardSchemaId}}</td>
+          <td>
+            <button class="btn btn-sm btn-danger" (click)="deleteSchema(Schema)">
+              <i class="fa fa-trash"></i> Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
 <!-- Setup Credential Form -->
 <div class="card" *ngIf="!isLoading">
   <h4 class="card-header">Step 4: Setup Credential</h4>

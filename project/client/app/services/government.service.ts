@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { Credential } from '../shared/models/setupCredentialDefinition.model';
 
 @Injectable()
-export class PatientService {
+export class GovernmentService {
 
   constructor(private http: HttpClient) { }
 

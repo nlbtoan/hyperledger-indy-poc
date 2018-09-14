@@ -45,7 +45,6 @@ export default class govCtrl extends BaseCtrl {
   //     }
   // }
   gettingIdCard = async (req, res) => {
-    console.log(req.body);
     let poolHandle = req.body.poolHandle;
     let governmentWallet = req.body.governmentWallet;
     let governmentDid = req.body.governmentDid;

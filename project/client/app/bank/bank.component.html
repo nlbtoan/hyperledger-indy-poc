@@ -2,7 +2,7 @@
 <app-toast [message]="toast.message"></app-toast>
 
 <div class="card" *ngIf="!isLoading">
-  <h4 class="card-header">Step 6: Apply Prescription</h4>
+  <h4 class="card-header">Step 6: Apply Loan</h4>
   <div class="card-body">
     <form [formGroup]="bankForm" (ngSubmit)="applyLoan()">
 
@@ -104,7 +104,7 @@
       </thead>
       <tbody *ngIf="bankIdCards.length === 0">
         <tr>
-          <td colspan="5">There are no patient prescriptions registered.</td>
+          <td colspan="5">There are no loan contracts.</td>
         </tr>
       </tbody>
       <tbody>

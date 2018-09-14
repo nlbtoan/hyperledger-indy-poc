@@ -2,16 +2,16 @@ import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { ToastComponent } from '../shared/toast/toast.component';
 
-import { PatientService } from '../services/patient.service';
+import { GovernmentService } from '../services/government.service';
 import { CreateSchemaService } from '../services/schema.service';
 import { LedgerService } from '../services/ledger.service';
 import { TrustAnchorService } from '../services/anchor.service';
 
 @Component({
-  selector: 'app-patient',
-  templateUrl: './patient.component.html'
+  selector: 'app-government',
+  templateUrl: './government.component.html'
 })
-export class PatientComponent implements OnInit {
+export class GovernmentComponent implements OnInit {
 
   @ViewChild('fileInput') fileInput: ElementRef;
 
@@ -50,7 +50,7 @@ export class PatientComponent implements OnInit {
   ]);
 
   constructor(
-    private patientService: PatientService,
+    private governmentService: GovernmentService,
     private formBuilder: FormBuilder,
     public toast: ToastComponent,
     private createSchemaService: CreateSchemaService,
@@ -107,7 +107,7 @@ export class PatientComponent implements OnInit {
   }
 
   getCredentialDefinitions() {
-    this.patientService.getAllCredentialDefinition().subscribe(
+    this.governmentService.getAllCredentialDefinition().subscribe(
       data => this.credentialDefinitions = data,
       error => console.log(error),
       () => this.isLoading = false
@@ -115,7 +115,7 @@ export class PatientComponent implements OnInit {
   }
 
   gettingIdCard() {
-    this.patientService.getAllPatientPrescription().subscribe(
+    this.governmentService.getAllPatientPrescription().subscribe(
       data => this.residentIdCards = data,
       error => console.log(error),
       () => this.isLoading = false
@@ -147,7 +147,7 @@ export class PatientComponent implements OnInit {
 
   deleteCredentialDefinition(credentialDefinition) {
     if (window.confirm('Are you sure you want to delete this credential?')) {
-      this.patientService.deleteCredentialDefinition(credentialDefinition).subscribe(
+      this.governmentService.deleteCredentialDefinition(credentialDefinition).subscribe(
         res => {
           this.getCredentialDefinitions();
           this.toast.setMessage('Credential Definition deleted successfully.', 'success');
@@ -162,7 +162,7 @@ export class PatientComponent implements OnInit {
 
   deletePatientPrescription(patientPrescription) {
     if (window.confirm('Are you sure you want to delete this prescription?')) {
-      this.patientService.deletePatientPrescription(patientPrescription).subscribe(
+      this.governmentService.deletePatientPrescription(patientPrescription).subscribe(
         data => {
           this.gettingIdCard();
           this.toast.setMessage('Patient Prescription deleted successfully.', 'success');
@@ -211,9 +211,9 @@ export class PatientComponent implements OnInit {
       }
     });
 
-    this.patientService.createIdCard(idCard).subscribe(
+    this.governmentService.createIdCard(idCard).subscribe(
       res => {
-        this.patientService.insertPatientPrescription(res).subscribe(
+        this.governmentService.insertPatientPrescription(res).subscribe(
           res => {
             this.gettingIdCard();
             this.isLoading = false;
@@ -255,9 +255,9 @@ export class PatientComponent implements OnInit {
       this.Schemas[this.Schemas.length - 1][key] = credentialDefinition[key];
     });
 
-    this.patientService.setupCredentialDefinition(this.Schemas[0]).subscribe(
+    this.governmentService.setupCredentialDefinition(this.Schemas[0]).subscribe(
       res => {
-        this.patientService.insertCredentialDefinition(res).subscribe(
+        this.governmentService.insertCredentialDefinition(res).subscribe(
           res => {
             this.getCredentialDefinitions();
             this.isLoading = false;
@@ -284,7 +284,7 @@ export class PatientComponent implements OnInit {
       let file = event.target.files[0];
       reader.readAsDataURL(file);
       reader.onload = () => {
-        this.patientService.hashFile({ binary: reader.result }).subscribe(
+        this.governmentService.hashFile({ binary: reader.result }).subscribe(
           res => {
             this.hashResponse = res.hash.sha256;
             this.toast.setMessage('Hash successfully.', 'success');
@@ -296,6 +296,40 @@ export class PatientComponent implements OnInit {
         );
       };
     }
+  }
+
+  createSchema() {
+    this.isLoading = true;
+    let setupSchema = {
+      governmentWallet: 'null',
+      governmentDid: 'null',
+      poolHandle: parseInt(this.ledgers[this.ledgers.length - 1].poolHandle),
+      schema: ["id", "name", "dob", "gender", "nationality", "hometown", "profile_image_hash", "created_at", "status"]
+    };
+
+    this.TrustAnchors.forEach(TrustAnchor => {
+      let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
+      if (anchorName === 'government' || anchorName === 'gov') {
+        setupSchema.governmentWallet = TrustAnchor.trustAnchorWallet;
+        setupSchema.governmentDid = TrustAnchor.trustAnchorDID;
+      }
+    });
+
+    this.createSchemaService.createSchema(setupSchema).subscribe(
+      res => {
+        this.createSchemaService.insertSchema(res).subscribe(
+          res => {
+            this.getShema();
+            this.isLoading = false;
+            this.toast.setMessage('Schema created successfully.', 'success');
+          }
+        );
+      },
+      error => {
+        this.isLoading = false;
+        console.log(error);
+      }
+    );
   }
 
 }
