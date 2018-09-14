@@ -4,7 +4,7 @@ import UserCtrl from './controllers/user';
 import Admin from './controllers/admin';
 import NursingHome from './controllers/nursingHome';
 import Government from './controllers/gov';
-import Pharmacy from './controllers/bank';
+import Bank from './controllers/bank';
 import HashFile from './controllers/hashFile';
 import Ledger from './controllers/ledger';
 import TrustAnchor from './controllers/trustAnchor';
@@ -21,7 +21,7 @@ export default function setRoutes(app) {
   const admin = new Admin();
   const nursingHome = new NursingHome();
   const gov = new Government();
-  const pharmacy = new Pharmacy();
+  const bank = new Bank();
   const hashFile = new HashFile();
   const ledger = new Ledger();
   const trustAnchor = new TrustAnchor();
@@ -111,13 +111,13 @@ export default function setRoutes(app) {
   router.route('/doctor/:id').delete(gov.delete);
 
   // Pharmacy
-  router.route('/applyIdCard').post(pharmacy.applyIdCard);
-  router.route('/pharmacyLogin').post(pharmacy.login);
-  router.route('/pharmacys').get(pharmacy.getAll);
-  router.route('/pharmacys/count').get(pharmacy.count);
-  router.route('/pharmacy/:id').get(pharmacy.get);
-  router.route('/pharmacy/:id').put(pharmacy.update);
-  router.route('/pharmacy/:id').delete(pharmacy.delete);
+  router.route('/applyIdCard').post(bank.applyIdCard);
+  router.route('/pharmacyLogin').post(bank.login);
+  router.route('/pharmacys').get(bank.getAll);
+  router.route('/pharmacys/count').get(bank.count);
+  router.route('/pharmacy/:id').get(bank.get);
+  router.route('/pharmacy/:id').put(bank.update);
+  router.route('/pharmacy/:id').delete(bank.delete);
 
   // Hash
   router.route('/hash').post(hashFile.hashFile);
