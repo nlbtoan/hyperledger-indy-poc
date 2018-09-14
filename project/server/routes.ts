@@ -11,7 +11,7 @@ import TrustAnchor from './controllers/trustAnchor';
 import IdCard from './controllers/idCard';
 import CredentialDefinition from './controllers/credentialDefinition';
 import ResidentIdCard from './controllers/residentIdCard';
-import PharmacyPrescription from './controllers/PharmacyPrescription';
+import BankIdCard from './controllers/bankIdCard';
 
 export default function setRoutes(app) {
 
@@ -28,7 +28,7 @@ export default function setRoutes(app) {
   const idCard = new IdCard();
   const credentialDefinition = new CredentialDefinition();
   const residentIdCard = new ResidentIdCard();
-  const pharmacyPrescription = new PharmacyPrescription();
+  const bankIdCard = new BankIdCard();
 
   //// Ledger data managerment ////
   // Ledger
@@ -72,12 +72,12 @@ export default function setRoutes(app) {
   router.route('/patientPrescription/:id').delete(residentIdCard.delete);
 
   // Pharmacy Prescription Lists
-  router.route('/pharmacyPrescriptions').get(pharmacyPrescription.getAll);
-  router.route('/pharmacyPrescriptions/count').get(pharmacyPrescription.count);
-  router.route('/pharmacyPrescription').post(pharmacyPrescription.insert);
-  router.route('/pharmacyPrescription/:id').get(pharmacyPrescription.get);
-  router.route('/pharmacyPrescription/:id').put(pharmacyPrescription.update);
-  router.route('/pharmacyPrescription/:id').delete(pharmacyPrescription.delete);
+  router.route('/bankIdCards').get(bankIdCard.getAll);
+  router.route('/bankIdCards/count').get(bankIdCard.count);
+  router.route('/bankIdCard').post(bankIdCard.insert);
+  router.route('/bankIdCard/:id').get(bankIdCard.get);
+  router.route('/bankIdCard/:id').put(bankIdCard.update);
+  router.route('/bankIdCard/:id').delete(bankIdCard.delete);
 
   //// Interation with the ledger ////
   // Admin
@@ -111,7 +111,7 @@ export default function setRoutes(app) {
   router.route('/doctor/:id').delete(gov.delete);
 
   // Pharmacy
-  router.route('/applyIdCard').post(bank.applyIdCard);
+  router.route('/applyLoan').post(bank.applyLoan);
   router.route('/pharmacyLogin').post(bank.login);
   router.route('/pharmacys').get(bank.getAll);
   router.route('/pharmacys/count').get(bank.count);

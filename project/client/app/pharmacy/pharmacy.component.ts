@@ -174,7 +174,7 @@ export class PharmacyComponent implements OnInit {
     }
   }
 
-  applyIdCard() {
+  applyLoan() {
     this.isLoading = true;
     let data = this.bankForm.value;
     data.status = 1;
@@ -204,7 +204,7 @@ export class PharmacyComponent implements OnInit {
       }
     });
 
-    this.bankService.applyIdCard(idCard).subscribe(
+    this.bankService.applyLoan(idCard).subscribe(
       res => {
         this.bankService.insertBankIdCard({ residentGovernmentDid: idCard.residentGovernmentDid, governmentIdCardCredDefId: idCard.governmentIdCardCredDefId }).subscribe(
           res => {

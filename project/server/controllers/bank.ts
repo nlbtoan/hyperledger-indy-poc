@@ -23,7 +23,7 @@ export default class BankCtrl extends BaseCtrl {
   }
 
   // Step: 6
-  // URL: /api/applyIdCard
+  // URL: /api/applyLoan
   // Body: 
   // {
   //   "poolHandle": "",
@@ -43,7 +43,7 @@ export default class BankCtrl extends BaseCtrl {
   //   "ResidentLastName": "",
   //   "dateOfBirth": ""
   // }
-  applyIdCard = async (req, res) => {
+  applyLoan = async (req, res) => {
     try {
       let bankResidentKey, residentbankDid, residentBankKey, bankResidentConnectionResponse;
       [req.body.residentWallet, bankResidentKey, residentbankDid, residentBankKey, bankResidentConnectionResponse] = await this.onboarding(req.body.poolHandle, "Bank", req.body.bankWallet, req.body.bankDid, "Personal", req.body.residentWallet, { 'id': req.body.residentWalletName }, req.body.residentWalletCredentials);
@@ -114,7 +114,7 @@ export default class BankCtrl extends BaseCtrl {
       credsForIdCardApplicationProof[`${credForAttr5['referent']}`] = credForAttr5;
       credsForIdCardApplicationProof[`${credForPredicate1['referent']}`] = credForPredicate1;
 
-      let [schemasJson, credDefsJson, revocStatesJson] = await this.proverGetEntitiesFromLedger(req.body.poolHandle, req.body.ResidentGovernmentDid, credsForIdCardApplicationProof, 'Personal');
+      let [schemasJson, credDefsJson, revocStatesJson] = await this.proverGetEntitiesFromLedger(req.body.poolHandle, req.body.residentGovernmentDid, credsForIdCardApplicationProof, 'Personal');
 
       let IdCardApplicationRequestedCredsJson = {
         'self_attested_attributes': {
@@ -130,7 +130,7 @@ export default class BankCtrl extends BaseCtrl {
       };
 
       let IdCardApplicationProofJson = await indy.proverCreateProof(req.body.residentWallet, authdecryptedIdCardApplicationProofRequestJson,
-        IdCardApplicationRequestedCredsJson, req.body.ResidentMasterSecretId,
+        IdCardApplicationRequestedCredsJson, req.body.residentMasterSecretId,
         schemasJson, credDefsJson, revocStatesJson);
 
       let authcryptedIdCardApplicationProofJson = await indy.cryptoAuthCrypt(req.body.residentWallet, residentBankKey, bankResidentVerkey, Buffer.from(JSON.stringify(IdCardApplicationProofJson), 'utf8'));

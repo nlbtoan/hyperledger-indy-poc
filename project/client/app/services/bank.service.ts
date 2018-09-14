@@ -7,8 +7,8 @@ export class BankService {
 
   constructor(private http: HttpClient) { }
 
-  applyIdCard(bank: any): Observable<any> {
-    return this.http.post<any>('/api/applyIdCard', bank);
+  applyLoan(bank: any): Observable<any> {
+    return this.http.post<any>('/api/applyLoan', bank);
   }
 
   insertBankIdCard(BankIdCard: any): Observable<any> {

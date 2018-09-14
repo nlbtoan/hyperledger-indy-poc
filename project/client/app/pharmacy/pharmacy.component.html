@@ -4,7 +4,7 @@
 <div class="card" *ngIf="!isLoading">
   <h4 class="card-header">Step 6: Apply Prescription</h4>
   <div class="card-body">
-    <form [formGroup]="bankForm" (ngSubmit)="applyIdCard()">
+    <form [formGroup]="bankForm" (ngSubmit)="applyLoan()">
 
       <div class="input-group" [ngClass]="setClassID()">
         <div class="input-group-prepend">
@@ -110,7 +110,7 @@
       <tbody>
         <tr *ngFor="let bankIdCard of bankIdCards">
           <td>{{bankIdCard.residentGovernmentDid}}</td>
-          <td>{{bankIdCard.governmanetIdCardCredDefId}}</td>
+          <td>{{bankIdCard.governmentIdCardCredDefId}}</td>
           <td>
             <button class="btn btn-sm btn-danger" (click)="deleteBankIdCard(bankIdCard)">
               <i class="fa fa-trash"></i> Delete
