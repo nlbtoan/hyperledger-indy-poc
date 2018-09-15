@@ -112,38 +112,52 @@ export default class GovernmentCtrl extends BaseCtrl {
   // URL: /api/setupCredentialDefinition
   // Body:
   // {
-  //   "poolHandle": 2,
-  //   "doctorDid": "BMkm2SzCDifFVFWGu9PEGY",
-  //   "doctorWallet": 13,
-  //   "idCardSchemaId": "UAyYVcKCQuNKGCztZUn3WX:2:IdCard:1.2",
-  //   "idCardSchema": {
-  //     "ver": "1.0",
-  //     "id": "UAyYVcKCQuNKGCztZUn3WX:2:IdCard:1.2",
-  //     "name": "IdCard",
-  //     "version": "1.2",
-  //     "attrNames": [
-  //         "doctor_name",
-  //         "patient_last_name",
-  //         "dob",
-  //         "status",
-  //         "pdf_hash",
-  //         "link",
-  //         "isCreated",
-  //         "patient_first_name"
-  //     ],
-  //     "seqNo": null
-  //   }
+  // "poolName": "indy",
+  // "governmentDid": "BMkm2SzCDifFVFWGu9PEGY",
+  // "governmentName": "government",
+  // "idCardSchemaId": "UAyYVcKCQuNKGCztZUn3WX:2:id-card:1.0",
+  // "idCardSchema": {
+  //   "ver": "1.0",
+  //   "id": "UAyYVcKCQuNKGCztZUn3WX:2:IdCard:1.2",
+  //   "name": "IdCard",
+  //   "version": "1.2",
+  //   "attrNames": [
+  //     "id",
+  //     "name",
+  //     "dob",
+  //     "gender",
+  //     "nationality",
+  //     "hometown",
+  //     "profile_image_hash",
+  //     "created_at",
+  //     "status"
+  //   ],
+  //   "seqNo": null
+  // }
   // }
   setupCredentialDefinition = async (req, res) => {
     try {
-      let poolHandle = req.body.poolHandle;
-      let governmentWallet = req.body.governmentWallet;
+      await indy.setProtocolVersion(2);
+      //Open pool ledger
+      let poolHandle = await indy.openPoolLedger(req.body.poolName);
+
+      //Close government wallet
+      let governmentWalletConfig = { 'id': req.body.governmentName + 'Wallet' };
+      let governmentWalletCredentials = { 'key': req.body.governmentName + '_key' };
+      let governmentWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
+
       let governmentDid = req.body.governmentDid;
 
       [, req.body.idCardSchema] = await this.getSchema(poolHandle, governmentDid, req.body.idCardSchemaId);
 
-      let [governmentIdCardCredDefId, governmentIdCardCredDefJson] = await indy.issuerCreateAndStoreCredentialDef(governmentWallet, governmentDid, req.body.idCardSchema, 'TAG1', 'CL', '{"support_revocation": false}');
-      await this.sendCredDef(poolHandle, governmentWallet, governmentDid, governmentIdCardCredDefJson);
+      let [governmentIdCardCredDefId, governmentIdCardCredDefJson] = await indy.issuerCreateAndStoreCredentialDef(governmentWalletHandle, governmentDid, req.body.idCardSchema, 'TAG1', 'CL', '{"support_revocation": false}');
+      await this.sendCredDef(poolHandle, governmentWalletHandle, governmentDid, governmentIdCardCredDefJson);
+
+      //Close government wallet
+      await indy.closeWallet(governmentWalletHandle);
+
+      //Close pool ledger
+      await indy.closePoolLedger(poolHandle);
 
       res.status(200).json({
         governmentIdCardCredDefId: governmentIdCardCredDefId,

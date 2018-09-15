@@ -4,7 +4,7 @@
 <div class="card" *ngIf="!isLoading">
   <h4 class="card-header">Step 3: Create ID Card Schema</h4>
   <form class="card-body">
-    <button class="btn btn-primary" (click)="createSchema()">
+    <button class="btn btn-primary" (click)="createSchema()" [disabled]="Schemas.length > 0">
       <i class="fa fa-sign-in"></i> Create Schema </button>
   </form>
 

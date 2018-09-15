@@ -238,16 +238,16 @@ export class GovernmentComponent implements OnInit {
     this.isLoading = true;
 
     let credentialDefinition = {
-      poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
-      governmentDid: 'none',
-      governmentWallet: 'none'
+      poolName: this.ledgers.pop().poolName,
+      governmentDid: 'null',
+      governmentName: 'null'
     }
 
     this.TrustAnchors.forEach(TrustAnchor => {
       let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
       if (anchorName === 'government' || anchorName === 'gov') {
         credentialDefinition.governmentDid = TrustAnchor.trustAnchorDID,
-          credentialDefinition.governmentWallet = TrustAnchor.trustAnchorWallet
+          credentialDefinition.governmentName = TrustAnchor.trustAnchorName
       }
     });
 
