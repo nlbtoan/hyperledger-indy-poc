@@ -66,7 +66,7 @@ export default class adminCtrl extends BaseCtrl {
         res.status(200).json({
           trustAnchorName: trustAnchorName,
           trustAnchorDID: trustAnchorDID,
-          trustAnchorWallet: trustAnchorWallet,
+          trustAnchorWallet: trustAnchorWalletConfig.id,
           stewardTrustAnchorKey: stewardTrustAnchorKey,
           trustAnchorStewardDid: trustAnchorStewardDid,
           trustAnchorStewardKey: trustAnchorStewardKey
