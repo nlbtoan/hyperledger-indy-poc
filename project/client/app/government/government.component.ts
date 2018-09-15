@@ -301,16 +301,16 @@ export class GovernmentComponent implements OnInit {
   createSchema() {
     this.isLoading = true;
     let setupSchema = {
-      governmentWallet: 'null',
+      governmentName: 'null',
       governmentDid: 'null',
-      poolHandle: parseInt(this.ledgers[this.ledgers.length - 1].poolHandle),
+      poolName: this.ledgers.pop().poolName,
       schema: ["id", "name", "dob", "gender", "nationality", "hometown", "profile_image_hash", "created_at", "status"]
     };
 
     this.TrustAnchors.forEach(TrustAnchor => {
       let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
       if (anchorName === 'government' || anchorName === 'gov') {
-        setupSchema.governmentWallet = TrustAnchor.trustAnchorWallet;
+        setupSchema.governmentName = TrustAnchor.trustAnchorName;
         setupSchema.governmentDid = TrustAnchor.trustAnchorDID;
       }
     });

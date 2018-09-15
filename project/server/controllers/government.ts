@@ -160,16 +160,32 @@ export default class GovernmentCtrl extends BaseCtrl {
   // URL: /api/createSchema
   // Body:
   // {
-  //   "governmentWallet": 5,
+  //   "governmentName": "government",
   //   "governmentDid": "AFJZeQZk3utUA2kcbvK1Zd",
-  //   "poolHandle": 2,
-  //   "schema": ["patient_first_name", "patient_last_name", "doctor_name", "status", "dob", "link", "pdf_hash", "isCreated"]
+  //   "poolName": "indy",
+  //   "schema": ["id", "name", "dob", "gender", "nationality", "hometown", "profile_image_hash", "created_at", "status"]
   // }
   createSchema = async (req, res) => {
     try {
+      await indy.setProtocolVersion(2);
+      //Open pool ledger
+      let poolHandle = await indy.openPoolLedger(req.body.poolName);
+
+      //Close government wallet
+      let governmentWalletConfig = { 'id': req.body.governmentName + 'Wallet' };
+      let governmentWalletCredentials = { 'key': req.body.governmentName + '_key' };
+      let governmentWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
+
       let [idCardSchemaId, idCardSchema] = await indy.issuerCreateSchema(req.body.governmentDid, 'id-card', '1.0', req.body.schema);
 
-      await this.sendSchema(req.body.poolHandle, req.body.governmentWallet, req.body.governmentDid, idCardSchema);
+      await this.sendSchema(poolHandle, governmentWalletHandle, req.body.governmentDid, idCardSchema);
+
+      //Close government wallet
+      await indy.closeWallet(governmentWalletHandle);
+
+      //Close pool ledger
+      await indy.closePoolLedger(poolHandle);
+
       res.status(200).json({
         idCardSchemaId: idCardSchemaId,
         idCardSchema: idCardSchema
