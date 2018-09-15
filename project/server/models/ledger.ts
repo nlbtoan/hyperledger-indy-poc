@@ -1,10 +1,9 @@
 import * as mongoose from 'mongoose';
 
 const ledgerSchema = new mongoose.Schema({
-  stewardWallet: Number,
+  stewardWallet: String,
   stewardDid: String,
   stewardKey: String,
-  poolHandle: Number,
   poolName: String
 });
 

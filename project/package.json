@@ -21,7 +21,7 @@
     "dev": "concurrently \"ng serve --proxy-config proxy.conf.json --host 0.0.0.0\" \"tsc -w -p server\" \"node dist/server/app.js\"",
     "server": "concurrently \"tsc -w -p server\" \"node dist/server/app.js\"",
     "client": "ng serve --proxy-config proxy.conf.json --host 0.0.0.0",
-    "prod": "rm -rf ~/.indy_client && rm -rf /tmp/.indy_client && concurrently \"ng build --aot --prod && tsc -p server && node dist/server/app.js\"",
+    "prod": "concurrently \"ng build --aot --prod && tsc -p server && node dist/server/app.js\"",
     "test": "ng test",
     "testbe": "tsc -p server && mocha dist/server/test --exit",
     "lint": "ng lint",

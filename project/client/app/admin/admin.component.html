@@ -58,7 +58,7 @@
       <input class="form-control" type="stewardWalletName" name="stewardWalletName" formControlName="stewardWalletName" placeholder="Steward Wallet Name">
     </div>
 
-    <button class="btn btn-primary" type="submit" [disabled]="!ledgerForm.valid">
+    <button class="btn btn-primary" type="submit" [disabled]="!ledgerForm.valid || users.length == 0">
       <i class="fa fa-sign-in"></i> Create Pool Ledger</button>
   </form>
 
@@ -66,10 +66,10 @@
     <table class="table table-bordered">
       <thead class="thead-light">
         <tr>
+          <th scope="col">Pool Name</th>          
+          <th scope="col">Steward Wallet</th>          
           <th scope="col">Steward Did</th>
-          <th scope="col">Steward Wallet</th>
-          <th scope="col">Pool Name</th>
-          <th scope="col">Pool Handle</th>
+          <th scope="col">Steward Key</th>
           <th scope="col">Option</th>
         </tr>
       </thead>
@@ -80,10 +80,10 @@
       </tbody>
       <tbody>
         <tr *ngFor="let ledger of ledgers">
+          <td>{{ledger.poolName}}</td>          
+          <td>{{ledger.stewardWallet}}</td>          
           <td>{{ledger.stewardDid}}</td>
-          <td>{{ledger.stewardWallet}}</td>
-          <td>{{ledger.poolName}}</td>
-          <td>{{ledger.poolHandle}}</td>
+          <td>{{ledger.stewardKey}}</td>
           <td>
             <button class="btn btn-sm btn-danger" (click)="deleteLedger(ledger)">
               <i class="fa fa-trash"></i> Delete

@@ -138,10 +138,9 @@ export default class adminCtrl extends BaseCtrl {
 
     if (stewardDid && stewardKey) {
       res.status(200).json({
-        stewardWallet: stewardWallet,
+        stewardWallet: stewardWalletConfig.id,
         stewardDid: stewardDid,
         stewardKey: stewardKey,
-        poolHandle: poolHandle,
         poolName: poolName
       });
     } else {
