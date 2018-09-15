@@ -69,13 +69,22 @@ export default class adminCtrl extends BaseCtrl {
 
       let stewardWalletConfig = { 'id': stewardWallet + 'Wallet' };
       let stewardWalletCredentials = { 'key': stewardWallet + '_key' };
-      let stewardWalletHanlde = await indy.openWallet(stewardWalletConfig, stewardWalletCredentials);
+      let stewardWalletHandle = await indy.openWallet(stewardWalletConfig, stewardWalletCredentials);
 
-      let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] = await this.onboarding(poolHandle, "Sovrin Steward", stewardWalletHanlde, stewardDid, trustAnchorName, null, trustAnchorWalletConfig, trustAnchorWalletCredentials);
+      let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] = await this.onboarding(poolHandle, "Sovrin Steward", stewardWalletHandle, stewardDid, trustAnchorName, null, trustAnchorWalletConfig, trustAnchorWalletCredentials);
 
       let trustAnchorDID = await this.getVerinym(poolHandle, "Sovrin Steward", stewardWallet, stewardDid,
         stewardTrustAnchorKey, trustAnchorName, trustAnchorWallet, trustAnchorStewardDid,
         trustAnchorStewardKey, 'TRUST_ANCHOR');
+
+      //Close trust anchor wallet
+      await indy.closeWallet(trustAnchorWallet);
+
+      //Close steward wallet
+      await indy.closeWallet(stewardWalletHandle);
+
+      //Close pool ledger
+      await indy.closePoolLedger(poolHandle);
 
       if (trustAnchorDID) {
         res.status(200).json({
@@ -121,8 +130,10 @@ export default class adminCtrl extends BaseCtrl {
     await indy.setProtocolVersion(2);
 
     let poolHandle = await indy.openPoolLedger(poolName);
+
     let stewardWalletConfig = { 'id': stewardName + 'Wallet' };
     let stewardWalletCredentials = { 'key': stewardName + '_key' };
+
     try {
       await indy.createWallet(stewardWalletConfig, stewardWalletCredentials);
     } catch (e) {
@@ -131,12 +142,19 @@ export default class adminCtrl extends BaseCtrl {
         res.sendStatus(403);
       }
     }
+
     let stewardWalletHandle = await indy.openWallet(stewardWalletConfig, stewardWalletCredentials);
     let stewardDidInfo = {
       'seed': '000000000000000000000000Steward1'
     };
 
     let [stewardDid, stewardKey] = await indy.createAndStoreMyDid(stewardWalletHandle, stewardDidInfo);
+
+    //Close steward wallet
+    await indy.closeWallet(stewardWalletHandle);
+
+    //Close pool ledger
+    await indy.closePoolLedger(poolHandle);
 
     if (stewardDid && stewardKey) {
       res.status(200).json({
