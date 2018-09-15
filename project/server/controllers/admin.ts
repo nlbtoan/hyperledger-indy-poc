@@ -52,13 +52,13 @@ export default class adminCtrl extends BaseCtrl {
   // {
   //   "trustAnchorName": "government",
   //   "poolName": "indy",
-  //   "stewardWallet": "mxtien",
+  //   "stewardName": "mxtien",
   //   "stewardDid": "Th7MpTaRZVRYnPiabds81Y"
   // }
   addTrustAnchor = async (req, res) => {
     try {
       let poolName = req.body.poolName;
-      let stewardWallet = req.body.stewardWallet;
+      let stewardName = req.body.stewardName;
       let stewardDid = req.body.stewardDid;
       let trustAnchorName = req.body.trustAnchorName;
       let trustAnchorWalletConfig = { 'id': trustAnchorName + 'Wallet' };
@@ -67,13 +67,13 @@ export default class adminCtrl extends BaseCtrl {
       await indy.setProtocolVersion(2);
       let poolHandle = await indy.openPoolLedger(poolName);
 
-      let stewardWalletConfig = { 'id': stewardWallet + 'Wallet' };
-      let stewardWalletCredentials = { 'key': stewardWallet + '_key' };
+      let stewardWalletConfig = { 'id': stewardName + 'Wallet' };
+      let stewardWalletCredentials = { 'key': stewardName + '_key' };
       let stewardWalletHandle = await indy.openWallet(stewardWalletConfig, stewardWalletCredentials);
 
       let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] = await this.onboarding(poolHandle, "Sovrin Steward", stewardWalletHandle, stewardDid, trustAnchorName, null, trustAnchorWalletConfig, trustAnchorWalletCredentials);
 
-      let trustAnchorDID = await this.getVerinym(poolHandle, "Sovrin Steward", stewardWallet, stewardDid,
+      let trustAnchorDID = await this.getVerinym(poolHandle, "Sovrin Steward", stewardName, stewardDid,
         stewardTrustAnchorKey, trustAnchorName, trustAnchorWallet, trustAnchorStewardDid,
         trustAnchorStewardKey, 'TRUST_ANCHOR');
 
