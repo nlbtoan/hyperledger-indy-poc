@@ -22,30 +22,6 @@ export default class adminCtrl extends BaseCtrl {
     });
   }
 
-  // Step: 3
-  // URL: /api/createSchema
-  // Body:
-  // {
-  //   "governmentWallet": 5,
-  //   "governmentDid": "AFJZeQZk3utUA2kcbvK1Zd",
-  //   "poolHandle": 2,
-  //   "schema": ["patient_first_name", "patient_last_name", "doctor_name", "status", "dob", "link", "pdf_hash", "isCreated"]
-  // }
-  createSchema = async (req, res) => {
-    try {
-      let [idCardSchemaId, idCardSchema] = await indy.issuerCreateSchema(req.body.governmentDid, 'id-card', '1.0', req.body.schema);
-
-      await this.sendSchema(req.body.poolHandle, req.body.governmentWallet, req.body.governmentDid, idCardSchema);
-      res.status(200).json({
-        idCardSchemaId: idCardSchemaId,
-        idCardSchema: idCardSchema
-      });
-    } catch (error) {
-      console.log(error);
-      res.sendStatus(403);
-    }
-  }
-
   // Step: 2
   // URL: /api/addTrustAnchor
   // Body:
@@ -73,18 +49,18 @@ export default class adminCtrl extends BaseCtrl {
 
       let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] = await this.onboarding(poolHandle, "Sovrin Steward", stewardWalletHandle, stewardDid, trustAnchorName, null, trustAnchorWalletConfig, trustAnchorWalletCredentials);
 
-      let trustAnchorDID = await this.getVerinym(poolHandle, "Sovrin Steward", stewardName, stewardDid,
+      let trustAnchorDID = await this.getVerinym(poolHandle, "Sovrin Steward", stewardWalletHandle, stewardDid,
         stewardTrustAnchorKey, trustAnchorName, trustAnchorWallet, trustAnchorStewardDid,
         trustAnchorStewardKey, 'TRUST_ANCHOR');
 
-      // //Close trust anchor wallet
-      // await indy.closeWallet(trustAnchorWallet);
+      //Close trust anchor wallet
+      await indy.closeWallet(trustAnchorWallet);
 
-      // //Close steward wallet
-      // await indy.closeWallet(stewardWalletHandle);
+      //Close steward wallet
+      await indy.closeWallet(stewardWalletHandle);
 
-      // //Close pool ledger
-      // await indy.closePoolLedger(poolHandle);
+      //Close pool ledger
+      await indy.closePoolLedger(poolHandle);
 
       if (trustAnchorDID) {
         res.status(200).json({
@@ -150,11 +126,11 @@ export default class adminCtrl extends BaseCtrl {
 
     let [stewardDid, stewardKey] = await indy.createAndStoreMyDid(stewardWalletHandle, stewardDidInfo);
 
-    // //Close steward wallet
-    // await indy.closeWallet(stewardWalletHandle);
+    //Close steward wallet
+    await indy.closeWallet(stewardWalletHandle);
 
-    // //Close pool ledger
-    // await indy.closePoolLedger(poolHandle);
+    //Close pool ledger
+    await indy.closePoolLedger(poolHandle);
 
     if (stewardDid && stewardKey) {
       res.status(200).json({

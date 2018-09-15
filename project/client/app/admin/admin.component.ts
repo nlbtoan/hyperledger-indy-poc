@@ -6,7 +6,6 @@ import { AuthService } from '../services/auth.service';
 import { UserService } from '../services/user.service';
 import { LedgerService } from '../services/ledger.service';
 import { TrustAnchorService } from '../services/anchor.service';
-import { CreateSchemaService } from '../services/schema.service';
 import { User } from '../shared/models/user.model';
 
 @Component({
@@ -41,8 +40,7 @@ export class AdminComponent implements OnInit {
     private formBuilder: FormBuilder,
     private userService: UserService,
     private ledgerService: LedgerService,
-    private trustAnchorService: TrustAnchorService,
-    private createSchemaService: CreateSchemaService
+    private trustAnchorService: TrustAnchorService
   ) { }
 
   ngOnInit() {
