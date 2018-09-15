@@ -221,7 +221,7 @@ export default class adminCtrl extends BaseCtrl {
     console.log(`\"${to}\" > Send anoncrypted connection response to \"${From}\"`);
 
     console.log(`\"${From}\" > Anondecrypt connection response from \"${to}\"`);
-    let decryptedConnectionResponse = JSON.parse(Buffer.from(await indy.cryptoAnonDecrypt(fromWallet, fromToKey, anoncryptedConnectionResponse)));
+    let decryptedConnectionResponse = JSON.parse(Buffer.from(await indy.cryptoAnonDecrypt(fromWallet, fromToKey, anoncryptedConnectionResponse)).toString());
 
     console.log(`\"${From}\" > Authenticates \"${to}\" by comparision of Nonce`);
     if (connectionRequest['nonce'] !== decryptedConnectionResponse['nonce']) {
@@ -251,7 +251,7 @@ export default class adminCtrl extends BaseCtrl {
     let [senderVerkey, authdecryptedDidInfo] =
       await indy.cryptoAuthDecrypt(fromWallet, fromToKey, Buffer.from(authcryptedDidInfo));
 
-    let authdecryptedDidInfoJson = JSON.parse(Buffer.from(authdecryptedDidInfo));
+    let authdecryptedDidInfoJson = JSON.parse(Buffer.from(authdecryptedDidInfo).toString());
     console.log(`\"${From}\" > Authenticate ${to} by comparision of Verkeys`);
     let retrievedVerkey = await indy.keyForDid(poolHandle, fromWallet, toFromDid);
     if (senderVerkey !== retrievedVerkey) {
