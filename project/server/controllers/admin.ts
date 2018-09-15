@@ -71,7 +71,7 @@ export default class adminCtrl extends BaseCtrl {
       let stewardWalletCredentials = { 'key': stewardWallet + '_key' };
       let stewardWalletHanlde = await indy.openWallet(stewardWalletConfig, stewardWalletCredentials);
 
-      let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] = await this.onboarding(poolHandle, "Sovrin Steward", stewardWalletHanlde, stewardDid, entityName, null, trustAnchorWalletConfig, trustAnchorWalletCredentials);
+      let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] = await this.onboarding(poolHandle, "Sovrin Steward", stewardWalletHanlde, stewardDid, trustAnchorName, null, trustAnchorWalletConfig, trustAnchorWalletCredentials);
 
       let trustAnchorDID = await this.getVerinym(poolHandle, "Sovrin Steward", stewardWallet, stewardDid,
         stewardTrustAnchorKey, trustAnchorName, trustAnchorWallet, trustAnchorStewardDid,
