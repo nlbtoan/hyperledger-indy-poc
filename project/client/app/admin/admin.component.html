@@ -58,7 +58,7 @@
       <input class="form-control" type="stewardWalletName" name="stewardWalletName" formControlName="stewardWalletName" placeholder="Steward Wallet Name">
     </div>
 
-    <button class="btn btn-primary" type="submit" [disabled]="!ledgerForm.valid || users.length == 0">
+    <button class="btn btn-primary" type="submit" [disabled]="!ledgerForm.valid || ledgers.length > 0">
       <i class="fa fa-sign-in"></i> Create Pool Ledger</button>
   </form>
 

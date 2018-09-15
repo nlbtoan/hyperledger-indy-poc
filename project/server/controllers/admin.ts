@@ -103,6 +103,7 @@ export default class adminCtrl extends BaseCtrl {
   // }
   createPoolLedger = async (req, res) => {
     let poolName = req.body.poolName;
+    let stewardWallet = req.body.stewardWalletName;
     let poolGenesisTxnPath = await this.getPoolGenesisTxnPath(poolName);
     let poolConfig = {
       "genesis_txn": poolGenesisTxnPath
@@ -119,8 +120,8 @@ export default class adminCtrl extends BaseCtrl {
     await indy.setProtocolVersion(2);
 
     let poolHandle = await indy.openPoolLedger(poolName);
-    let stewardWalletConfig = { 'id': req.body.stewardWalletName };
-    let stewardWalletCredentials = { 'key': req.body.stewardWalletName + '_key' };
+    let stewardWalletConfig = { 'id': stewardWallet };
+    let stewardWalletCredentials = { 'key': stewardWallet + '_key' };
     try {
       await indy.createWallet(stewardWalletConfig, stewardWalletCredentials);
     } catch (e) {
@@ -129,16 +130,16 @@ export default class adminCtrl extends BaseCtrl {
         res.sendStatus(403);
       }
     }
-    let stewardWallet = await indy.openWallet(stewardWalletConfig, stewardWalletCredentials);
+    let stewardWalletHandle = await indy.openWallet(stewardWalletConfig, stewardWalletCredentials);
     let stewardDidInfo = {
       'seed': '000000000000000000000000Steward1'
     };
 
-    let [stewardDid, stewardKey] = await indy.createAndStoreMyDid(stewardWallet, stewardDidInfo);
+    let [stewardDid, stewardKey] = await indy.createAndStoreMyDid(stewardWalletHandle, stewardDidInfo);
 
     if (stewardDid && stewardKey) {
       res.status(200).json({
-        stewardWallet: stewardWalletConfig.id,
+        stewardWallet: stewardWallet,
         stewardDid: stewardDid,
         stewardKey: stewardKey,
         poolName: poolName
