@@ -60,11 +60,16 @@ export default class adminCtrl extends BaseCtrl {
   addTrustAnchor = async (req, res) => {
     try {
       let poolHandle = req.body.poolHandle;
+      let poolName = req.body.poolName;
       let stewardWallet = req.body.stewardWallet;
       let stewardDid = req.body.stewardDid;
       let entityName = req.body.name;
       let trustAnchorWalletConfig = { 'id': req.body.trustAnchorWalletName };
       let trustAnchorWalletCredentials = { 'key': entityName + '_key' };
+
+      await indy.setProtocolVersion(2);
+      poolHandle = await indy.openPoolLedger(poolName);
+
       let [trustAnchorWallet, stewardTrustAnchorKey, trustAnchorStewardDid, trustAnchorStewardKey] = await this.onboarding(poolHandle, "Sovrin Steward", stewardWallet, stewardDid, entityName, null, trustAnchorWalletConfig, trustAnchorWalletCredentials);
 
       let trustAnchorDID = await this.getVerinym(poolHandle, "Sovrin Steward", stewardWallet, stewardDid,
