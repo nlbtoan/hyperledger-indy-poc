@@ -156,14 +156,15 @@ export class AdminComponent implements OnInit {
 
   addTrustAnchor() {
     this.isLoading = true;
-    let trustAnchor = this.anchorForm.value;
-    trustAnchor.trustAnchorWalletName = this.anchorForm.value.name + 'Wallet';
-    trustAnchor.poolHandle = parseInt(this.ledgers[this.ledgers.length - 1].poolHandle);
-    trustAnchor.poolName = this.ledgers[this.ledgers.length - 1].poolName;
-    trustAnchor.stewardWallet = parseInt(this.ledgers[this.ledgers.length - 1].stewardWallet);
-    trustAnchor.stewardDid = this.ledgers[this.ledgers.length - 1].stewardDid;
+    let ledger = this.ledgers.pop();
+    let data = {
+      poolName: ledger.poolName,
+      stewardName: ledger.stewardName,
+      stewardDid: ledger.stewardDid,
+      trustAnchorName: this.anchorForm.value.name
+    };
 
-    this.trustAnchorService.addTrustAnchor(trustAnchor).subscribe(
+    this.trustAnchorService.addTrustAnchor(data).subscribe(
       res => {
         this.trustAnchorService.insertTrustAnchor(res).subscribe(
           res => {
