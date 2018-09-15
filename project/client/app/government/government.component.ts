@@ -179,13 +179,12 @@ export class GovernmentComponent implements OnInit {
     this.isLoading = true;
     let data = this.residentForm.value;
     let idCard = {
-      residentWalletName: data.name.split(' ').join('') + 'Wallet',
-      poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
-      poolName: this.ledgers[this.ledgers.length - 1].poolName,
-      governmentIdCardCredDefId: this.credentialDefinitions[this.credentialDefinitions.length - 1].governmentIdCardCredDefId,
+      residentName: data.name.split(' ').join('') + 'Wallet',
+      poolName: this.ledgers.pop().poolName,
+      governmentIdCardCredDefId: this.credentialDefinitions.pop().governmentIdCardCredDefId,
       governmentDid: 'null',
-      governmentWallet: 'null',
-      bankWallet: 'null',
+      governmentName: 'null',
+      bankName: 'null',
       bankDid: 'null',
       idCardCredValues: {
         id: { raw: this.residentForm.value.id, encoded: '1' },
@@ -204,9 +203,9 @@ export class GovernmentComponent implements OnInit {
       let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
       if (anchorName === 'government' || anchorName === 'gov') {
         idCard.governmentDid = TrustAnchor.trustAnchorDID;
-        idCard.governmentWallet = TrustAnchor.trustAnchorWallet;
+        idCard.governmentName = TrustAnchor.trustAnchorName;
       } else if (anchorName === 'banking' || anchorName === 'bank') {
-        idCard.bankWallet = TrustAnchor.trustAnchorWallet;
+        idCard.bankName = TrustAnchor.trustAnchorName;
         idCard.bankDid = TrustAnchor.trustAnchorDID;
       }
     });

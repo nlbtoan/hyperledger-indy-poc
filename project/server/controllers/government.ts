@@ -25,15 +25,13 @@ export default class GovernmentCtrl extends BaseCtrl {
   // Step: 5
   // URL: /api/gettingPrescription
   // {
-  //   "name":"resident22",
-  //   "residentWalletName": "residentWallet22",
-  //   "poolHandle": 2,
-  //   "poolName": "indy22",
-  //   "doctorWallet": 13,
-  //   "doctorDid": "BMkm2SzCDifFVFWGu9PEGY",
-  //   "doctorPrescriptionCredDefId": "BMkm2SzCDifFVFWGu9PEGY:3:CL:810",
-  //   "bankWallet": 21,
-  //   "prescriptionCredValues": {
+  //   "residentName": "MaiXuanTien",
+  //   "poolName": "indy",
+  //   "governmentName": "government",
+  //   "governmentDid": "BMkm2SzCDifFVFWGu9PEGY",
+  //   "governmentIdCardCredDefId": "BMkm2SzCDifFVFWGu9PEGY:3:CL:810",
+  //   "bankName": "bank",
+  //   "idCardCredValues": {
   //         "resident_first_name": { "raw": "resident", "encoded": "1139481716457488690172217916278103335" },
   //         "resident_last_name": { "raw": "Garcia", "encoded": "5321642780241790123587902456789123452" },
   //         "doctor_name": { "raw": "Dr . James Hold", "encoded": "12434523576212321" },
@@ -45,37 +43,60 @@ export default class GovernmentCtrl extends BaseCtrl {
   //     }
   // }
   gettingIdCard = async (req, res) => {
-    let poolHandle = req.body.poolHandle;
-    let governmentWallet = req.body.governmentWallet;
+    let poolName = req.body.poolName;
+    let governmentName = req.body.governmentName;
     let governmentDid = req.body.governmentDid;
-    let bankWallet = req.body.bankWallet;
-    let residentWalletConfig = { 'id': req.body.residentWalletName };
-    let residentWalletCredentials = { 'key': req.body.name + '_key' };
-    let residentWallet, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse;
+    let bankName = req.body.bankName;
+    let residentWalletConfig = { 'id': req.body.residentName };
+    let residentWalletCredentials = { 'key': req.body.residentName + '_key' };
+    let residentWalletHandle, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse;
 
     try {
-      [residentWallet, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse] = await this.onboarding(poolHandle, "Government", governmentWallet, governmentDid, "Personal", null, residentWalletConfig, residentWalletCredentials);
-      let idCardCredOfferJson = await indy.issuerCreateCredentialOffer(governmentWallet, req.body.governmentIdCardCredDefId);
-      let residentGovernmentVerkey = await indy.keyForDid(poolHandle, bankWallet, governmentResidentConnectionResponse['did']);
-      let authcryptedIdCardCredOffer = await indy.cryptoAuthCrypt(governmentWallet, governmentResidentKey, residentGovernmentVerkey, Buffer.from(JSON.stringify(idCardCredOfferJson), 'utf8'));
-      let [governmentResidentVerkey, authdecryptedIdCardCredOfferJson, authdecryptedIdCardCredOffer] = await this.authDecrypt(residentWallet, residentGovernmentKey, authcryptedIdCardCredOffer);
-      let residentMasterSecretId = await indy.proverCreateMasterSecret(residentWallet, null);
+      await indy.setProtocolVersion(2);
+      //Open pool ledger
+      let poolHandle = await indy.openPoolLedger(req.body.poolName);
+
+      //Open government wallet
+      let governmentWalletConfig = { 'id': governmentName + 'Wallet' };
+      let governmentWalletCredentials = { 'key': governmentName + '_key' };
+      let governmentWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
+
+      //Open government wallet
+      let bankWalletConfig = { 'id': bankName + 'Wallet' };
+      let bankWalletCredentials = { 'key': bankName + '_key' };
+      let bankWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
+
+      [residentWalletHandle, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse] = await this.onboarding(poolHandle, "Government", governmentWalletHandle, governmentDid, "Personal", null, residentWalletConfig, residentWalletCredentials);
+      let idCardCredOfferJson = await indy.issuerCreateCredentialOffer(governmentWalletHandle, req.body.governmentIdCardCredDefId);
+      let residentGovernmentVerkey = await indy.keyForDid(poolHandle, bankWalletHandle, governmentResidentConnectionResponse['did']);
+      let authcryptedIdCardCredOffer = await indy.cryptoAuthCrypt(governmentWalletHandle, governmentResidentKey, residentGovernmentVerkey, Buffer.from(JSON.stringify(idCardCredOfferJson), 'utf8'));
+      let [governmentResidentVerkey, authdecryptedIdCardCredOfferJson, authdecryptedIdCardCredOffer] = await this.authDecrypt(residentWalletHandle, residentGovernmentKey, authcryptedIdCardCredOffer);
+      let residentMasterSecretId = await indy.proverCreateMasterSecret(residentWalletHandle, null);
       let governmentIdCardCredDef;
       [req.body.governmentIdCardCredDefId, governmentIdCardCredDef] = await this.getCredDef(poolHandle, residentGovernmentDid, authdecryptedIdCardCredOffer['cred_def_id']);
-      let [idCardCredRequestJson, idCardCredRequestMetadataJson] = await indy.proverCreateCredentialReq(residentWallet, residentGovernmentDid, authdecryptedIdCardCredOfferJson, governmentIdCardCredDef, residentMasterSecretId);
-      let authcryptedIdCardCredRequest = await indy.cryptoAuthCrypt(residentWallet, residentGovernmentKey, governmentResidentVerkey, Buffer.from(JSON.stringify(idCardCredRequestJson), 'utf8'));
+      let [idCardCredRequestJson, idCardCredRequestMetadataJson] = await indy.proverCreateCredentialReq(residentWalletHandle, residentGovernmentDid, authdecryptedIdCardCredOfferJson, governmentIdCardCredDef, residentMasterSecretId);
+      let authcryptedIdCardCredRequest = await indy.cryptoAuthCrypt(residentWalletHandle, residentGovernmentKey, governmentResidentVerkey, Buffer.from(JSON.stringify(idCardCredRequestJson), 'utf8'));
 
       let authdecryptedIdCardCredRequestJson;
-      [residentGovernmentVerkey, authdecryptedIdCardCredRequestJson] = await this.authDecrypt(governmentWallet, governmentResidentKey, authcryptedIdCardCredRequest);
+      [residentGovernmentVerkey, authdecryptedIdCardCredRequestJson] = await this.authDecrypt(governmentWalletHandle, governmentResidentKey, authcryptedIdCardCredRequest);
       let idCardCredValues = req.body.idCardCredValues;
-      let [idCardCredJson] = await indy.issuerCreateCredential(governmentWallet, idCardCredOfferJson, authdecryptedIdCardCredRequestJson, idCardCredValues, null, -1);
-      let authcryptedidCardCredJson = await indy.cryptoAuthCrypt(governmentWallet, governmentResidentKey, residentGovernmentVerkey, Buffer.from(JSON.stringify(idCardCredJson), 'utf8'));
-      let [, authdecryptedidCardCredJson] = await this.authDecrypt(residentWallet, residentGovernmentKey, authcryptedidCardCredJson);
-      await indy.proverStoreCredential(residentWallet, null, idCardCredRequestMetadataJson,
+      let [idCardCredJson] = await indy.issuerCreateCredential(governmentWalletHandle, idCardCredOfferJson, authdecryptedIdCardCredRequestJson, idCardCredValues, null, -1);
+      let authcryptedidCardCredJson = await indy.cryptoAuthCrypt(governmentWalletHandle, governmentResidentKey, residentGovernmentVerkey, Buffer.from(JSON.stringify(idCardCredJson), 'utf8'));
+      let [, authdecryptedidCardCredJson] = await this.authDecrypt(residentWalletHandle, residentGovernmentKey, authcryptedidCardCredJson);
+      await indy.proverStoreCredential(residentWalletHandle, null, idCardCredRequestMetadataJson,
         authdecryptedidCardCredJson, governmentIdCardCredDef, null);
 
+      //Close bank wallet
+      await indy.closeWallet(bankWalletHandle);
+
+      //Close government wallet
+      await indy.closeWallet(governmentWalletHandle);
+
+      //Close pool ledger
+      await indy.closePoolLedger(poolHandle);
+
       res.status(200).json({
-        residentWallet: residentWallet,
+        residentWalletHandle: residentWalletHandle,
         residentWalletCredentials: residentWalletCredentials,
         governmentResidentKey: governmentResidentKey,
         residentGovernmentDid: residentGovernmentDid,
@@ -96,8 +117,8 @@ export default class GovernmentCtrl extends BaseCtrl {
       console.log(error);
       try {
         //Close and delete wallet
-        if (residentWallet) {
-          await indy.closeWallet(residentWallet);
+        if (residentWalletHandle) {
+          await indy.closeWallet(residentWalletHandle);
           await indy.deleteWallet(residentWalletConfig, residentWalletCredentials);
         }
         res.sendStatus(403);
@@ -141,7 +162,7 @@ export default class GovernmentCtrl extends BaseCtrl {
       //Open pool ledger
       let poolHandle = await indy.openPoolLedger(req.body.poolName);
 
-      //Close government wallet
+      //Open government wallet
       let governmentWalletConfig = { 'id': req.body.governmentName + 'Wallet' };
       let governmentWalletCredentials = { 'key': req.body.governmentName + '_key' };
       let governmentWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
@@ -185,7 +206,7 @@ export default class GovernmentCtrl extends BaseCtrl {
       //Open pool ledger
       let poolHandle = await indy.openPoolLedger(req.body.poolName);
 
-      //Close government wallet
+      //Open government wallet
       let governmentWalletConfig = { 'id': req.body.governmentName + 'Wallet' };
       let governmentWalletCredentials = { 'key': req.body.governmentName + '_key' };
       let governmentWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
