@@ -26,7 +26,7 @@ export class AdminComponent implements OnInit {
   poolName = new FormControl('', [
     Validators.required
   ]);
-  stewardWalletName = new FormControl('', [
+  stewardName = new FormControl('', [
     Validators.required
   ]);
 
@@ -53,7 +53,7 @@ export class AdminComponent implements OnInit {
     // For Pool Ledger
     this.ledgerForm = this.formBuilder.group({
       poolName: this.poolName,
-      stewardWalletName: this.stewardWalletName
+      stewardName: this.stewardName
     })
 
     // For Anchor
@@ -67,8 +67,8 @@ export class AdminComponent implements OnInit {
     return { 'has-danger': !this.poolName.pristine && !this.poolName.valid };
   }
 
-  setClassStewardWalletName() {
-    return { 'has-danger': !this.stewardWalletName.pristine && !this.stewardWalletName.valid };
+  setClassStewardName() {
+    return { 'has-danger': !this.stewardName.pristine && !this.stewardName.valid };
   }
 
   // For Trust Anchor

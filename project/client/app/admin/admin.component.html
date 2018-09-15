@@ -49,13 +49,13 @@
       <input class="form-control" type="poolName" name="poolName" formControlName="poolName" placeholder="Pool Name" autofocus>
     </div>
 
-    <div class="input-group" [ngClass]="setClassStewardWalletName()">
+    <div class="input-group" [ngClass]="setClassStewardName()">
       <div class="input-group-prepend">
         <span class="input-group-text">
           <i class="fa fa-male"></i>
         </span>
       </div>
-      <input class="form-control" type="stewardWalletName" name="stewardWalletName" formControlName="stewardWalletName" placeholder="Steward Wallet Name">
+      <input class="form-control" type="stewardName" name="stewardName" formControlName="stewardName" placeholder="Steward Name">
     </div>
 
     <button class="btn btn-primary" type="submit" [disabled]="!ledgerForm.valid || ledgers.length > 0">
