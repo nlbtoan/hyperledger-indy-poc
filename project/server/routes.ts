@@ -79,7 +79,6 @@ export default function setRoutes(app) {
   // Admin
   router.route('/createPoolLedger').post(admin.createPoolLedger);
   router.route('/addTrustAnchor').post(admin.addTrustAnchor);
-  router.route('/createSchema').post(admin.createSchema);
   router.route('/login').post(userCtrl.login);
   router.route('/users').get(userCtrl.getAll);
   router.route('/users/count').get(userCtrl.count);
@@ -89,6 +88,7 @@ export default function setRoutes(app) {
   router.route('/user/:id').delete(userCtrl.delete);
 
   // Government
+  router.route('/createSchema').post(government.createSchema);
   router.route('/setupCredentialDefinition').post(government.setupCredentialDefinition);
   router.route('/gettingIdCard').post(government.gettingIdCard);
   router.route('/doctorLogin').post(government.login);
