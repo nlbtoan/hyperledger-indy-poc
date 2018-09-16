@@ -47,7 +47,7 @@ export default class GovernmentCtrl extends BaseCtrl {
     let governmentName = req.body.governmentName;
     let governmentDid = req.body.governmentDid;
     let bankName = req.body.bankName;
-    let residentWalletConfig = { 'id': req.body.residentName };
+    let residentWalletConfig = { 'id': req.body.residentName + 'Wallet'};
     let residentWalletCredentials = { 'key': req.body.residentName + '_key' };
     let residentWalletHandle, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse;
 
@@ -61,7 +61,7 @@ export default class GovernmentCtrl extends BaseCtrl {
       let governmentWalletCredentials = { 'key': governmentName + '_key' };
       let governmentWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
 
-      //Open government wallet
+      //Open bank wallet
       let bankWalletConfig = { 'id': bankName + 'Wallet' };
       let bankWalletCredentials = { 'key': bankName + '_key' };
       let bankWalletHandle = await indy.openWallet(bankWalletConfig, bankWalletCredentials);

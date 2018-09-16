@@ -178,35 +178,29 @@ export class BankComponent implements OnInit {
     this.isLoading = true;
     let data = this.bankForm.value;
     data.status = 1;
-
-    let idCard = {
-      poolHandle: this.ledgers[this.ledgers.length - 1].poolHandle,
-      poolName: this.ledgers[this.ledgers.length - 1].poolName,
-      residentWallet: this.residentIdCards[this.residentIdCards.length - 1].residentWallet,
-      residentWalletName: data.name.split(' ').join('') + 'Wallet',
-      residentGovernmentDid: this.residentIdCards[this.residentIdCards.length - 1].residentGovernmentDid,
-      residentMasterSecretId: this.residentIdCards[this.residentIdCards.length - 1].residentMasterSecretId,
-      governmentIdCardCredDefId: this.credentialDefinitions[this.credentialDefinitions.length - 1].governmentIdCardCredDefId,
-      pdfHash: this.hashResponse,
-      bankWallet: 'null',
+    let cards = this.residentIdCards.pop();
+    let contract = {
+      poolName: this.ledgers.pop().poolName,
+      residentName: data.name.split(' ').join(''),
+      residentGovernmentDid: cards.residentGovernmentDid,
+      residentMasterSecretId: cards.residentMasterSecretId,
+      governmentIdCardCredDefId: this.credentialDefinitions.pop().governmentIdCardCredDefId,
+      bankName: 'null',
       bankDid: 'null',
-      residentWalletCredentials: {
-        key: data.name.split(' ').join('') + "_key"
-      },
       data: data
     };
 
     this.TrustAnchors.forEach(TrustAnchor => {
       let anchorName = TrustAnchor.trustAnchorName.toLowerCase();
       if (anchorName === 'banking' || anchorName === 'bank') {
-        idCard.bankWallet = TrustAnchor.trustAnchorWallet;
-        idCard.bankDid = TrustAnchor.trustAnchorDID;
+        contract.bankName = TrustAnchor.trustAnchorName;
+        contract.bankDid = TrustAnchor.trustAnchorDID;
       }
     });
 
-    this.bankService.applyLoan(idCard).subscribe(
+    this.bankService.applyLoan(contract).subscribe(
       res => {
-        this.bankService.insertContract({ residentGovernmentDid: idCard.residentGovernmentDid, governmentIdCardCredDefId: idCard.governmentIdCardCredDefId , money: data.money}).subscribe(
+        this.bankService.insertContract({ residentGovernmentDid: contract.residentGovernmentDid, governmentIdCardCredDefId: contract.governmentIdCardCredDefId, money: data.money }).subscribe(
           res => {
             this.getBankIdCards();
             this.isLoading = false;

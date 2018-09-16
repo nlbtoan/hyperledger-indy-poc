@@ -26,27 +26,35 @@ export default class BankCtrl extends BaseCtrl {
   // URL: /api/applyLoan
   // Body: 
   // {
-  //   "poolHandle": "",
-  //   "poolName": "",
-  //   "residentWallet": "",
-  //   "residentWalletName": "",
-  //   "residentWalletCredentials": "",
-  //   "ResidentGovernmentDid": "",
-  //   "ResidentMasterSecretId": "",
-  //   "bankWallet": "",
-  //   "bankDid": "",
-  //   "GovernmentIdCardCredDefId": "",
-  //   "status": "",
-  //   "GovernmentName": "",
-  //   "pdfHash": "",
-  //   "ResidentFirstName": "",
-  //   "ResidentLastName": "",
-  //   "dateOfBirth": ""
+  //   "poolName": "Indy",
+  //   "residentName": "MaiXuanTien",
+  //   "residentGovernmentDid": "YCvR87NU3iEJitox2dkhvB",
+  //   "residentMasterSecretId": "",
+  //   "bankName": "bank",
+  //   "bankDid": "MCRDJAn5sfSXSs5u71r2zx",
+  //   "governmentIdCardCredDefId": "",
+  //   "data": {}
   // }
   applyLoan = async (req, res) => {
     try {
-      let bankResidentKey, residentbankDid, residentBankKey, bankResidentConnectionResponse;
-      [req.body.residentWallet, bankResidentKey, residentbankDid, residentBankKey, bankResidentConnectionResponse] = await this.onboarding(req.body.poolHandle, "Bank", req.body.bankWallet, req.body.bankDid, "Personal", req.body.residentWallet, { 'id': req.body.residentWalletName }, req.body.residentWalletCredentials);
+      let poolName = req.body.poolName;
+      let bankName = req.body.bankName;
+
+      await indy.setProtocolVersion(2);
+      //Open pool ledger
+      let poolHandle = await indy.openPoolLedger(req.body.poolName);
+
+      //Open bank wallet
+      let bankWalletConfig = { 'id': bankName + 'Wallet' };
+      let bankWalletCredentials = { 'key': bankName + '_key' };
+      let bankWalletHandle = await indy.openWallet(bankWalletConfig, bankWalletCredentials);
+
+      //Open bank wallet
+      let residentWalletConfig = { 'id': req.body.residentName + 'Wallet' };
+      let residentWalletCredentials = { 'key': req.body.residentName + '_key' };
+      let residentWallet = await indy.openWallet(residentWalletConfig, residentWalletCredentials);
+
+      let [residentWalletHandle, bankResidentKey, residentbankDid, residentBankKey, bankResidentConnectionResponse] = await this.onboarding(poolHandle, "Bank", bankWalletHandle, req.body.bankDid, "Personal", residentWallet, residentWalletConfig, residentWalletCredentials);
 
       let IdCardApplicationProofRequestJson = {
         'nonce': '1432422343242122312411212',
@@ -82,10 +90,10 @@ export default class BankCtrl extends BaseCtrl {
         }
       };
 
-      let residentBankVerkey = await indy.keyForDid(req.body.poolHandle, req.body.bankWallet, bankResidentConnectionResponse['did']);
-      let authcryptedIdCardApplicationProofRequestJson = await indy.cryptoAuthCrypt(req.body.bankWallet, bankResidentKey, residentBankVerkey, Buffer.from(JSON.stringify(IdCardApplicationProofRequestJson), 'utf8'));
-      let [bankResidentVerkey, authdecryptedIdCardApplicationProofRequestJson] = await this.authDecrypt(req.body.residentWallet, residentBankKey, authcryptedIdCardApplicationProofRequestJson);
-      let searchForIdCardApplicationProofRequest = await indy.proverSearchCredentialsForProofReq(req.body.residentWallet, authdecryptedIdCardApplicationProofRequestJson, null)
+      let residentBankVerkey = await indy.keyForDid(poolHandle, bankWalletHandle, bankResidentConnectionResponse['did']);
+      let authcryptedIdCardApplicationProofRequestJson = await indy.cryptoAuthCrypt(bankWalletHandle, bankResidentKey, residentBankVerkey, Buffer.from(JSON.stringify(IdCardApplicationProofRequestJson), 'utf8'));
+      let [bankResidentVerkey, authdecryptedIdCardApplicationProofRequestJson] = await this.authDecrypt(residentWalletHandle, residentBankKey, authcryptedIdCardApplicationProofRequestJson);
+      let searchForIdCardApplicationProofRequest = await indy.proverSearchCredentialsForProofReq(residentWalletHandle, authdecryptedIdCardApplicationProofRequestJson, null)
       let credsForIdCardApplicationProofRequest = await indy.proverFetchCredentialsForProofReq(searchForIdCardApplicationProofRequest, 'attr1_referent', 100)
       let credForAttr1 = credsForIdCardApplicationProofRequest[0]['cred_info'];
 
@@ -114,7 +122,7 @@ export default class BankCtrl extends BaseCtrl {
       credsForIdCardApplicationProof[`${credForAttr5['referent']}`] = credForAttr5;
       credsForIdCardApplicationProof[`${credForPredicate1['referent']}`] = credForPredicate1;
 
-      let [schemasJson, credDefsJson, revocStatesJson] = await this.proverGetEntitiesFromLedger(req.body.poolHandle, req.body.residentGovernmentDid, credsForIdCardApplicationProof, 'Personal');
+      let [schemasJson, credDefsJson, revocStatesJson] = await this.proverGetEntitiesFromLedger(poolHandle, req.body.residentGovernmentDid, credsForIdCardApplicationProof, 'Personal');
 
       let IdCardApplicationRequestedCredsJson = {
         'self_attested_attributes': {
@@ -129,17 +137,17 @@ export default class BankCtrl extends BaseCtrl {
         'requested_predicates': { 'predicate1_referent': { 'cred_id': credForPredicate1['referent'] } }
       };
 
-      let IdCardApplicationProofJson = await indy.proverCreateProof(req.body.residentWallet, authdecryptedIdCardApplicationProofRequestJson,
+      let IdCardApplicationProofJson = await indy.proverCreateProof(residentWalletHandle, authdecryptedIdCardApplicationProofRequestJson,
         IdCardApplicationRequestedCredsJson, req.body.residentMasterSecretId,
         schemasJson, credDefsJson, revocStatesJson);
 
-      let authcryptedIdCardApplicationProofJson = await indy.cryptoAuthCrypt(req.body.residentWallet, residentBankKey, bankResidentVerkey, Buffer.from(JSON.stringify(IdCardApplicationProofJson), 'utf8'));
+      let authcryptedIdCardApplicationProofJson = await indy.cryptoAuthCrypt(residentWalletHandle, residentBankKey, bankResidentVerkey, Buffer.from(JSON.stringify(IdCardApplicationProofJson), 'utf8'));
 
       let decryptedIdCardApplicationProofJson, decryptedIdCardApplicationProof;
-      [, decryptedIdCardApplicationProofJson, decryptedIdCardApplicationProof] = await this.authDecrypt(req.body.bankWallet, bankResidentKey, authcryptedIdCardApplicationProofJson);
+      [, decryptedIdCardApplicationProofJson, decryptedIdCardApplicationProof] = await this.authDecrypt(bankWalletHandle, bankResidentKey, authcryptedIdCardApplicationProofJson);
 
       let revocRefDefsJson, revocRegsJson;
-      [schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson] = await this.verifierGetEntitiesFromLedger(req.body.poolHandle, req.body.bankDid, decryptedIdCardApplicationProof['identifiers'], 'Bank');
+      [schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson] = await this.verifierGetEntitiesFromLedger(poolHandle, req.body.bankDid, decryptedIdCardApplicationProof['identifiers'], 'Bank');
 
       let decryptedData = decryptedIdCardApplicationProof['requested_proof'];
       assert(req.body.data.id === decryptedData['revealed_attrs']['attr1_referent']['raw']);
@@ -149,6 +157,16 @@ export default class BankCtrl extends BaseCtrl {
       assert(req.body.data.created_at === decryptedData['revealed_attrs']['attr5_referent']['raw']);
 
       await indy.verifierVerifyProof(IdCardApplicationProofRequestJson, decryptedIdCardApplicationProofJson, schemasJson, credDefsJson, revocRefDefsJson, revocRegsJson);
+
+      //Close resident wallet
+      await indy.closeWallet(residentWalletHandle);
+
+      //Close bank wallet
+      await indy.closeWallet(bankWalletHandle);
+
+      //Close pool ledger
+      await indy.closePoolLedger(poolHandle);
+
       res.status(200).json();
     } catch (error) {
       console.log(error);
