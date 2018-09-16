@@ -5,6 +5,6 @@ const schema = new mongoose.Schema({
   schema: Object
 });
 
-const Schema = mongoose.model('Schema', schema);
+const SchemaModel = mongoose.model('Schema', schema);
 
-export default Schema;
+export default SchemaModel;
