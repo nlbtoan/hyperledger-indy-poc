@@ -1,10 +1,10 @@
 import * as mongoose from 'mongoose';
 
-const schema = new mongoose.Schema({
+const schemaModel = new mongoose.Schema({
   schemaId: String,
   schema: Object
 });
 
-const SchemaModel = mongoose.model('Schema', schema);
+const SchemaModel = mongoose.model('SchemaModel', schemaModel);
 
 export default SchemaModel;
