@@ -9,6 +9,7 @@ import TrustAnchor from './controllers/trustAnchor';
 import IdCardSchema from './controllers/idCardSchema';
 import CredentialDefinition from './controllers/credentialDefinition';
 import ResidentIdCard from './controllers/residentIdCard';
+import Contract from './controllers/contract';
 
 export default function setRoutes(app) {
 
@@ -23,6 +24,8 @@ export default function setRoutes(app) {
   const schema = new IdCardSchema();
   const credentialDefinition = new CredentialDefinition();
   const residentIdCard = new ResidentIdCard();
+  const contract = new Contract();
+
 
   //// Ledger data managerment ////
   // Ledger
@@ -64,6 +67,14 @@ export default function setRoutes(app) {
   router.route('/idCard/:id').get(residentIdCard.get);
   router.route('/idCard/:id').put(residentIdCard.update);
   router.route('/idCard/:id').delete(residentIdCard.delete);
+
+  // Contract
+  router.route('/contracts').get(contract.getAll);
+  router.route('/contracts/count').get(contract.count);
+  router.route('/contracts').post(contract.insert);
+  router.route('/contracts/:id').get(contract.get);
+  router.route('/contracts/:id').put(contract.update);
+  router.route('/contracts/:id').delete(contract.delete);
 
   //// Interation with the ledger ////
   // Admin

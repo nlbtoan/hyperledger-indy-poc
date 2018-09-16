@@ -117,7 +117,7 @@ export class BankComponent implements OnInit {
   }
 
   getBankIdCards() {
-    this.bankService.getAllBankIdCard().subscribe(
+    this.bankService.getAllContract().subscribe(
       data => {
         this.bankIdCards = data;
       },
@@ -160,9 +160,9 @@ export class BankComponent implements OnInit {
     );
   }
 
-  deleteBankIdCard(bankIdCard: any) {
+  deleteBankIdCard(data: any) {
     if (window.confirm('Are you sure you want to delete this bankIdCard?')) {
-      this.bankService.deleteBankIdCard(bankIdCard).subscribe(
+      this.bankService.deleteContract(data).subscribe(
         res => {
           this.getBankIdCards();
         },
@@ -206,7 +206,7 @@ export class BankComponent implements OnInit {
 
     this.bankService.applyLoan(idCard).subscribe(
       res => {
-        this.bankService.insertBankIdCard({ residentGovernmentDid: idCard.residentGovernmentDid, governmentIdCardCredDefId: idCard.governmentIdCardCredDefId }).subscribe(
+        this.bankService.insertContract({ residentGovernmentDid: idCard.residentGovernmentDid, governmentIdCardCredDefId: idCard.governmentIdCardCredDefId , money: data.money}).subscribe(
           res => {
             this.getBankIdCards();
             this.isLoading = false;

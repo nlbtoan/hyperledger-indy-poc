@@ -7,20 +7,20 @@ export class BankService {
 
   constructor(private http: HttpClient) { }
 
-  applyLoan(bank: any): Observable<any> {
-    return this.http.post<any>('/api/applyLoan', bank);
+  applyLoan(data: any): Observable<any> {
+    return this.http.post<any>('/api/applyLoan', data);
   }
 
-  insertBankIdCard(BankIdCard: any): Observable<any> {
-    return this.http.post<any>('/api/bankIdCard', BankIdCard);
+  insertContract(data: any): Observable<any> {
+    return this.http.post<any>('/api/contract', data);
   }
 
-  getAllBankIdCard(): Observable<any> {
-    return this.http.get<any>('/api/bankIdCards')
+  getAllContract(): Observable<any> {
+    return this.http.get<any>('/api/contracts')
   }
 
-  deleteBankIdCard(BankIdCard: any): Observable<any> {
-    return this.http.delete(`/api/bankIdCard/${BankIdCard._id}`, { responseType: 'text' });
+  deleteContract(data: any): Observable<any> {
+    return this.http.delete(`/api/contract/${data._id}`, { responseType: 'text' });
   }
 
 }
