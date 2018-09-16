@@ -195,7 +195,7 @@ export default class GovernmentCtrl extends BaseCtrl {
 
       let [schemaId, schema] = await indy.issuerCreateSchema(req.body.governmentDid, 'id-card', '1.0', req.body.schema);
 
-      await this.sendSchema(poolHandle, governmentWalletHandle, req.body.governmentDid, schemaId);
+      await this.sendSchema(poolHandle, governmentWalletHandle, req.body.governmentDid, schema);
 
       //Close government wallet
       await indy.closeWallet(governmentWalletHandle);
