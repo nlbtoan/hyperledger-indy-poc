@@ -98,7 +98,8 @@
       <thead class="thead-light">
         <tr>
           <th scope="col">Resident Government DID</th>
-          <th scope="col"> Government Id Card Credential Definition</th>
+          <th scope="col">Government Id Card Credential Definition</th>
+          <th scope="col">Money</th>
           <th scope="col">Option</th>
         </tr>
       </thead>
@@ -111,6 +112,7 @@
         <tr *ngFor="let bankIdCard of bankIdCards">
           <td>{{bankIdCard.residentGovernmentDid}}</td>
           <td>{{bankIdCard.governmentIdCardCredDefId}}</td>
+          <td>{{bankIdCard.money}}</td>
           <td>
             <button class="btn btn-sm btn-danger" (click)="deleteBankIdCard(bankIdCard)">
               <i class="fa fa-trash"></i> Delete

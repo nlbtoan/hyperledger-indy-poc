@@ -64,7 +64,7 @@ export default class GovernmentCtrl extends BaseCtrl {
       //Open government wallet
       let bankWalletConfig = { 'id': bankName + 'Wallet' };
       let bankWalletCredentials = { 'key': bankName + '_key' };
-      let bankWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
+      let bankWalletHandle = await indy.openWallet(bankWalletConfig, bankWalletCredentials);
 
       [residentWalletHandle, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse] = await this.onboarding(poolHandle, "Government", governmentWalletHandle, governmentDid, "Personal", null, residentWalletConfig, residentWalletCredentials);
       let idCardCredOfferJson = await indy.issuerCreateCredentialOffer(governmentWalletHandle, req.body.governmentIdCardCredDefId);
@@ -85,6 +85,9 @@ export default class GovernmentCtrl extends BaseCtrl {
       let [, authdecryptedidCardCredJson] = await this.authDecrypt(residentWalletHandle, residentGovernmentKey, authcryptedidCardCredJson);
       await indy.proverStoreCredential(residentWalletHandle, null, idCardCredRequestMetadataJson,
         authdecryptedidCardCredJson, governmentIdCardCredDef, null);
+
+      //Close resident wallet
+      await indy.closeWallet(residentWalletHandle);
 
       //Close bank wallet
       await indy.closeWallet(bankWalletHandle);
