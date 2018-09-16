@@ -1,0 +1,112 @@
+{
+  "name": "hyperledger-indy-poc",
+  "version": "6.0.3",
+  "license": "MIT",
+  "author": "Nguyen Bao Xuan Truong",
+  "description": "Hyperledger-Indy demo",
+  "angular-cli": {},
+  "engines": {
+    "node": "8.11.1",
+    "npm": "6.1.0"
+  },
+  "scripts": {
+    "ng": "ng",
+    "build": "ng build --prod",
+    "clean": "rm -rf ~/.indy_client && rm -rf /tmp/.indy_client",
+    "demo": "node ./server/indy/gettingStarted.js",
+    "create": "docker build -f docker/indy-pool.dockerfile -t indy_pool .",
+    "container": "docker run --name indy_pool -itd -p 9701-9708:9701-9708 indy_pool",
+    "start": "docker start indy_pool",
+    "stop": "docker stop indy_pool",
+    "predev": "tsc -p server",
+    "dev": "concurrently \"ng serve --proxy-config proxy.conf.json --host 0.0.0.0\" \"tsc -w -p server\" \"node dist/server/app.js\"",
+    "server": "concurrently \"tsc -w -p server\" \"node dist/server/app.js\"",
+    "client": "ng serve --proxy-config proxy.conf.json --host 0.0.0.0",
+    "prod": "concurrently \"ng build --aot --prod && tsc -p server && node dist/server/app.js\"",
+    "test": "ng test",
+    "testbe": "tsc -p server && mocha dist/server/test --exit",
+    "lint": "ng lint",
+    "lintbe": "tslint server/**/**.ts{,x}",
+    "e2e": "ng e2e"
+  },
+  "contributors": [
+    {
+      "name": "Nguyen Bao Xuan Truong",
+      "email": "nbxtruong@tma.com.vn"
+    },
+    {
+      "name": "Nguyen Trung Dung",
+      "email": "ntdung1@tma.com.vn"
+    },
+    {
+      "name": "Phi Quang Phuoc",
+      "email": "pqphuoc@tma.com.vn"
+    },
+    {
+      "name": "Le Trung Hieu",
+      "email": "ltrunghieu@tma.com.vn"
+    }
+  ],
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^6.0.3",
+    "@angular/common": "^6.0.3",
+    "@angular/compiler": "^6.0.3",
+    "@angular/core": "^6.0.3",
+    "@angular/forms": "^6.0.3",
+    "@angular/http": "^6.0.3",
+    "@angular/platform-browser": "^6.0.3",
+    "@angular/platform-browser-dynamic": "^6.0.3",
+    "@angular/router": "^6.0.3",
+    "@auth0/angular-jwt": "^2.0.0",
+    "bcryptjs": "^2.4.3",
+    "bluebird": "^3.5.1",
+    "body-parser": "^1.18.3",
+    "bootstrap": "^4.1.1",
+    "core-js": "^2.5.4",
+    "cryptiles": "^4.1.1",
+    "dotenv": "^5.0.1",
+    "express": "^4.16.3",
+    "font-awesome": "^4.7.0",
+    "home-dir": "^1.0.0",
+    "indy-sdk": "^1.6.2",
+    "jquery": "^3.3.1",
+    "jsonwebtoken": "^8.2.1",
+    "mkdirp": "^0.5.1",
+    "mongoose": "^5.1.2",
+    "morgan": "^1.9.0",
+    "node-file-hash": "^1.0.1",
+    "popper.js": "^1.14.3",
+    "rxjs": "^6.0.0",
+    "rxjs-compat": "^6.2.0",
+    "tether": "^1.4.4",
+    "zone.js": "^0.8.26"
+  },
+  "devDependencies": {
+    "@angular/cli": "~6.0.5",
+    "@angular/compiler-cli": "^6.0.3",
+    "@angular-devkit/build-angular": "~0.6.5",
+    "@angular/language-service": "^6.0.3",
+    "@types/express": "^4.11.1",
+    "@types/jasmine": "~2.8.6",
+    "@types/jasminewd2": "~2.0.3",
+    "@types/node": "~8.9.4",
+    "chai": "^4.1.2",
+    "chai-http": "^4.0.0",
+    "codelyzer": "~4.2.1",
+    "concurrently": "^3.5.1",
+    "jasmine-core": "~2.99.1",
+    "jasmine-spec-reporter": "~4.2.1",
+    "karma": "~1.7.1",
+    "karma-chrome-launcher": "~2.2.0",
+    "karma-coverage-istanbul-reporter": "~1.4.2",
+    "karma-jasmine": "~1.1.1",
+    "karma-jasmine-html-reporter": "^0.2.2",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.17.5",
+    "protractor": "~5.3.0",
+    "ts-node": "~5.0.1",
+    "tslint": "~5.9.1",
+    "typescript": "~2.7.2"
+  }
+}
