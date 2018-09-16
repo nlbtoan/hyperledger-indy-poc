@@ -6,7 +6,7 @@ import Government from './controllers/government';
 import Bank from './controllers/bank';
 import Ledger from './controllers/ledger';
 import TrustAnchor from './controllers/trustAnchor';
-import Schema from './controllers/schema';
+import IdCardSchema from './controllers/idCardSchema';
 import CredentialDefinition from './controllers/credentialDefinition';
 import ResidentIdCard from './controllers/residentIdCard';
 
@@ -20,7 +20,7 @@ export default function setRoutes(app) {
   const bank = new Bank();
   const ledger = new Ledger();
   const trustAnchor = new TrustAnchor();
-  const schema = new Schema();
+  const schema = new IdCardSchema();
   const credentialDefinition = new CredentialDefinition();
   const residentIdCard = new ResidentIdCard();
 
