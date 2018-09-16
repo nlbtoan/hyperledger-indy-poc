@@ -36,25 +36,26 @@ export default class BankCtrl extends BaseCtrl {
   //   "data": {}
   // }
   applyLoan = async (req, res) => {
+    let poolHandle, bankWalletHandle, residentWalletHandle;
     try {
       let poolName = req.body.poolName;
       let bankName = req.body.bankName;
 
       await indy.setProtocolVersion(2);
       //Open pool ledger
-      let poolHandle = await indy.openPoolLedger(req.body.poolName);
+      poolHandle = await indy.openPoolLedger(req.body.poolName);
 
       //Open bank wallet
       let bankWalletConfig = { 'id': bankName + 'Wallet' };
       let bankWalletCredentials = { 'key': bankName + '_key' };
-      let bankWalletHandle = await indy.openWallet(bankWalletConfig, bankWalletCredentials);
+      bankWalletHandle = await indy.openWallet(bankWalletConfig, bankWalletCredentials);
 
       //Open bank wallet
       let residentWalletConfig = { 'id': req.body.residentName + 'Wallet' };
       let residentWalletCredentials = { 'key': req.body.residentName + '_key' };
-      let residentWallet = await indy.openWallet(residentWalletConfig, residentWalletCredentials);
+      residentWalletHandle = await indy.openWallet(residentWalletConfig, residentWalletCredentials);
 
-      let [residentWalletHandle, bankResidentKey, residentbankDid, residentBankKey, bankResidentConnectionResponse] = await this.onboarding(poolHandle, "Bank", bankWalletHandle, req.body.bankDid, "Personal", residentWallet, residentWalletConfig, residentWalletCredentials);
+      let [, bankResidentKey, , residentBankKey, bankResidentConnectionResponse] = await this.onboarding(poolHandle, bankName, bankWalletHandle, req.body.bankDid, req.body.data.name, residentWalletHandle, residentWalletConfig, residentWalletCredentials);
 
       let IdCardApplicationProofRequestJson = {
         'nonce': '1432422343242122312411212',
@@ -170,6 +171,13 @@ export default class BankCtrl extends BaseCtrl {
       res.status(200).json();
     } catch (error) {
       console.log(error);
+      switch (error.message) {
+        case 'WalletNotFoundError':
+          if (residentWalletHandle) await indy.closeWallet(residentWalletHandle);
+          if (bankWalletHandle) await indy.closeWallet(bankWalletHandle);
+          if (poolHandle) await indy.closePoolLedger(poolHandle);
+          break;
+      }
       res.sendStatus(403);
     }
   }
