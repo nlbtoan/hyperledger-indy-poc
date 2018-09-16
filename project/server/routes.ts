@@ -70,11 +70,11 @@ export default function setRoutes(app) {
 
   // Contract
   router.route('/contracts').get(contract.getAll);
-  router.route('/contracts/count').get(contract.count);
-  router.route('/contracts').post(contract.insert);
-  router.route('/contracts/:id').get(contract.get);
-  router.route('/contracts/:id').put(contract.update);
-  router.route('/contracts/:id').delete(contract.delete);
+  router.route('/contract/count').get(contract.count);
+  router.route('/contract').post(contract.insert);
+  router.route('/contract/:id').get(contract.get);
+  router.route('/contract/:id').put(contract.update);
+  router.route('/contract/:id').delete(contract.delete);
 
   //// Interation with the ledger ////
   // Admin
