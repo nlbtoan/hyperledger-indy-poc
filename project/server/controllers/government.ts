@@ -205,7 +205,7 @@ export default class GovernmentCtrl extends BaseCtrl {
 
       res.status(200).json({
         schemaId: schemaId,
-        schema: schema
+        schemaData: schema
       });
     } catch (error) {
       console.log(error);
