@@ -19,19 +19,22 @@ Other tools and technologies used:
 
 ## Prerequisites
 1. Work with Ubuntu 16.04
-2. Install [Node Version Manager](https://github.com/creationix/nvm)
-3. Install NodeJS: `nvm install 8.11.3`
-4. Install Docker: `sudo apt-get install -y docker docker.io`
-5. Copy `libindy.so` to `/usr/lib/`. Get `libindy.so` by done this [post](https://github.com/hyperledger/indy-sdk/tree/master/wrappers/java)
+2. Setup Development/Runtime Environment: `chmod u+x ./prereqs-ubuntu.sh && ./prereqs-ubuntu.sh`
 
 ## Setup local ledger
-`npm run container`: Setup pool ledger container (The docker container will run automatically).
+`npm run create`
+
+## Clean up
+`npm run clean`
 
 ## Start local ledger
-`npm run ledger`: Start pool ledger container (When your pool ledger already exist).
+`npm run start`
+
+## Stop local ledger
+`npm run stop`
 
 ## Run Indy script demo
-`npm run indy`: Run full demo for Hyperledger-Indy.
+`npm run demo`
 
 ## Run Web Demo
 ### Install dependencies
