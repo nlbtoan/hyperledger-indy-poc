@@ -178,13 +178,13 @@ export class BankComponent implements OnInit {
     this.isLoading = true;
     let data = this.bankForm.value;
     data.status = 1;
-    let cards = this.residentIdCards.pop();
+    let cards = this.residentIdCards[0];
     let contract = {
-      poolName: this.ledgers.pop().poolName,
+      poolName: this.ledgers[0].poolName,
       residentName: data.name.split(' ').join(''),
       residentGovernmentDid: cards.residentGovernmentDid,
       residentMasterSecretId: cards.residentMasterSecretId,
-      governmentIdCardCredDefId: this.credentialDefinitions.pop().governmentIdCardCredDefId,
+      governmentIdCardCredDefId: this.credentialDefinitions[0].governmentIdCardCredDefId,
       bankName: 'null',
       bankDid: 'null',
       data: data

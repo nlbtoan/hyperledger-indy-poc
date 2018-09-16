@@ -180,8 +180,8 @@ export class GovernmentComponent implements OnInit {
     let data = this.residentForm.value;
     let idCard = {
       residentName: data.name.split(' ').join(''),
-      poolName: this.ledgers.pop().poolName,
-      governmentIdCardCredDefId: this.credentialDefinitions.pop().governmentIdCardCredDefId,
+      poolName: this.ledgers[0].poolName,
+      governmentIdCardCredDefId: this.credentialDefinitions[0].governmentIdCardCredDefId,
       governmentDid: 'null',
       governmentName: 'null',
       bankName: 'null',
@@ -237,7 +237,7 @@ export class GovernmentComponent implements OnInit {
     this.isLoading = true;
 
     let credentialDefinition = {
-      poolName: this.ledgers.pop().poolName,
+      poolName: this.ledgers[0].poolName,
       governmentDid: 'null',
       governmentName: 'null'
     }
@@ -302,7 +302,7 @@ export class GovernmentComponent implements OnInit {
     let setupSchema = {
       governmentName: 'null',
       governmentDid: 'null',
-      poolName: this.ledgers.pop().poolName,
+      poolName: this.ledgers[0].poolName,
       schema: ["id", "name", "dob", "gender", "nationality", "hometown", "profile_image_hash", "created_at", "status"]
     };
 

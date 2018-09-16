@@ -154,7 +154,7 @@ export class AdminComponent implements OnInit {
 
   addTrustAnchor() {
     this.isLoading = true;
-    let ledger = this.ledgers.pop();
+    let ledger = this.ledgers[0];
     let data = {
       poolName: ledger.poolName,
       stewardName: ledger.stewardName,
