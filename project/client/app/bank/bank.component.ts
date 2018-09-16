@@ -137,7 +137,7 @@ export class BankComponent implements OnInit {
   }
 
   gettingIdCard() {
-    this.governmentService.getAllPatientPrescription().subscribe(
+    this.governmentService.getAllIdCard().subscribe(
       data => this.residentIdCards = data,
       error => console.log(error),
       () => this.isLoading = false

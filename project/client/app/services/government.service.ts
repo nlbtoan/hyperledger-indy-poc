@@ -2,47 +2,45 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { Credential } from '../shared/models/setupCredentialDefinition.model';
-
 @Injectable()
 export class GovernmentService {
 
   constructor(private http: HttpClient) { }
 
-  createIdCard(resident: any): Observable<any> {
-    return this.http.post<any>('/api/gettingIdCard', resident);
+  createIdCard(data: any): Observable<any> {
+    return this.http.post<any>('/api/createIdCard', data);
   }
 
-  setupCredentialDefinition(credential: Credential): Observable<Credential> {
-    return this.http.post<Credential>('/api/setupCredentialDefinition', credential);
+  setupCredentialDefinition(data: any): Observable<any> {
+    return this.http.post<any>('/api/setupCredentialDefinition', data);
   }
 
   hashFile(base64: any): Observable<any> {
     return this.http.post<any>('/api/hash', base64);
   }
 
-  insertCredentialDefinition(CredentialDefinition: any): Observable<any> {
-    return this.http.post<any>('/api/CredentialDefinition', CredentialDefinition);
+  insertCredentialDefinition(data: any): Observable<any> {
+    return this.http.post<any>('/api/credentialDefinition', data);
   }
 
-  deleteCredentialDefinition(CredentialDefinition: any): Observable<any> {
-    return this.http.delete(`/api/credentialDefinition/${CredentialDefinition._id}`, { responseType: 'text' });
+  deleteCredentialDefinition(data: any): Observable<any> {
+    return this.http.delete(`/api/credentialDefinition/${data._id}`, { responseType: 'text' });
   }
 
   getAllCredentialDefinition(): Observable<any> {
     return this.http.get<any>('/api/credentialDefinitions');
   }
 
-  insertPatientPrescription(PatientPrescription: any): Observable<any> {
-    return this.http.post<any>('/api/PatientPrescription', PatientPrescription);
+  insertIdCard(IdCard: any): Observable<any> {
+    return this.http.post<any>('/api/idCard', IdCard);
   }
 
-  getAllPatientPrescription(): Observable<any> {
-    return this.http.get<any>('/api/patientPrescriptions')
+  getAllIdCard(): Observable<any> {
+    return this.http.get<any>('/api/idCards')
   }
 
-  deletePatientPrescription(PatientPrescription: any): Observable<any> {
-    return this.http.delete(`/api/patientPrescription/${PatientPrescription._id}`, { responseType: 'text' });
+  deleteIdCard(data: any): Observable<any> {
+    return this.http.delete(`/api/idCard/${data._id}`, { responseType: 'text' });
   }
 
 }

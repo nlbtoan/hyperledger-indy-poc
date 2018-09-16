@@ -6,10 +6,9 @@ import Government from './controllers/government';
 import Bank from './controllers/bank';
 import Ledger from './controllers/ledger';
 import TrustAnchor from './controllers/trustAnchor';
-import IdCard from './controllers/idCard';
+import Schema from './controllers/schema';
 import CredentialDefinition from './controllers/credentialDefinition';
 import ResidentIdCard from './controllers/residentIdCard';
-import BankIdCard from './controllers/bankIdCard';
 
 export default function setRoutes(app) {
 
@@ -21,10 +20,9 @@ export default function setRoutes(app) {
   const bank = new Bank();
   const ledger = new Ledger();
   const trustAnchor = new TrustAnchor();
-  const idCard = new IdCard();
+  const schema = new Schema();
   const credentialDefinition = new CredentialDefinition();
   const residentIdCard = new ResidentIdCard();
-  const bankIdCard = new BankIdCard();
 
   //// Ledger data managerment ////
   // Ledger
@@ -43,13 +41,13 @@ export default function setRoutes(app) {
   router.route('/trustAnchor/:id').put(trustAnchor.update);
   router.route('/trustAnchor/:id').delete(trustAnchor.delete);
 
-  // idCard schema
-  router.route('/schemas').get(idCard.getAll);
-  router.route('/schema/count').get(idCard.count);
-  router.route('/schema').post(idCard.insert);
-  router.route('/schema/:id').get(idCard.get);
-  router.route('/schema/:id').put(idCard.update);
-  router.route('/schema/:id').delete(idCard.delete);
+  // Schema
+  router.route('/schemas').get(schema.getAll);
+  router.route('/schema/count').get(schema.count);
+  router.route('/schema').post(schema.insert);
+  router.route('/schema/:id').get(schema.get);
+  router.route('/schema/:id').put(schema.update);
+  router.route('/schema/:id').delete(schema.delete);
 
   // Credential Definition
   router.route('/credentialDefinitions').get(credentialDefinition.getAll);
@@ -59,21 +57,13 @@ export default function setRoutes(app) {
   router.route('/credentialDefinition/:id').put(credentialDefinition.update);
   router.route('/credentialDefinition/:id').delete(credentialDefinition.delete);
 
-  // Prescription
-  router.route('/patientPrescriptions').get(residentIdCard.getAll);
-  router.route('/patientPrescriptions/count').get(residentIdCard.count);
-  router.route('/patientPrescription').post(residentIdCard.insert);
-  router.route('/patientPrescription/:id').get(residentIdCard.get);
-  router.route('/patientPrescription/:id').put(residentIdCard.update);
-  router.route('/patientPrescription/:id').delete(residentIdCard.delete);
-
-  // Pharmacy Prescription Lists
-  router.route('/bankIdCards').get(bankIdCard.getAll);
-  router.route('/bankIdCards/count').get(bankIdCard.count);
-  router.route('/bankIdCard').post(bankIdCard.insert);
-  router.route('/bankIdCard/:id').get(bankIdCard.get);
-  router.route('/bankIdCard/:id').put(bankIdCard.update);
-  router.route('/bankIdCard/:id').delete(bankIdCard.delete);
+  // ID Card
+  router.route('/idCards').get(residentIdCard.getAll);
+  router.route('/idCard/count').get(residentIdCard.count);
+  router.route('/idCard').post(residentIdCard.insert);
+  router.route('/idCard/:id').get(residentIdCard.get);
+  router.route('/idCard/:id').put(residentIdCard.update);
+  router.route('/idCard/:id').delete(residentIdCard.delete);
 
   //// Interation with the ledger ////
   // Admin
@@ -90,22 +80,10 @@ export default function setRoutes(app) {
   // Government
   router.route('/createSchema').post(government.createSchema);
   router.route('/setupCredentialDefinition').post(government.setupCredentialDefinition);
-  router.route('/gettingIdCard').post(government.gettingIdCard);
-  router.route('/doctorLogin').post(government.login);
-  router.route('/doctors').get(government.getAll);
-  router.route('/doctors/count').get(government.count);
-  router.route('/doctor/:id').get(government.get);
-  router.route('/doctor/:id').put(government.update);
-  router.route('/doctor/:id').delete(government.delete);
+  router.route('/createIdCard').post(government.createIdCard);
 
   // Bank
   router.route('/applyLoan').post(bank.applyLoan);
-  router.route('/pharmacyLogin').post(bank.login);
-  router.route('/pharmacys').get(bank.getAll);
-  router.route('/pharmacys/count').get(bank.count);
-  router.route('/pharmacy/:id').get(bank.get);
-  router.route('/pharmacy/:id').put(bank.update);
-  router.route('/pharmacy/:id').delete(bank.delete);
 
   // Hash
   router.route('/hash').post(government.hashFile);

@@ -115,7 +115,7 @@ export class GovernmentComponent implements OnInit {
   }
 
   gettingIdCard() {
-    this.governmentService.getAllPatientPrescription().subscribe(
+    this.governmentService.getAllIdCard().subscribe(
       data => this.residentIdCards = data,
       error => console.log(error),
       () => this.isLoading = false
@@ -161,15 +161,15 @@ export class GovernmentComponent implements OnInit {
   }
 
   deletePatientPrescription(patientPrescription) {
-    if (window.confirm('Are you sure you want to delete this prescription?')) {
-      this.governmentService.deletePatientPrescription(patientPrescription).subscribe(
+    if (window.confirm('Are you sure you want to delete this id card?')) {
+      this.governmentService.deleteIdCard(patientPrescription).subscribe(
         data => {
           this.gettingIdCard();
-          this.toast.setMessage('Patient Prescription deleted successfully.', 'success');
+          this.toast.setMessage('ID card deleted successfully.', 'success');
         },
         error => {
           console.log(error);
-          this.toast.setMessage('Patient Prescription can not deleted.', 'danger');
+          this.toast.setMessage('ID card can not deleted.', 'danger');
         }
       );
     }
@@ -179,7 +179,7 @@ export class GovernmentComponent implements OnInit {
     this.isLoading = true;
     let data = this.residentForm.value;
     let idCard = {
-      residentName: data.name.split(' ').join('') + 'Wallet',
+      residentName: data.name.split(' ').join(''),
       poolName: this.ledgers.pop().poolName,
       governmentIdCardCredDefId: this.credentialDefinitions.pop().governmentIdCardCredDefId,
       governmentDid: 'null',
@@ -212,16 +212,16 @@ export class GovernmentComponent implements OnInit {
 
     this.governmentService.createIdCard(idCard).subscribe(
       res => {
-        this.governmentService.insertPatientPrescription(res).subscribe(
+        this.governmentService.insertIdCard(res).subscribe(
           res => {
             this.gettingIdCard();
             this.isLoading = false;
-            this.toast.setMessage('Resident Id Card created successfully.', 'success');
+            this.toast.setMessage('Id Card created successfully.', 'success');
           },
           error => {
             console.log(error);
             this.isLoading = false;
-            this.toast.setMessage('Resident Id Card can not created', 'danger');
+            this.toast.setMessage('Id Card can not created', 'danger');
           }
         );
       },
