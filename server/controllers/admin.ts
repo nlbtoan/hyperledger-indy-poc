@@ -72,6 +72,9 @@ export default class adminCtrl extends BaseCtrl {
           trustAnchorStewardKey: trustAnchorStewardKey
         });
       } else {
+        if (trustAnchorWallet) await indy.closeWallet(trustAnchorWallet);
+        if (stewardWalletHandle) await indy.closeWallet(stewardWalletHandle);
+        if (poolHandle) await indy.closePoolLedger(poolHandle);
         res.sendStatus(403);
       }
     } catch (error) {
@@ -94,6 +97,7 @@ export default class adminCtrl extends BaseCtrl {
     let poolConfig = {
       "genesis_txn": poolGenesisTxnPath
     };
+
     try {
       await indy.createPoolLedgerConfig(poolName, poolConfig);
     } catch (e) {
@@ -115,6 +119,7 @@ export default class adminCtrl extends BaseCtrl {
     } catch (e) {
       if (e.message !== "WalletAlreadyExistsError") {
         console.log(e);
+        if (poolHandle) await indy.closePoolLedger(poolHandle);
         res.sendStatus(403);
       }
     }
@@ -123,8 +128,13 @@ export default class adminCtrl extends BaseCtrl {
     let stewardDidInfo = {
       'seed': '000000000000000000000000Steward1'
     };
+    let stewardDid, stewardKey;
 
-    let [stewardDid, stewardKey] = await indy.createAndStoreMyDid(stewardWalletHandle, stewardDidInfo);
+    try {
+      [stewardDid, stewardKey] = await indy.createAndStoreMyDid(stewardWalletHandle, stewardDidInfo);
+    } catch (e) {
+      console.log(e);
+    }
 
     //Close steward wallet
     await indy.closeWallet(stewardWalletHandle);
@@ -140,6 +150,8 @@ export default class adminCtrl extends BaseCtrl {
         poolName: poolName
       });
     } else {
+      if (stewardWalletHandle) await indy.closeWallet(stewardWalletHandle);
+      if (poolHandle) await indy.closePoolLedger(poolHandle);
       res.sendStatus(403);
     }
   }

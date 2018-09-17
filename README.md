@@ -20,6 +20,7 @@ Other tools and technologies used:
 ## Prerequisites
 1. Work with Ubuntu 16.04
 2. Setup Development/Runtime Environment: `chmod u+x ./prereqs-ubuntu.sh && ./prereqs-ubuntu.sh`
+3. Install dependencies: `npm install`
 
 ## Setup local ledger
 `npm run create`
@@ -48,20 +49,3 @@ A window will automatically open at [localhost:4200](http://localhost:4200). Ang
 
 ### Production mode
 `npm run prod`: run the project with a production bundle and AOT compilation listening at [localhost:3000](http://localhost:3000)
-
-## Please open an issue if
-* you have any suggestion to improve this project.
-* you noticed any problem or error.
-
-## Running frontend unit tests
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
-
-## Running frontend end-to-end tests
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/). 
-Before running the tests make sure you are serving the app via `npm start`.
-
-## Running backend tests
-Run `mongod` to run an instance of MongoDB, then run `npm run testbe` to execute the backend tests via [Mocha](https://mochajs.org/).
-
-## Running TSLint
-Run `ng lint` (frontend) and `npm run lintbe` (backend) to execute the linter via [TSLint](https://palantir.github.io/tslint/).

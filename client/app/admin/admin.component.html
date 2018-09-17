@@ -66,8 +66,8 @@
     <table class="table table-bordered">
       <thead class="thead-light">
         <tr>
-          <th scope="col">Pool Name</th>          
-          <th scope="col">Steward Name</th>          
+          <th scope="col">Pool Name</th>
+          <th scope="col">Steward Name</th>
           <th scope="col">Steward Did</th>
           <th scope="col">Steward Key</th>
           <th scope="col">Option</th>
@@ -80,8 +80,8 @@
       </tbody>
       <tbody>
         <tr *ngFor="let ledger of ledgers">
-          <td>{{ledger.poolName}}</td>          
-          <td>{{ledger.stewardName}}</td>          
+          <td>{{ledger.poolName}}</td>
+          <td>{{ledger.stewardName}}</td>
           <td>{{ledger.stewardDid}}</td>
           <td>{{ledger.stewardKey}}</td>
           <td>
@@ -99,15 +99,24 @@
   <h4 class="card-header">Step 2: Add Trust Anchor</h4>
   <form class="card-body" [formGroup]="anchorForm" (ngSubmit)="addTrustAnchor()">
 
-    <div class="input-group" [ngClass]="setClassName()">
+    <!-- <div class="input-group" [ngClass]="setClassName()">
       <div class="input-group-prepend">
         <span class="input-group-text">
           <i class="fa fa-book"></i>
         </span>
       </div>
       <input class="form-control" type="name" name="name" formControlName="name" placeholder="Trust Anchor Name">
+    </div> -->
+    <div class="input-group">
+      <div class="input-group-prepend">
+        <span class="input-group-text"><i class="fa fa-book"></i></span>
+      </div>
+      <select class="custom-select" name="name" formControlName="name">
+        <option value="" selected disabled>Role</option>
+        <option value="government">Government</option>
+        <option value="bank">Bank</option>
+      </select>
     </div>
-
     <button class="btn btn-primary" type="submit" [disabled]="!anchorForm.valid">
       <i class="fa fa-sign-in"></i> Add Trust Anchor </button>
   </form>

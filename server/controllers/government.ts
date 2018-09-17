@@ -47,10 +47,10 @@ export default class GovernmentCtrl extends BaseCtrl {
     let governmentName = req.body.governmentName;
     let governmentDid = req.body.governmentDid;
     let bankName = req.body.bankName;
-    let residentWalletConfig = { 'id': req.body.residentName + 'Wallet'};
+    let residentWalletConfig = { 'id': req.body.residentName + 'Wallet' };
     let residentWalletCredentials = { 'key': req.body.residentName + '_key' };
     let residentWalletHandle, governmentResidentKey, residentGovernmentDid, residentGovernmentKey, governmentResidentConnectionResponse;
-
+    let poolHandle, governmentWalletHandle, bankWalletHandle;
     try {
       await indy.setProtocolVersion(2);
       //Open pool ledger
@@ -118,17 +118,17 @@ export default class GovernmentCtrl extends BaseCtrl {
       });
     } catch (error) {
       console.log(error);
-      try {
-        //Close and delete wallet
-        if (residentWalletHandle) {
-          await indy.closeWallet(residentWalletHandle);
-          await indy.deleteWallet(residentWalletConfig, residentWalletCredentials);
-        }
-        res.sendStatus(403);
-      } catch (e) {
-        console.log(e);
-        res.sendStatus(403);
-      }
+      if (residentWalletHandle)
+        await indy.closeWallet(residentWalletHandle);
+
+      if (bankWalletHandle)
+        await indy.closeWallet(bankWalletHandle);
+
+      if (governmentWalletHandle)
+        await indy.closeWallet(governmentWalletHandle);
+
+      if (poolHandle) await indy.closePoolLedger(poolHandle);
+      res.sendStatus(403);
     }
   }
 
@@ -142,15 +142,16 @@ export default class GovernmentCtrl extends BaseCtrl {
   // "schemaId": "UAyYVcKCQuNKGCztZUn3WX:2:id-card:1.0"
   // }
   setupCredentialDefinition = async (req, res) => {
+    let poolHandle, governmentWalletHandle;
     try {
       await indy.setProtocolVersion(2);
       //Open pool ledger
-      let poolHandle = await indy.openPoolLedger(req.body.poolName);
+      poolHandle = await indy.openPoolLedger(req.body.poolName);
 
       //Open government wallet
       let governmentWalletConfig = { 'id': req.body.governmentName + 'Wallet' };
       let governmentWalletCredentials = { 'key': req.body.governmentName + '_key' };
-      let governmentWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
+      governmentWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
 
       let governmentDid = req.body.governmentDid;
 
@@ -171,6 +172,8 @@ export default class GovernmentCtrl extends BaseCtrl {
       });
     } catch (error) {
       console.log(error);
+      if (governmentWalletHandle) await indy.closeWallet(governmentWalletHandle);
+      if (poolHandle) await indy.closePoolLedger(poolHandle);
       res.sendStatus(403);
     }
   }
@@ -186,15 +189,16 @@ export default class GovernmentCtrl extends BaseCtrl {
   //   "schema": ["id", "name", "dob", "gender", "nationality", "hometown", "profile_image_hash", "created_at", "status"]
   // }
   createSchema = async (req, res) => {
+    let poolHandle, governmentWalletHandle;
     try {
       await indy.setProtocolVersion(2);
       //Open pool ledger
-      let poolHandle = await indy.openPoolLedger(req.body.poolName);
+      poolHandle = await indy.openPoolLedger(req.body.poolName);
 
       //Open government wallet
       let governmentWalletConfig = { 'id': req.body.governmentName + 'Wallet' };
       let governmentWalletCredentials = { 'key': req.body.governmentName + '_key' };
-      let governmentWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
+      governmentWalletHandle = await indy.openWallet(governmentWalletConfig, governmentWalletCredentials);
 
       let [schemaId, schema] = await indy.issuerCreateSchema(req.body.governmentDid, 'id-card', '1.0', req.body.schema);
 
@@ -212,6 +216,8 @@ export default class GovernmentCtrl extends BaseCtrl {
       });
     } catch (error) {
       console.log(error);
+      if (governmentWalletHandle) await indy.closeWallet(governmentWalletHandle);
+      if (poolHandle) await indy.closePoolLedger(poolHandle);
       res.sendStatus(403);
     }
   }

@@ -171,13 +171,9 @@ export default class BankCtrl extends BaseCtrl {
       res.status(200).json();
     } catch (error) {
       console.log(error);
-      switch (error.message) {
-        case 'WalletNotFoundError':
-          if (residentWalletHandle) await indy.closeWallet(residentWalletHandle);
-          if (bankWalletHandle) await indy.closeWallet(bankWalletHandle);
-          if (poolHandle) await indy.closePoolLedger(poolHandle);
-          break;
-      }
+      if (residentWalletHandle) await indy.closeWallet(residentWalletHandle);
+      if (bankWalletHandle) await indy.closeWallet(bankWalletHandle);
+      if (poolHandle) await indy.closePoolLedger(poolHandle);
       res.sendStatus(403);
     }
   }

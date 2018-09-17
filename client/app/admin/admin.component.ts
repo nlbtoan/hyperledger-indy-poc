@@ -29,7 +29,7 @@ export class AdminComponent implements OnInit {
     Validators.required
   ]);
 
-  // For Trust Anchor 
+  // For Ledger 
   anchorForm: FormGroup;
   name = new FormControl('', [
     Validators.required
@@ -69,7 +69,7 @@ export class AdminComponent implements OnInit {
     return { 'has-danger': !this.stewardName.pristine && !this.stewardName.valid };
   }
 
-  // For Trust Anchor
+  // For Ledger
   setClassName() {
     return { 'has-danger': !this.name.pristine && !this.name.valid };
   }
@@ -111,7 +111,7 @@ export class AdminComponent implements OnInit {
   deleteTrustAnchor(trustAnchor: any) {
     if (window.confirm('Are you sure you want to delete ' + trustAnchor.trustAnchorName + '?')) {
       this.trustAnchorService.deleteTrustAnchor(trustAnchor).subscribe(
-        data => this.toast.setMessage('Trust anchor deleted successfully.', 'success'),
+        data => this.toast.setMessage('Ledger deleted successfully.', 'success'),
         error => console.log(error),
         () => this.getTrustAnchor()
       );
@@ -121,7 +121,7 @@ export class AdminComponent implements OnInit {
   deleteLedger(ledger: any) {
     if (window.confirm('Are you sure you want to delete ' + ledger.name + '?')) {
       this.ledgerService.deletePoolLedger(ledger).subscribe(
-        data => this.toast.setMessage('Trust anchor deleted successfully.', 'success'),
+        data => this.toast.setMessage('Ledger deleted successfully.', 'success'),
         error => console.log(error),
         () => this.getLedger()
       );
@@ -168,7 +168,7 @@ export class AdminComponent implements OnInit {
           res => {
             this.getTrustAnchor();
             this.isLoading = false;
-            this.toast.setMessage('Trust Anchor created successfully.', 'success');
+            this.toast.setMessage('Ledger created successfully.', 'success');
           },
           error => {
             this.isLoading = false;
