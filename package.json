@@ -17,6 +17,8 @@
     "create": "docker build -f docker/indy-pool.dockerfile -t indy_pool . && docker run --name indy_pool -itd -p 9701-9708:9701-9708 indy_pool",
     "start": "docker start indy_pool",
     "stop": "docker stop indy_pool",
+    "pool-config": "docker exec -it indy_pool cat /var/lib/indy/sandbox/pool_transactions_genesis",
+    "domain-config": "docker exec -it indy_pool cat /var/lib/indy/sandbox/domain_transactions_genesis",
     "predev": "tsc -p server",
     "dev": "concurrently \"ng serve --proxy-config proxy.conf.json --host 0.0.0.0\" \"tsc -w -p server\" \"node dist/server/app.js\"",
     "server": "concurrently \"tsc -w -p server\" \"node dist/server/app.js\"",
